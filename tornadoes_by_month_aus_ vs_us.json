@@ -1,0 +1,53 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Butterfly chart of tornado percent by month for Australia vs America (2000-2024).",
+  "data": {
+    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_month_percent_2000-2024_AUS_US.csv",
+    "format": { "type": "csv" }
+  },
+  "transform": [
+    {
+      "calculate": "datum.country == 'Australia' ? -datum.percent : +datum.percent",
+      "as": "signed_percent"
+    }
+  ],
+  "width": 700,
+  "height": 420,
+  "mark": { "type": "bar", "cornerRadius": 2 },
+  "encoding": {
+    "y": {
+      "field": "month_name",
+      "type": "ordinal",
+      "sort": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+      "axis": { "title": null }
+    },
+    "x": {
+      "field": "signed_percent",
+      "type": "quantitative",
+      "scale": { "domain": [-25, 25] },
+      "axis": {
+        "title": "Percent of tornadoes (2000-2024)",
+        "labelExpr": "datum.value === 0 ? '0%' : (round(abs(datum.value) * 10) / 10) + '%'"
+      }
+    },
+    "color": {
+      "field": "country",
+      "type": "nominal",
+      "scale": {
+        "domain": ["Australia", "America"],
+        "range": ["#0072B2", "#D55E00"]
+      },
+      "legend": { "title": "Country" }
+    },
+    "tooltip": [
+      { "field": "country", "type": "nominal" },
+      { "field": "month_name", "type": "ordinal", "title": "Month" },
+      { "field": "count", "type": "quantitative", "title": "Count" },
+      { "field": "percent", "type": "quantitative", "title": "Percent", "format": ".3f" }
+    ]
+  },
+  "config": {
+    "axis": { "labelFontSize": 12, "titleFontSize": 13 },
+    "legend": { "labelFontSize": 12, "titleFontSize": 13 }
+  }
+}
