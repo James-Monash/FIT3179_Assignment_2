@@ -1,0 +1,138 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "width": 900,
+  "height": 600,
+  "projection": {"type": "mercator", "center": [134, -28], "scale": 850},
+  "background": "#c6dbef",
+  "title": {
+    "text": "Top Five Fastest Tornadoes by Wind Speed Since 1900",
+    "subtitle": "Change the time range to see to see the fastest tornadoes in certain periods",
+    "anchor": "start",
+    "fontSize": 18,
+    "font": "Helvetica",
+    "color": "#333"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/James-Monash/3179-Week-10-Assignment/main/tornado_with_wind_speed_data.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "Date/Time": "date:%d/%m/%Y %H:%M"
+      }
+    }
+  },
+  "params": [
+    {
+      "name": "Min_Year",
+      "value": 1900,
+      "bind": {
+        "input": "range",
+        "min": 1900,
+        "max": 2025,
+        "step": 1,
+        "name": "Start Year: "
+      }
+    },
+    {
+      "name": "Max_Year",
+      "value": 2025,
+      "bind": {
+        "input": "range",
+        "min": 1900,
+        "max": 2025,
+        "step": 1,
+        "name": "End Year: "
+      }
+    }
+  ],
+  "transform": [
+    {"calculate": "toNumber(datum['Max speed (km/h)'])", "as": "MaxSpeed"},
+    {"calculate": "datum['Date/Time']", "as": "ParsedDate"},
+    {"filter": "datum.ParsedDate !== null"},
+    {"calculate": "year(datum.ParsedDate)", "as": "Year"},
+    {"calculate": "toNumber(datum.Longitude)", "as": "lon"},
+    {"calculate": "toNumber(datum.Latitude)", "as": "lat"},
+    {
+      "filter": "isFinite(datum.MaxSpeed) && isFinite(datum.lon) && isFinite(datum.lat) && (datum.Year >= Min_Year) && (datum.Year <= Max_Year)"
+    },
+    {
+      "window": [
+        {"op": "row_number", "as": "rownum"}
+      ],
+      "sort": [
+        {"field": "MaxSpeed", "order": "descending"},
+        {"field": "ParsedDate", "order": "ascending"},
+        {"field": "Tornado ID", "order": "ascending"}
+      ]
+    },
+    {"filter": "datum.rownum <= 5"},
+    {
+      "calculate": "timeFormat(datum.ParsedDate, '%d/%m/%Y')",
+      "as": "FormattedDate"
+    },
+    {
+      "calculate": "(format(datum.MaxSpeed, '.0f') + ' km/h')",
+      "as": "MaxSpeedFmt"
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/James-Monash/3179-Week-10-Assignment/main/australia.json",
+        "format": {"type": "topojson", "feature": "ne_50m_admin_1_states_provinces"}
+      },
+      "mark": {"type": "geoshape", "fill": "#f7f3ea", "stroke": "#999", "strokeWidth": 0.8}
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/James-Monash/3179-Week-10-Assignment/main/10_degree_graticules_for_australia.json",
+        "format": {"type": "topojson", "feature": "ne_50m_graticules_10"}
+      },
+      "mark": {"type": "geoshape", "stroke": "#ccc", "strokeWidth": 0.7}
+    },
+    {
+      "mark": {"type": "image", "width": 36, "height": 36, "opacity": 1},
+      "encoding": {
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "url": {
+          "value": "https://raw.githubusercontent.com/James-Monash/3179-Week-10-Assignment/main/tornado.svg"
+        },
+        "tooltip": [
+          {"title": "Date", "field": "FormattedDate", "type": "nominal"},
+          {"title": "Max wind speed", "field": "MaxSpeedFmt", "type": "nominal"}
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          { "lon": 118, "lat": -24, "label": "Fastest tornadoes in WA occurred in the 21st century" }
+        ]
+      },
+      "mark": { "type": "text", "align": "left", "baseline": "middle", "fontSize": 12, "dx": -36, "dy": -18, "lineBreak": true, "color": "#111" },
+      "encoding": {
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude":  { "field": "lat", "type": "quantitative" },
+        "text": { "field": "label", "type": "nominal" }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          { "lon": 151.2, "lat": -27.2, "label": "NSW and QLD witness the most tornadoes" }
+        ]
+      },
+      "mark": { "type": "text", "align": "left", "baseline": "middle", "fontSize": 12, "dx": -50, "dy": -130, "lineBreak": true, "color": "#111" },
+      "encoding": {
+        "longitude": { "field": "lon", "type": "quantitative" },
+        "latitude":  { "field": "lat", "type": "quantitative" },
+        "text": { "field": "label", "type": "nominal" }
+      }
+    }
+  ],
+  "config": {
+    "legend": {"labelFont": "Helvetica", "titleFont": "Helvetica"},
+    "title": {"font": "Helvetica"}
+  }
+}
