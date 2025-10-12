@@ -1,0 +1,25 @@
+id,event,country,year,deaths,lat,lon,coord_confidence
+1,Daulatpur–Saturia tornado,Bangladesh,1989,1300,23.75,89.83,high
+2,Tri-State Tornado,United States,1925,695,37.77,-89.33,high
+3,Soviet Union tornado outbreak,Russia,1984,400,55.75,37.62,low
+4,The Dixie Tornado Outbreak,United States,1908,320,32.36,-87.02,low
+5,Great Natchez Tornado,United States,1840,317,31.56,-91.38,high
+6,Louis–East St. Louis Tornado,United States,1896,255,38.62,-90.19,high
+7,Tupelo–Gainesville Tornado,United States,1936,203,34.25,-88.75,medium
+8,Joplin Tornado,United States,2011,158,37.0842,-94.5133,high
+9,Goliad Tornado,United States,1902,114,28.67,-97.38,medium
+10,Worcester Tornado,United States,1953,94,42.26,-71.80,high
+11,Yazoo City Tornado,United States,2010,10,32.85,-90.40,high
+12,Sicily tornadoes,Italy,1851,500,37.60,14.02,low
+13,Jarrell Tornado,United States,1997,,30.77,-97.56,high
+14,Topeka Tornado,United States,1966,17,39.05,-95.67,high
+15,Woodward Tornado,United States,1947,169,34.43,-99.41,high
+16,Grand Harbour of Malta Tornado,Malta,1551,500,35.89,14.51,high
+17,Marshfield Tornado,United States,1880,166,42.12,-70.74,high
+18,Udall Tornado,United States,1955,87,37.02,-97.53,high
+19,Carolinas Tornado Outbreak,United States,1984,57,34.95,-79.00,low
+20,Saturia–Manikganij Sadar tornado,Bangladesh,1973,681,23.80,89.86,high
+21,Waco Tornado,United States,1953,114,31.55,-97.15,high
+22,San Justo Tornado,Argentina,1973,63,-31.55,-61.98,medium
+23,Saragosa Tornado,United States,1987,30,31.17,-104.46,high
+24,Port Macquarie Tornado,Australia,1962,3,-31.43,152.91,high
