@@ -17,34 +17,32 @@
       background: url('background-pattern.png') center top repeat; /* replace with your background image or pattern */
       background-color: #f4f7fb;
     }
-    .page {
-      max-width: 1200px;
-      margin: 24px auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      box-sizing: border-box;
+    .page { 
+      max-width: 1400px; 
+      margin: 24px auto; 
+      padding: 20px; 
+      display:flex; 
+      flex-direction:column; 
+      gap:28px; 
     }
 
     /* Each viz card */
-    .viz-card {
-      background: rgba(255,255,255,0.95);
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(20,30,40,0.06);
-      padding: 14px;
-      box-sizing: border-box;
-      width: 100%;
+    .viz-card { 
+      display:block; 
+      margin-left:auto; 
+      margin-right:auto; 
+      max-width:1200px; 
     }
+
     .viz-title { font-size: 16px; font-weight: 600; margin: 0 0 8px 0; }
     .viz-sub { margin: 0 0 12px 0; color: #555; font-size: 13px; }
 
     /* Containers for vega-embed targets */
-    .viz-embed { width: 100%; }
+    .viz-embed { width:100%; max-width:1100px; margin:0 auto; }
 
     /* Row for side-by-side maps (dynamic) */
-    .row { display:flex; gap:16px; align-items:flex-start; }
-    .col { flex:1; min-width:280px; }
+    .row { display:flex; gap:16px; align-items:flex-start; justify-content:center; }
+    .col { flex:1; min-width:280px; max-width:620px; }
 
     /* Small responsive tweaks */
     @media (max-width: 900px) {
@@ -63,24 +61,31 @@
 <body>
   <div class="page">
 
+    <h1>Tornadoes in Austrlia</h1>
+    <h2>When you think about tornadoes, you likely think about America, however, Australia has around 100 tornadoes a year and has conditions ripe for severe storms.</h2>
+
     <!-- 1) tornado_density_across_australia -->
     <section class="viz-card">
-      <h3 class="viz-title">Tornado density across Australia</h3>
-      <p class="viz-sub">Rendered from tornado_density_across_australia.json</p>
+      <p class="viz-sub">Inspect the locations where tornadoes are most common across Australia.</p>
       <div id="viz-tornado-density" class="viz-embed"></div>
     </section>
 
     <!-- 2) severe_weather_proportions_per_state -->
     <section class="viz-card">
-      <h3 class="viz-title">Severe weather proportions per state</h3>
-      <p class="viz-sub">Rendered from severe_weather_proportions_per_state.json</p>
+      <p class="viz-sub">Much of Australia's wild weather isn't tornado related. Look at the distribution of rain, hail and tornado events, reported by the Bureau of Metereology (BOM) for each state.
+      ACT was excluded due to low amounts of data.</p>
       <div id="viz-severe-proportions" class="viz-embed"></div>
     </section>
+
+    <p>The Fujita rating is a scale for measuring tornado strength. It was proposed in 1971 by Japanese-American meterologist Dr. Tetsuya Fujita at the University of Chicago. A lot of the research into severe storms
+    has been focussed in the United States. This is because they experience a large number of tornadoes, compared to the rest of the world. It is hard to study tornadoes due to their unpredictable nature. Dr Fujita suggested
+    the use of a destruction scale as a way to determine wind strength. For example, it is known winds above 180km/h are required to destroy mobile homes. This means that if mobile homes have been destroyed then the tornado
+    must have had winds of this magnitude. Tornadoes are broadly categorised into F0-F5 ratings. In 2007 the Enhanced Fujita scale was introduced. This refined the damage rating categories.</p>
 
     <!-- 3+4) dynamic maps row: Australian and US maps (side-by-side) -->
     <section class="viz-card">
       <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
-      <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below</p>
+      <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
 
       <!-- legend/checkboxes for rating toggles -->
       <div id="legend-checkboxes" style="margin-bottom:12px;"></div>
@@ -93,8 +98,8 @@
 
     <!-- 5) fastest_australian_tornadoes -->
     <section class="viz-card">
-      <h3 class="viz-title">Fastest Australian tornadoes</h3>
-      <p class="viz-sub">Rendered from fastest_australian_tornadoes.json</p>
+      <p class="viz-sub">As noted before. Wind speeds are estimated based on damage. When the BOM is surveying tornado damage, they estimate the associated wind strength. Use the time sliders in the below visualisation to
+      see the fastest tornadoes in a given period.</p>
       <div id="viz-fastest-aus" class="viz-embed"></div>
     </section>
 
