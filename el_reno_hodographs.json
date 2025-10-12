@@ -1,0 +1,112 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Four hodograph panels (2x2). Facet titles removed. Points and lines coloured by altitude order; a single shared altitude legend is shown at the right.",
+  "data": {
+    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/elreno_hodograph_combined.csv",
+    "format": {"type": "csv"}
+  },
+  "hconcat": [
+    {
+      "width": 640,
+      "height": 640,
+      "facet": {
+        "field": "time_label",
+        "type": "nominal",
+        "columns": 2,
+        "header": {"title": null, "label": {"fontSize": 12}}
+      },
+      "spec": {
+        "transform": [
+          {"calculate": "toNumber(datum.u)", "as": "u_num"},
+          {"calculate": "toNumber(datum.v)", "as": "v_num"},
+          {"calculate": "isFinite(toNumber(datum.altitude)) ? toNumber(datum.altitude) : toNumber(datum.level_index)", "as": "order_val"},
+          {"calculate": "isFinite(toNumber(datum.altitude)) ? toNumber(datum.altitude) : null", "as": "altitude_num"},
+          {"filter": "isFinite(datum.u_num) && isFinite(datum.v_num) && isFinite(datum.order_val)"}
+        ],
+        "layer": [
+          {
+            "mark": {"type": "line", "interpolate": "linear", "strokeWidth": 1.6},
+            "encoding": {
+              "x": {
+                "field": "u_num",
+                "type": "quantitative",
+                "scale": {"domain": [-40, 40]},
+                "title": "U (east, m/s)"
+              },
+              "y": {
+                "field": "v_num",
+                "type": "quantitative",
+                "scale": {"domain": [-40, 40]},
+                "title": "V (north, m/s)"
+              },
+              "detail": {"field": "time_label"},
+              "order": {"field": "order_val", "type": "quantitative"},
+              "color": {"field": "time_label", "type": "nominal", "legend": {"title": "Sounding"}},
+              "opacity": {"value": 0.9}
+            }
+          },
+          {
+            "mark": {"type": "point", "filled": true, "stroke": "#222", "strokeWidth": 0.6},
+            "encoding": {
+              "x": {"field": "u_num", "type": "quantitative"},
+              "y": {"field": "v_num", "type": "quantitative"},
+              "color": {
+                "field": "order_val",
+                "type": "quantitative",
+                "scale": {"scheme": "viridis"},
+                "legend": null
+              },
+              "tooltip": [
+                {"field":"time_label","type":"nominal","title":"Sounding"},
+                {"field":"altitude","type":"quantitative","title":"Altitude (orig)"},
+                {"field":"level_index","type":"quantitative","title":"Level index"},
+                {"field":"speed_m_s","type":"quantitative","title":"Speed (m/s)"},
+                {"field":"dir_deg","type":"quantitative","title":"Dir (deg)"},
+                {"field":"u","type":"quantitative","title":"U (m/s)"},
+                {"field":"v","type":"quantitative","title":"V (m/s)"}
+              ],
+              "size": {"value": 60},
+              "opacity": {"value": 0.95}
+            }
+          }
+        ]
+      },
+      "resolve": {"scale": {"x": "shared", "y": "shared", "color": "independent"}}
+    },
+    {
+      "width": 120,
+      "height": 640,
+      "data": {
+        "values": [
+          {"order_val": 0},
+          {"order_val": 50},
+          {"order_val": 100},
+          {"order_val": 150},
+          {"order_val": 200},
+          {"order_val": 250},
+          {"order_val": 300},
+          {"order_val": 350},
+          {"order_val": 4000}
+        ]
+      },
+      "mark": {"type": "rect"},
+      "encoding": {
+        "x": {"value": 0, "axis": null},
+        "y": {"field": "order_val", "type": "quantitative", "axis": null},
+        "y2": {"value": 0},
+        "color": {
+          "field": "order_val",
+          "type": "quantitative",
+          "scale": {"scheme": "viridis", "domain": [0, 400]},
+          "legend": {"title": "Altitude (m)", "orient": "right", "gradientLength": 200}
+        }
+      },
+      "config": {"view": {"stroke": "transparent"}}
+    }
+  ],
+  "config": {
+    "view": {"stroke": "transparent"},
+    "axis": {"labelFontSize": 12, "titleFontSize": 13},
+    "legend": {"labelFontSize": 11, "titleFontSize": 12}
+  }
+}
