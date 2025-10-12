@@ -11,7 +11,7 @@ id,event,country,year,deaths,lat,lon,coord_confidence
 10,Worcester Tornado,United States,1953,94,42.26,-71.80,high
 11,Yazoo City Tornado,United States,2010,10,32.85,-90.40,high
 12,Sicily tornadoes,Italy,1851,500,37.60,14.02,low
-13,Jarrell Tornado,United States,1997,,30.77,-97.56,high
+13,Jarrell Tornado,United States,1997,27,30.77,-97.56,high
 14,Topeka Tornado,United States,1966,17,39.05,-95.67,high
 15,Woodward Tornado,United States,1947,169,34.43,-99.41,high
 16,Marshfield Tornado,United States,1880,166,42.12,-70.74,high
@@ -22,4 +22,5 @@ id,event,country,year,deaths,lat,lon,coord_confidence
 21,San Justo Tornado,Argentina,1973,63,-31.55,-61.98,medium
 22,Saragosa Tornado,United States,1987,30,31.17,-104.46,high
 23,Port Macquarie Tornado,Australia,1962,3,-31.43,152.91,high
+
 
