@@ -1,0 +1,8 @@
+state,total_reports,tornado_mentions,hail_mentions,rain_mentions,rain_hail,rain_tornado,hail_tornado,all_three,total_mentions,centroid_lon,centroid_lat
+NSW,4047,385,1756,1906,152,6,5,3,4047,147.0,-33.0
+NT,216,21,43,152,5,0,0,0,216,133.0,-19.0
+QLD,2592,131,1118,1343,47,1,1,0,2592,145.0,-20.0
+SA,954,228,203,523,16,1,0,0,954,135.0,-30.0
+TAS,284,29,53,202,10,0,0,0,284,146.5,-42.0
+VIC,1903,218,590,1095,76,2,0,0,1903,145.0,-37.0
+WA,1748,213,380,1155,43,1,4,1,1748,121.5,-25.0
