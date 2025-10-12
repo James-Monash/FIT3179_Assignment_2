@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Severe Weather Visualisations</title>
+
+  <!-- Vega / Vega-Lite / Vega-Embed -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+
+  <style>
+    /* Page and container */
+    html,body { height:100%; margin:0; font-family: Helvetica, Arial, sans-serif; color:#111; }
+    body {
+      background: url('background-pattern.png') center top repeat; /* replace with your background image or pattern */
+      background-color: #f4f7fb;
+    }
+    .page {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      box-sizing: border-box;
+    }
+
+    /* Each viz card */
+    .viz-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(20,30,40,0.06);
+      padding: 14px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .viz-title { font-size: 16px; font-weight: 600; margin: 0 0 8px 0; }
+    .viz-sub { margin: 0 0 12px 0; color: #555; font-size: 13px; }
+
+    /* Containers for vega-embed targets */
+    .viz-embed { width: 100%; }
+
+    /* Row for side-by-side maps (dynamic) */
+    .row { display:flex; gap:16px; align-items:flex-start; }
+    .col { flex:1; min-width:280px; }
+
+    /* Small responsive tweaks */
+    @media (max-width: 900px) {
+      .row { flex-direction: column; }
+    }
+
+    /* Simple legend/controls area (if you want) */
+    #legend-checkboxes { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .legend-item { display:flex; align-items:center; gap:8px; user-select:none; cursor:pointer; }
+    .legend-item input { pointer-events:auto; }
+    .swatch { width:16px; height:12px; border-radius:2px; display:inline-block; border:1px solid rgba(0,0,0,0.12); }
+    .legend-label { font-size:13px; color:#222; }
+    .legend-item.disabled { opacity:0.35; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- 1) tornado_density_across_australia -->
+    <section class="viz-card">
+      <h3 class="viz-title">Tornado density across Australia</h3>
+      <p class="viz-sub">Rendered from tornado_density_across_australia.json</p>
+      <div id="viz-tornado-density" class="viz-embed"></div>
+    </section>
+
+    <!-- 2) severe_weather_proportions_per_state -->
+    <section class="viz-card">
+      <h3 class="viz-title">Severe weather proportions per state</h3>
+      <p class="viz-sub">Rendered from severe_weather_proportions_per_state.json</p>
+      <div id="viz-severe-proportions" class="viz-embed"></div>
+    </section>
+
+    <!-- 3+4) dynamic maps row: Australian and US maps (side-by-side) -->
+    <section class="viz-card">
+      <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
+      <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below</p>
+
+      <!-- legend/checkboxes for rating toggles -->
+      <div id="legend-checkboxes" style="margin-bottom:12px;"></div>
+
+      <div class="row">
+        <div id="aus-chart" class="col viz-embed"></div>
+        <div id="us-chart"  class="col viz-embed"></div>
+      </div>
+    </section>
+
+    <!-- 5) fastest_australian_tornadoes -->
+    <section class="viz-card">
+      <h3 class="viz-title">Fastest Australian tornadoes</h3>
+      <p class="viz-sub">Rendered from fastest_australian_tornadoes.json</p>
+      <div id="viz-fastest-aus" class="viz-embed"></div>
+    </section>
+
+    <!-- 6) tornadoes_by_month_aus_vs_us -->
+    <section class="viz-card">
+      <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
+      <p class="viz-sub">Rendered from tornadoes_by_month_aus_vs_us.json</p>
+      <div id="viz-by-month" class="viz-embed"></div>
+    </section>
+
+    <!-- 7) deadliest_tornadoes_bubble_chart -->
+    <section class="viz-card">
+      <h3 class="viz-title">Deadliest tornadoes — bubble chart</h3>
+      <p class="viz-sub">Rendered from deadliest_tornadoes_bubble_chart.json</p>
+      <div id="viz-deadliest-bubble" class="viz-embed"></div>
+    </section>
+
+    <!-- 8) deadliest_tornadoes_on_a_map -->
+    <section class="viz-card">
+      <h3 class="viz-title">Deadliest tornadoes on a map</h3>
+      <p class="viz-sub">Rendered from deadliest_tornadoes_on_a_map.json</p>
+      <div id="viz-deadliest-map" class="viz-embed"></div>
+    </section>
+
+    <!-- 9) el_reno_hodographs -->
+    <section class="viz-card">
+      <h3 class="viz-title">El Reno hodographs</h3>
+      <p class="viz-sub">Rendered from el_reno_hodographs.json</p>
+      <div id="viz-hodographs" class="viz-embed"></div>
+    </section>
+
+  </div>
+
+  <script>
+    // ------------------------
+    // Configuration
+    // ------------------------
+
+    // JSON spec filenames placed beside index.html in the same repo/folder
+    const specs = {
+      tornadoDensity: "tornado_density_across_australia.json",
+      severeProportions: "severe_weather_proportions_per_state.json",
+      fastestAus: "fastest_australian_tornadoes.json",
+      byMonth: "tornadoes_by_month_aus_vs_us.json",
+      deadliestBubble: "deadliest_tornadoes_bubble_chart.json",
+      deadliestMap: "deadliest_tornadoes_on_a_map.json",
+      hodographs: "el_reno_hodographs.json"
+    };
+
+    // CSV / topo repo used for dynamic maps (the repo you used previously)
+    // If you want to change the repo, update this base path.
+    const csvRepoBase = "https://raw.githubusercontent.com/James-Monash/3179-Week-10-Assignment/main/";
+
+    // Patterns and topo files (update repo path if needed)
+    const ausCsvPattern = csvRepoBase + "Tornado_F{R}_2010_2024_Australia.csv";
+    const usCsvPattern  = csvRepoBase + "Tornado_F{R}_2010_2024_America.csv";
+
+    const ausBaseTopo = csvRepoBase + "australia.json";
+    const ausGraticules = csvRepoBase + "10_degree_graticules_for_australia.json";
+
+    const usBaseTopo = csvRepoBase + "mainland_united_states.json";
+    const usGraticules = csvRepoBase + "10_degree_graticules_for_united_states.json";
+
+    // Fujita rating colours and list (initial selection: all)
+    const ratingColors = {
+      "F0": "#999999",
+      "F1": "#E69F00",
+      "F2": "#56B4E9",
+      "F3": "#009E73",
+      "F4": "#F0E442",
+      "F5": "#984ea3"
+    };
+    const ratings = ["F0","F1","F2","F3","F4","F5"];
+    let selectedRatings = new Set(ratings);
+
+    // Latitude/longitude field names in the CSVs
+    const ausLatField = "Latitude";
+    const ausLonField = "Longitude";
+    const usLatField = "BEGIN_LAT";
+    const usLonField = "BEGIN_LON";
+
+    // ------------------------
+    // Helpers
+    // ------------------------
+
+    async function embedSpec(target, urlOrSpec) {
+      try {
+        await vegaEmbed(target, urlOrSpec, { actions: false, renderer: "canvas" });
+      } catch (err) {
+        document.querySelector(target).innerHTML = "<div style='padding:12px;color:#900;'>Failed to render: " + (err.message || err) + "</div>";
+        console.error("Embed error", err);
+      }
+    }
+
+    async function fetchCsv(url) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) return [];
+        const text = await r.text();
+        const lines = text.trim().split(/\r?\n/);
+        if (lines.length === 0) return [];
+        const cols = lines[0].split(",");
+        const rows = [];
+        for (let i=1;i<lines.length;i++){
+          const vals = lines[i].split(",");
+          const obj = {};
+          for (let j=0;j<cols.length;j++){
+            obj[cols[j]] = vals[j] !== undefined ? vals[j] : "";
+          }
+          rows.push(obj);
+        }
+        return rows;
+      } catch (e) {
+        console.warn("CSV fetch failed", url, e);
+        return [];
+      }
+    }
+
+    // ------------------------
+    // Dynamic maps (Australia and US) logic
+    // ------------------------
+
+    function buildCombinedLegend() {
+      const container = document.getElementById("legend-checkboxes");
+      container.innerHTML = "";
+      ratings.forEach(r => {
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.dataset.rating = r;
+
+        // checkbox
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = true;
+        cb.value = r;
+        cb.setAttribute("aria-label", r + " toggle");
+        cb.addEventListener("change", onLegendToggle);
+
+        // swatch
+        const sw = document.createElement("span");
+        sw.className = "swatch";
+        sw.style.background = ratingColors[r];
+
+        // label
+        const lbl = document.createElement("span");
+        lbl.className = "legend-label";
+        lbl.textContent = r;
+
+        // click on whole item toggles checkbox
+        item.addEventListener("click", (e) => {
+          if (e.target.tagName.toLowerCase() === "input") return;
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event("change"));
+        });
+
+        item.appendChild(cb);
+        item.appendChild(sw);
+        item.appendChild(lbl);
+        container.appendChild(item);
+      });
+    }
+
+    function onLegendToggle(e) {
+      const rating = e.target.value;
+      const checked = e.target.checked;
+      const item = e.target.closest(".legend-item");
+      if (!checked) {
+        selectedRatings.delete(rating);
+        item.classList.add("disabled");
+      } else {
+        selectedRatings.add(rating);
+        item.classList.remove("disabled");
+      }
+      renderMaps();
+    }
+
+    async function renderMaps() {
+      // build base layers
+      const ausLayers = [
+        {
+          data: { url: ausBaseTopo, format: { type: "topojson", feature: "ne_50m_admin_1_states_provinces" } },
+          mark: { type: "geoshape", fill: "#e0e0e0", stroke: "white", strokeWidth: 1 }
+        },
+        {
+          data: { url: ausGraticules, format: { type: "topojson", feature: "ne_50m_graticules_10" } },
+          mark: { type: "geoshape", stroke: "#ccc", strokeWidth: 0.9 }
+        }
+      ];
+
+      const usLayers = [
+        {
+          data: { url: usBaseTopo, format: { type: "topojson", feature: "ne_50m_admin_1_states_provinces" } },
+          mark: { type: "geoshape", fill: "#e0e0e0", stroke: "white", strokeWidth: 1 }
+        },
+        {
+          data: { url: usGraticules, format: { type: "topojson", feature: "ne_50m_graticules_10" } },
+          mark: { type: "geoshape", stroke: "#ccc", strokeWidth: 0.9 }
+        }
+      ];
+
+      // gather per-rating point layers (only for selected ratings)
+      for (const r of ratings) {
+        if (!selectedRatings.has(r)) continue;
+
+        const ausUrl = ausCsvPattern.replace("{R}", r.slice(1));
+        const usUrl  = usCsvPattern.replace("{R}", r.slice(1));
+
+        // fetch CSVs (graceful if missing)
+        const [ausRows, usRows] = await Promise.all([fetchCsv(ausUrl), fetchCsv(usUrl)]);
+
+        const ausValues = ausRows.map(row => {
+          const out = Object.assign({}, row);
+          if (out[ausLatField] !== undefined) out[ausLatField] = parseFloat(out[ausLatField]);
+          if (out[ausLonField] !== undefined) out[ausLonField] = parseFloat(out[ausLonField]);
+          out.TOR_F_SCALE = out.TOR_F_SCALE || r;
+          return out;
+        });
+
+        const usValues = usRows.map(row => {
+          const out = Object.assign({}, row);
+          if (out[usLatField] !== undefined) out[usLatField] = parseFloat(out[usLatField]);
+          if (out[usLonField] !== undefined) out[usLonField] = parseFloat(out[usLonField]);
+          out.TOR_F_SCALE = out.TOR_F_SCALE || r;
+          return out;
+        });
+
+        // push a point layer for this rating
+        ausLayers.push({
+          data: { values: ausValues },
+          mark: { type: "point", filled: true, size: 36 },
+          encoding: {
+            longitude: { field: ausLonField, type: "quantitative" },
+            latitude: { field: ausLatField, type: "quantitative" },
+            color: { value: ratingColors[r] },
+            tooltip: [{ title: "Fujita rating", field: "TOR_F_SCALE", type: "nominal" }]
+          }
+        });
+
+        usLayers.push({
+          data: { values: usValues },
+          mark: { type: "point", filled: true, size: 36 },
+          encoding: {
+            longitude: { field: usLonField, type: "quantitative" },
+            latitude: { field: usLatField, type: "quantitative" },
+            color: { value: ratingColors[r] },
+            tooltip: [{ title: "Fujita rating", field: "TOR_F_SCALE", type: "nominal" }]
+          }
+        });
+      } // end per-rating loop
+
+      // Construct final specs
+      const ausSpec = {
+        $schema: "https://vega.github.io/schema/vega-lite/v6.json",
+        width: 700,
+        height: 540,
+        background: "#c6dbef",
+        projection: { type: "mercator", center: [134, -25], scale: 700 },
+        title: { text: "Australian Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
+        layer: ausLayers,
+        config: { view: { stroke: null } }
+      };
+
+      const usSpec = {
+        $schema: "https://vega.github.io/schema/vega-lite/v6.json",
+        width: 700,
+        height: 540,
+        background: "#c6dbef",
+        projection: { type: "mercator", center: [-98, 38], scale: 700 },
+        title: { text: "U.S. Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
+        layer: usLayers,
+        config: { view: { stroke: null } }
+      };
+
+      // embed into the two side-by-side containers
+      document.getElementById("aus-chart").innerHTML = "";
+      document.getElementById("us-chart").innerHTML = "";
+      await vegaEmbed("#aus-chart", ausSpec, { actions: false, renderer: "canvas" });
+      await vegaEmbed("#us-chart", usSpec, { actions: false, renderer: "canvas" });
+    }
+
+    // ------------------------
+    // Initialization: embed static specs and start dynamic maps
+    // ------------------------
+    async function init() {
+      // build legend toggles for dynamic maps
+      buildCombinedLegend();
+
+      // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
+      await embedSpec("#viz-tornado-density", specs.tornadoDensity);
+      await embedSpec("#viz-severe-proportions", specs.severeProportions);
+      await embedSpec("#viz-fastest-aus", specs.fastestAus);
+
+      // other later static specs
+      await embedSpec("#viz-by-month", specs.byMonth);
+      await embedSpec("#viz-deadliest-bubble", specs.deadliestBubble);
+      await embedSpec("#viz-deadliest-map", specs.deadliestMap);
+      await embedSpec("#viz-hodographs", specs.hodographs);
+
+      // Render dynamic maps row (Australia + US)
+      await renderMaps();
+    }
+
+    // run
+    init();
+  </script>
+</body>
+</html>
