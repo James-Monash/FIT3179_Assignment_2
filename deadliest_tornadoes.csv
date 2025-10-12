@@ -14,12 +14,12 @@ id,event,country,year,deaths,lat,lon,coord_confidence
 13,Jarrell Tornado,United States,1997,,30.77,-97.56,high
 14,Topeka Tornado,United States,1966,17,39.05,-95.67,high
 15,Woodward Tornado,United States,1947,169,34.43,-99.41,high
-17,Marshfield Tornado,United States,1880,166,42.12,-70.74,high
-18,Udall Tornado,United States,1955,87,37.02,-97.53,high
-19,Carolinas Tornado Outbreak,United States,1984,57,34.95,-79.00,low
-20,Saturia–Manikganij Sadar tornado,Bangladesh,1973,681,23.80,89.86,high
-21,Waco Tornado,United States,1953,114,31.55,-97.15,high
-22,San Justo Tornado,Argentina,1973,63,-31.55,-61.98,medium
-23,Saragosa Tornado,United States,1987,30,31.17,-104.46,high
+16,Marshfield Tornado,United States,1880,166,42.12,-70.74,high
+17,Udall Tornado,United States,1955,87,37.02,-97.53,high
+18,Carolinas Tornado Outbreak,United States,1984,57,34.95,-79.00,low
+19,Saturia–Manikganij Sadar tornado,Bangladesh,1973,681,23.80,89.86,high
+20,Waco Tornado,United States,1953,114,31.55,-97.15,high
+21,San Justo Tornado,Argentina,1973,63,-31.55,-61.98,medium
+22,Saragosa Tornado,United States,1987,30,31.17,-104.46,high
+23,Port Macquarie Tornado,Australia,1962,3,-31.43,152.91,high
 
-24,Port Macquarie Tornado,Australia,1962,3,-31.43,152.91,high
