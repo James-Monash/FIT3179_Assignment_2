@@ -1,0 +1,57 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "World map with smaller, semi-transparent point markers to reduce overlap.",
+  "data": {
+    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/110m_world_map_with_30_degree_graticules.json",
+    "format": { "type": "topojson", "feature": "ne_110m_admin_0_countries" }
+  },
+  "projection": { "type": "equalEarth" },
+  "layer": [
+    {
+      "mark": { "type": "geoshape", "fill": "#efefef", "stroke": "#999", "strokeWidth": 0.5 }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/deadliest_tornadoes.csv",
+        "format": { "type": "csv" }
+      },
+      "transform": [
+        { "calculate": "datum.lat === '' || datum.lat === null ? null : +datum.lat", "as": "lat_num" },
+        { "calculate": "datum.lon === '' || datum.lon === null ? null : +datum.lon", "as": "lon_num" },
+        { "calculate": "datum.deaths === '' || datum.deaths === null ? null : +datum.deaths", "as": "deaths_num" },
+        { "filter": "datum.lat_num != null && datum.lon_num != null && datum.lat_num !== 0 && datum.lon_num !== 0" }
+      ],
+      "mark": { "type": "circle", "opacity": 0.72, "stroke": "#ffffff", "strokeWidth": 0.8 },
+      "encoding": {
+        "longitude": { "field": "lon_num", "type": "quantitative" },
+        "latitude": { "field": "lat_num", "type": "quantitative" },
+        "size": {
+          "field": "deaths_num",
+          "type": "quantitative",
+          "scale": { "range": [30, 700], "domain": [1, 1300] },
+          "legend": null
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Bangladesh","United States","Russia","Italy","Malta","Argentina","Australia"],
+            "range": ["#E69F00","#56B4E9","#009E73","#F0E442","#0072B2","#D55E00","#CC79A7"]
+          },
+          "legend": { "title": "Country" }
+        },
+        "tooltip": [
+          { "field": "event", "type": "nominal", "title": "Event" },
+          { "field": "country", "type": "nominal", "title": "Country" },
+          { "field": "year", "type": "quantitative", "title": "Year" },
+          { "field": "deaths_num", "type": "quantitative", "title": "Fatalities" },
+          { "field": "lat_num", "type": "quantitative", "title": "Lat" },
+          { "field": "lon_num", "type": "quantitative", "title": "Lon" }
+        ]
+      }
+    }
+  ],
+  "width": 960,
+  "height": 520,
+  "config": { "view": { "stroke": "transparent" } }
+}
