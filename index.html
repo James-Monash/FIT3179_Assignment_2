@@ -128,6 +128,9 @@
       <div id="viz-deadliest-map" class="viz-embed"></div>
     </section>
 
+    <p>Wind shear is an important requirement for supercell development which is the type of thunderstorm that can produce a tornado. The wind needs to change in direction and magnitude with height. The El Reno 2013 tornado 
+    was one of the largest tornadoes of all time. Look at the wind values across that day and note the curved shape in the last reading that was taken slightly after the tornado developed. This indicates rotation.</p>
+
     <!-- 9) first two el_reno_hodographs -->
     <section class="viz-card">
       <h3 class="viz-title">El Reno hodographs</h3>
@@ -408,7 +411,7 @@
       await embedSpec("#viz-deadliest-bubble", specs.deadliestBubble);
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
       await embedSpec("#viz-hodographs_first_two", specs.firstTwoHodographs); 
-      await embedSpec("viz-hodographs_first_two", specs.secondTwoHodographs); 
+      await embedSpec("#viz-hodographs_first_two", specs.secondTwoHodographs); 
 
       // Render dynamic maps row (Australia + US)
       await renderMaps();
