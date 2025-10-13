@@ -128,13 +128,17 @@
       <div id="viz-deadliest-map" class="viz-embed"></div>
     </section>
 
-    <!-- 9) el_reno_hodographs -->
+    <!-- 9) first two el_reno_hodographs -->
     <section class="viz-card">
       <h3 class="viz-title">El Reno hodographs</h3>
-      <p class="viz-sub">Rendered from el_reno_hodographs.json</p>
-      <div id="viz-hodographs" class="viz-embed"></div>
+      <div id="viz-hodographs_first_two" class="viz-embed"></div>
     </section>
 
+    <!-- 10) second two el_reno_hodographs -->
+    <section class="viz-card">
+      <div id="viz-hodographs_second_two" class="viz-embed"></div>
+    </section>
+    
     <p>In conclusion, Australia has had its fair share of tornadoes and severe weather in general. However, the United States remains the capital of tornadoes.</p>
 
   </div>
@@ -152,7 +156,8 @@
       byMonth: "tornadoes_by_month_aus_vs_us.json",
       deadliestBubble: "deadliest_tornadoes_bubble_chart.json",
       deadliestMap: "deadliest_tornadoes_on_a_map.json",
-      hodographs: "el_reno_hodographs.json"
+      firstTwoHodographs: "el_reno_first_two_hodographs.json",
+      secondTwoHodographs: "el_reno_second_two_hodographs.json"
     };
 
     // CSV / topo repo used for dynamic maps (the repo you used previously)
@@ -402,7 +407,8 @@
       await embedSpec("#viz-by-month", specs.byMonth);
       await embedSpec("#viz-deadliest-bubble", specs.deadliestBubble);
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
-      await embedSpec("#viz-hodographs", specs.hodographs);
+      await embedSpec("#viz-hodographs_first_two", specs.firstTwoHodographs); 
+      await embedSpec("viz-hodographs_first_two", specs.secondTwoHodographs); 
 
       // Render dynamic maps row (Australia + US)
       await renderMaps();
