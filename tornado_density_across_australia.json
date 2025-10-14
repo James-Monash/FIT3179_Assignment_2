@@ -8,14 +8,6 @@
     "center": [134, -28],
     "scale": 850
   },
-  "title": {
-    "text": "Tornado Density Across Australia Since 1900",
-    "anchor": "start",
-    "fontSize": 20,
-    "font": "Helvetica",
-    "color": "#333",
-    "subtitle": "Aggregated by 3° bins and scaled by frequency"
-  },
   "layer": [
     {
       "data": {
@@ -27,7 +19,7 @@
       },
       "mark": {
         "type": "geoshape",
-        "fill": "#fdd835",
+        "fill": "#f7f3ea",
         "stroke": "white",  
         "strokeWidth": 1
       }
