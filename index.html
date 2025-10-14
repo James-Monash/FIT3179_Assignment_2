@@ -13,17 +13,66 @@
   <style>
     /* Page and container */
     html,body { height:100%; margin:0; font-family: Helvetica, Arial, sans-serif; color:#111; }
+    
     body {
-      background: url('background-pattern.png') center top repeat; /* replace with your background image or pattern */
-      background-color: #f4f7fb;
+      margin: 0;
+      padding: 0;
+      background-color: #e0e7ef; /* soft blue-gray background */
+      background-repeat: repeat;
+      background-size: auto;
+      font-family: Helvetica, Arial, sans-serif;
+      color: #111;
     }
-    .page { 
-      max-width: 1400px; 
-      margin: 24px auto; 
-      padding: 20px; 
-      display:flex; 
-      flex-direction:column; 
-      gap:28px; 
+    
+    /* Outer poster container */
+    .poster {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background-color: #f4f7fb; /* light grey poster background */
+      box-shadow: 0 0 40px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+
+    /* Inner content layout */
+    .page {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Main page title */
+    .page-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1f2a44; /* deep stormy blue */
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    /* Subtitle under title */
+    .page-subtitle {
+      font-size: 20px;
+      font-weight: 400;
+      color: #4b5d7e; /* muted steel blue */
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    
+    /* Intro paragraph with narrow width and line breaks */
+    .intro-paragraph {
+      max-width: 700px;
+      margin: 0 auto 32px auto;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      text-align: center;
+    }
+    
+    /* Highlighted words */
+    .highlight {
+      color: #e07b39; /* weathered orange */
+      font-weight: 600;
     }
 
     /* Each viz card */
@@ -34,8 +83,20 @@
       max-width:1200px; 
     }
 
-    .viz-title { font-size: 16px; font-weight: 600; margin: 0 0 8px 0; }
-    .viz-sub { margin: 0 0 12px 0; color: #555; font-size: 13px; }
+    .viz-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2c3e50; /* stormy navy */
+      margin: 0 0 6px 0;
+      text-align: left;
+    }
+    
+    .viz-sub {
+      font-size: 14px;
+      color: #5c6e8c; /* steel blue-gray */
+      margin: 0 0 16px 0;
+      text-align: left;
+    }
 
     /* Containers for vega-embed targets */
     .viz-embed { width:100%; max-width:1100px; margin:0 auto; }
@@ -49,7 +110,7 @@
       .row { flex-direction: column; }
     }
 
-    /* Simple legend/controls area (if you want) */
+    /* Simple legend/controls area */
     #legend-checkboxes { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
     .legend-item { display:flex; align-items:center; gap:8px; user-select:none; cursor:pointer; }
     .legend-item input { pointer-events:auto; }
@@ -59,91 +120,110 @@
   </style>
 </head>
 <body>
-  <div class="page">
+  <div class="poster">
+    <div class="page">
+      <h1 class="page-title">Tornadoes from the United States to Australia</h1>
+      <h2 class="page-subtitle">
+        When you think about tornadoes, you likely think about America.
+        But Australia experiences <span class="highlight">around 100 tornadoes</span> a year.
+      </h2>
+      
+      <p class="intro-paragraph">
+        Tornadoes are one of the most <span class="highlight">violent</span> weather phenomena.
+        They form under specific conditions: instability, moisture, and a lifting mechanism.
+        Australia’s geography and climate make it <span class="highlight">ripe for severe storms</span>.
+        Despite lower frequency than the U.S., tornadoes here can be <span class="highlight">just as destructive</span>.
+        This page explores their patterns, strength, and impact.
+      </p>
 
-    <h1>Tornadoes in Australia</h1>
-    <h2>When you think about tornadoes, you likely think about America, however, Australia has around 100 tornadoes a year and has conditions ripe for severe storms.</h2>
-
-    <!-- 1) tornado_density_across_australia -->
-    <section class="viz-card">
-      <p class="viz-sub">Inspect the locations where tornadoes are most common across Australia.</p>
-      <div id="viz-tornado-density" class="viz-embed"></div>
-    </section>
-
-    <!-- 2) severe_weather_proportions_per_state -->
-    <section class="viz-card">
-      <p class="viz-sub">Much of Australia's wild weather isn't tornado related. Look at the distribution of rain, hail and tornado events, reported by the Bureau of Metereology (BOM) for each state.
-      ACT was excluded due to low amounts of data.</p>
-      <div id="viz-severe-proportions" class="viz-embed"></div>
-    </section>
-
-    <p>The Fujita rating is a scale for measuring tornado strength. It was proposed in 1971 by Japanese-American meterologist Dr. Tetsuya Fujita at the University of Chicago. A lot of the research into severe storms
-    has been focussed in the United States. This is because they experience a large number of tornadoes, compared to the rest of the world. It is hard to study tornadoes due to their unpredictable nature. Dr Fujita suggested
-    the use of a destruction scale as a way to determine wind strength. For example, it is known winds above 180km/h are required to destroy mobile homes. This means that if mobile homes have been destroyed then the tornado
-    must have had winds of this magnitude. Tornadoes are broadly categorised into F0-F5 ratings. In 2007 the Enhanced Fujita scale was introduced. This refined the damage rating categories.</p>
-
-    <!-- 3+4) dynamic maps row: Australian and US maps (side-by-side) -->
-    <section class="viz-card">
-      <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
-      <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
-
-      <!-- legend/checkboxes for rating toggles -->
-      <div id="legend-checkboxes" style="margin-bottom:12px;"></div>
-
-      <div class="row">
-        <div id="aus-chart" class="col viz-embed"></div>
-        <div id="us-chart"  class="col viz-embed"></div>
-      </div>
-    </section>
-
-    <!-- 5) fastest_australian_tornadoes -->
-    <section class="viz-card">
-      <p class="viz-sub">As noted before. Wind speeds are estimated based on damage. When the BOM is surveying tornado damage, they estimate the associated wind strength. Use the time sliders in the below visualisation to
-      see the fastest tornadoes in a given period.</p>
-      <div id="viz-fastest-aus" class="viz-embed"></div>
-    </section>
-
-    <p>Tornadoes are very seasonal events. They require certain conditions to occur, such as a lifting mechanism, a moist atmosphere, and also conditional instability. Because of this, Spring is the most common season to 
-    see tornadoes, although they can happen at any time of the year. View below the distribution of tornadoes across months in Australia - a Southern Hemisphere country - and the United States - a Northern Hemisphere country.</p>
-
-    <!-- 6) tornadoes_by_month_aus_vs_us -->
-    <section class="viz-card">
-      <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
-      <div id="viz-by-month" class="viz-embed"></div>
-    </section>
-
-    <p>With wind speeds high enough to shred a well built house off of its foundations, tornadoes sadly have killed many people. See below a chart of some of the deadliest tornadoes of all time.</p>
-
-    <!-- 7) deadliest_tornadoes_bubble_chart -->
-    <section class="viz-card">
-      <h3 class="viz-title">Deadliest tornadoes — bubble chart</h3>
-      <div id="viz-deadliest-bubble" class="viz-embed"></div>
-    </section>
-
-    <p>See the general locations of the deadliest tornadoes visualised on a map.</p>
-
-    <!-- 8) deadliest_tornadoes_on_a_map -->
-    <section class="viz-card">
-      <h3 class="viz-title">Deadliest tornadoes on a map</h3>
-      <div id="viz-deadliest-map" class="viz-embed"></div>
-    </section>
-
-    <p>Wind shear is an important requirement for supercell development which is the type of thunderstorm that can produce a tornado. The wind needs to change in direction and magnitude with height. The El Reno 2013 tornado 
-    was one of the largest tornadoes of all time. Look at the wind values across that day and note the curved shape in the last reading that was taken slightly after the tornado developed. This indicates rotation.</p>
-
-    <!-- 9) first two el_reno_hodographs -->
-    <section class="viz-card">
-      <h3 class="viz-title">El Reno hodographs</h3>
-      <div id="viz-hodographs_first_two" class="viz-embed"></div>
-    </section>
-
-    <!-- 10) second two el_reno_hodographs -->
-    <section class="viz-card">
-      <div id="viz-hodographs_second_two" class="viz-embed"></div>
-    </section>
-    
-    <p>In conclusion, Australia has had its fair share of tornadoes and severe weather in general. However, the United States remains the capital of tornadoes.</p>
-
+      <p class="intro-paragraph">
+        Using the map below, inspect the locations where
+        tornadoes are most common across Australia. 
+      </p>
+  
+      <!-- 1) tornado_density_across_australia -->
+      <section class="viz-card">
+        <h3 class="viz-title">Tornado Density Across Australia since 1900</h3>
+        <p class="viz-sub">
+          Aggregated by 3 degree bins and scaled by frequency.
+        </p>
+        <div id="viz-tornado-density" class="viz-embed"></div>
+      </section>
+  
+      <!-- 2) severe_weather_proportions_per_state -->
+      <section class="viz-card">
+        <p class="viz-sub">Much of Australia's wild weather isn't tornado related. Look at the distribution of rain, hail and tornado events, reported by the Bureau of Metereology (BOM) for each state.
+        ACT was excluded due to low amounts of data.</p>
+        <div id="viz-severe-proportions" class="viz-embed"></div>
+      </section>
+  
+      <p>The Fujita rating is a scale for measuring tornado strength. It was proposed in 1971 by Japanese-American meterologist Dr. Tetsuya Fujita at the University of Chicago. A lot of the research into severe storms
+      has been focussed in the United States. This is because they experience a large number of tornadoes, compared to the rest of the world. It is hard to study tornadoes due to their unpredictable nature. Dr Fujita suggested
+      the use of a destruction scale as a way to determine wind strength. For example, it is known winds above 180km/h are required to destroy mobile homes. This means that if mobile homes have been destroyed then the tornado
+      must have had winds of this magnitude. Tornadoes are broadly categorised into F0-F5 ratings. In 2007 the Enhanced Fujita scale was introduced. This refined the damage rating categories.</p>
+  
+      <!-- 3+4) dynamic maps row: Australian and US maps (side-by-side) -->
+      <section class="viz-card">
+        <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
+        <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
+  
+        <!-- legend/checkboxes for rating toggles -->
+        <div id="legend-checkboxes" style="margin-bottom:12px;"></div>
+  
+        <div class="row">
+          <div id="aus-chart" class="col viz-embed"></div>
+          <div id="us-chart"  class="col viz-embed"></div>
+        </div>
+      </section>
+  
+      <!-- 5) fastest_australian_tornadoes -->
+      <section class="viz-card">
+        <p class="viz-sub">As noted before. Wind speeds are estimated based on damage. When the BOM is surveying tornado damage, they estimate the associated wind strength. Use the time sliders in the below visualisation to
+        see the fastest tornadoes in a given period.</p>
+        <div id="viz-fastest-aus" class="viz-embed"></div>
+      </section>
+  
+      <p>Tornadoes are very seasonal events. They require certain conditions to occur, such as a lifting mechanism, a moist atmosphere, and also conditional instability. Because of this, Spring is the most common season to 
+      see tornadoes, although they can happen at any time of the year. View below the distribution of tornadoes across months in Australia - a Southern Hemisphere country - and the United States - a Northern Hemisphere country.</p>
+  
+      <!-- 6) tornadoes_by_month_aus_vs_us -->
+      <section class="viz-card">
+        <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
+        <div id="viz-by-month" class="viz-embed"></div>
+      </section>
+  
+      <p>With wind speeds high enough to shred a well built house off of its foundations, tornadoes sadly have killed many people. See below a chart of some of the deadliest tornadoes of all time.</p>
+  
+      <!-- 7) deadliest_tornadoes_bubble_chart -->
+      <section class="viz-card">
+        <h3 class="viz-title">Deadliest tornadoes — bubble chart</h3>
+        <div id="viz-deadliest-bubble" class="viz-embed"></div>
+      </section>
+  
+      <p>See the general locations of the deadliest tornadoes visualised on a map.</p>
+  
+      <!-- 8) deadliest_tornadoes_on_a_map -->
+      <section class="viz-card">
+        <h3 class="viz-title">Deadliest tornadoes on a map</h3>
+        <div id="viz-deadliest-map" class="viz-embed"></div>
+      </section>
+  
+      <p>Wind shear is an important requirement for supercell development which is the type of thunderstorm that can produce a tornado. The wind needs to change in direction and magnitude with height. The El Reno 2013 tornado 
+      was one of the largest tornadoes of all time. Look at the wind values across that day and note the curved shape in the last reading that was taken slightly after the tornado developed. This indicates rotation.</p>
+  
+      <!-- 9) first two el_reno_hodographs -->
+      <section class="viz-card">
+        <h3 class="viz-title">El Reno hodographs</h3>
+        <div id="viz-hodographs_first_two" class="viz-embed"></div>
+      </section>
+  
+      <!-- 10) second two el_reno_hodographs -->
+      <section class="viz-card">
+        <div id="viz-hodographs_second_two" class="viz-embed"></div>
+      </section>
+      
+      <p>In conclusion, Australia has had its fair share of tornadoes and severe weather in general. However, the United States remains the capital of tornadoes.</p>
+    </div>
   </div>
 
   <script>
