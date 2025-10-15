@@ -229,63 +229,63 @@
       .row { flex-direction: column; }
     }
 
-    /* container that centers the chart+legend group */
-    .viz-legend-wrapper { display: flex; justify-content: center; padding: 12px 0; }
-    
-    /* row holding chart and legend */
-    /* STACK the two maps vertically in the left column */
-    .viz-left {
-      flex: 0 1 auto;
-      min-width: 320px;
-      max-width: 760px;        /* match other viz widths so left edge lines up */
-      display: block;
-    }
-
-    .legend-right { flex: 0 0 auto; display: flex; align-items: flex-start; margin-left: 12px; }
-    
-    /* legend box styling */
-    .size-legend {
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.96);
-      border: 1px solid rgba(34,40,49,0.08);
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 13px;
-      color: #1f2a44;
-      pointer-events: auto;
-    }
-    
-    /* legend title */
-    .size-legend .legend-title { font-weight: 700; margin-bottom: 6px; }
-    
-    /* responsive: stack on narrow screens */
-    @media (max-width: 880px) {
-      .viz-legend-wrapper { flex-direction: column; align-items: center; }
-      .legend-right { margin-left: 0; margin-top: 12px; }
-    }
-
-    /* Scoped rules for the stacked maps group only */
-    .map-stack-left {
-      flex: 0 1 auto;
-      min-width: 320px;
-      max-width: 760px;      /* tune to match other viz group width */
-      display: block;
-    }
-    
-    /* stack the two maps vertically and keep full width of the left column */
-    .map-stack-left .map-stack-item {
-      margin-bottom: 18px;
-      width: 100%;
+    /* make the wrapper a two-column flex row with left and right columns */
+    .viz-legend-wrapper {
+      display: flex;
+      justify-content: center;   /* center the whole combined unit on the page */
+      align-items: flex-start;   /* legend sits at the top of the chart */
+      gap: 16px;
       box-sizing: border-box;
     }
     
-    /* make embedded canvases use the exact left-column width */
-    .map-stack-left .viz-embed {
-      width: 760px;          /* keep same left-edge alignment as other visualisations */
+    /* left column: fixed visual width so the legend always has space */
+    .viz-left {
+      flex: 0 0 760px;          /* fixed basis = the visual width used across the site */
       max-width: 100%;
+      box-sizing: border-box;
+      display: block;
     }
     
+    /* ensure embedded charts use the column width and cannot overflow it */
+    .viz-left .viz-embed {
+      width: 100%;
+      max-width: 760px;
+      box-sizing: border-box;
+      position: relative;       /* keep overlays positioned relative to the embed */
+      overflow: visible;        /* ensure annotations still show */
+    }
+    
+    /* stacked map variant stays inside same left column (only affects that section) */
+    .map-stack-left { flex: 0 0 760px; }
+    
+    /* each stacked map item uses the left-column width */
+    .map-stack-item { width: 100%; box-sizing: border-box; margin-bottom: 18px; }
+    
+    /* right column: legend container that does not shrink below its content */
+    .legend-right {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: flex-start;
+      min-width: 180px;
+      box-sizing: border-box;
+    }
+    
+    /* keep legend visually on top (if necessary) and non-overlapping */
+    .size-legend {
+      z-index: 5;
+      position: relative;
+    }
+    
+    /* safety: prevent absolute-position children (if any) from escaping layout */
+    .viz-legend-wrapper > * { min-height: 1px; }
+    
+    /* responsive fallback: stack on small screens */
+    @media (max-width: 920px) {
+      .viz-legend-wrapper { flex-direction: column; align-items: center; }
+      .viz-left, .map-stack-left { flex: 0 1 92vw; }
+      .viz-left .viz-embed { width: 92vw; max-width: 92vw; }
+      .legend-right { margin-top: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -357,7 +357,7 @@
         </div>
       </section>
       
-      <p>
+      <p class="intro-paragraph">
         The <span class="highlight">Fujita rating</span> measures tornado strength.<br/>
         It was proposed in 1971 by Dr. Tetsuya Fujita.<br/>
         Dr. Fujita worked at the University of Chicago.<br/>
@@ -374,8 +374,8 @@
   
       <!-- 3+4) dynamic maps row: Australian and US maps (vertically placed) -->
       <section class="viz-card">
-        <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
-        <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
+        <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S. between 2010-2025</h3>
+        <p class="viz-sub">Values are colour coded by Fujita rating</p>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left map-stack-left">
@@ -999,7 +999,6 @@
         height: 600,
         background: "#c6dbef",
         projection: { type: "mercator", center: [134, -25], scale: 850 },
-        title: { text: "Australian Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
         layer: ausLayers,
         config: { view: { stroke: null } }
       };
@@ -1010,7 +1009,6 @@
         height: 600,
         background: "#c6dbef",
         projection: { type: "mercator", center: [-98, 38], scale: 850 },
-        title: { text: "U.S. Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
         layer: usLayers,
         config: { view: { stroke: null } }
       };
