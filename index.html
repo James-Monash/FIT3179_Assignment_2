@@ -12,35 +12,6 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-tooltip@1.1.0"></script>
 
   <style>
-    /* Annotation styles */
-    .annotation-label {
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      color: #1f2a44;            /* deep stormy blue */
-      background: rgba(255,255,255,0.92);
-      border: 1px solid rgba(34,40,49,0.08);
-      padding: 8px 10px;
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      pointer-events: none;
-    }
-        
-    /* Leader line style (rule) */
-    .annotation-line {
-      stroke: #e07b39;
-      stroke-width: 1.4;
-      stroke-opacity: 0.95;
-    }
-    
-    /* Highlight marker for source point */
-    .annotation-marker {
-      fill: #e07b39;
-      stroke: #ffffff;
-      stroke-width: 1.5;
-      opacity: 1;
-    }
-    
     /* Basic tooltip element and visibility behavior (matches plugin expectations) */
     #vg-tooltip-element {
       visibility: hidden;
@@ -98,7 +69,19 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-        
+    
+    /* Prepend small decorative chip to keys */
+    #vg-tooltip-element .key::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 8px;
+      vertical-align: middle;
+      border-radius: 2px;
+      background: #e07b39;            /* weathered orange chip */
+    }
+    
     /* Value styling */
     #vg-tooltip-element table tr td.value,
     #vg-tooltip-element .value {
@@ -416,185 +399,6 @@
     }
 
     // ------------------------
-    // Density map logic
-    // ------------------------
-
-    /**
-     * Embed the tornado density visualization with inline annotations.
-     * - target: CSS selector for embed target (e.g. "#viz-tornado-density")
-     * - urlOrSpec: URL string or spec object
-     * - opts: optional object to override marker/label styles or annotations
-     */
-    async function embedAnnotatedTornadoDensity(target, urlOrSpec, opts = {}) {
-      // default annotation data (adjust lon/lat as required)
-      const annotations = opts.annotations || [
-        // source point -> boxed label (with leader line)
-        {
-          id: "victoria-hotspot",
-          src: { lon: 144, lat: -39 },       // source point to highlight
-          box: { lon: 128, lat: -38 },      // boxed label anchor position
-          label: "Southern Victoria experienced the most recorded tornadoes",
-          caption: "Aggregated 1900–2024",
-          leader: true
-        },
-        // standalone boxed note (no leader)
-        {
-          id: "tropics-note",
-          box: { lon: 113, lat: -12 },      // top-left box position
-          label: "Tropics see more storms but fewer recorded tornadoes",
-          caption: "Observation from reporting data",
-          leader: false
-        }
-      ];
-    
-      // helper to build annotation layers from annotations array
-      function buildAnnotationLayers(annotations) {
-        // marker layer (only for annotations that have a src)
-        const markerValues = annotations
-          .filter(a => a.src)
-          .map(a => ({ lon: a.src.lon, lat: a.src.lat, id: a.id }));
-    
-        const markerLayer = {
-          description: "Annotation markers",
-          data: { values: markerValues },
-          mark: {
-            type: "point",
-            shape: "diamond",
-            filled: true,
-            size: opts.markerSize || 700,
-            color: opts.markerColor || "#e07b39",
-            stroke: opts.markerStroke || "#ffffff",
-            strokeWidth: 1.5,
-            opacity: 1
-          },
-          encoding: {
-            longitude: { field: "lon", type: "quantitative" },
-            latitude: { field: "lat", type: "quantitative" },
-            tooltip: { value: "Annotated point" }
-          }
-        };
-    
-        // leader line values for annotations with leader=true and both src & box
-        const lineValues = annotations
-          .filter(a => a.leader && a.src && a.box)
-          .map(a => ({ x1: a.src.lon, y1: a.src.lat, x2: a.box.lon, y2: a.box.lat, id: a.id }));
-    
-        const lineLayer = {
-          description: "Annotation leader lines",
-          data: { values: lineValues },
-          mark: {
-            type: "rule",
-            color: opts.lineColor || "#e07b39",
-            strokeWidth: opts.lineWidth || 1.4,
-            opacity: opts.lineOpacity || 0.95
-          },
-          encoding: {
-            x: { field: "x1", type: "quantitative" },
-            y: { field: "y1", type: "quantitative" },
-            x2: { field: "x2" },
-            y2: { field: "y2" }
-          }
-        };
-    
-        // text boxes (main label)
-        const boxValues = annotations.map(a => ({
-          lon_box: (a.box && a.box.lon) || (a.src && a.src.lon),
-          lat_box: (a.box && a.box.lat) || (a.src && a.src.lat),
-          label: a.label,
-          id: a.id
-        }));
-    
-        const textLayer = {
-          description: "Annotation text boxes",
-          data: { values: boxValues },
-          mark: {
-            type: "text",
-            align: "left",
-            baseline: "top",
-            dx: 0,
-            dy: 0,
-            fontSize: opts.labelFontSize || 13,
-            fontWeight: 700,
-            color: opts.labelColor || "#1f2a44"
-          },
-          encoding: {
-            longitude: { field: "lon_box", type: "quantitative" },
-            latitude: { field: "lat_box", type: "quantitative" },
-            text: { field: "label", type: "nominal" }
-          }
-        };
-    
-        // caption layer (small text under the label)
-        const captionValues = annotations.map(a => ({
-          lon_box: (a.box && a.box.lon) || (a.src && a.src.lon),
-          lat_box: (a.box && a.box.lat) || (a.src && a.src.lat),
-          caption: a.caption || "",
-          id: a.id
-        }));
-    
-        const captionLayer = {
-          description: "Annotation captions",
-          data: { values: captionValues },
-          mark: {
-            type: "text",
-            align: "left",
-            baseline: "top",
-            dx: 0,
-            dy: 16,
-            fontSize: opts.captionFontSize || 12,
-            fontWeight: 500,
-            color: opts.captionColor || "#55607a"
-          },
-          encoding: {
-            longitude: { field: "lon_box", type: "quantitative" },
-            latitude: { field: "lat_box", type: "quantitative" },
-            text: { field: "caption", type: "nominal" }
-          }
-        };
-    
-        return [markerLayer, lineLayer, textLayer, captionLayer];
-      }
-    
-      // fetch spec if url provided
-      let spec;
-      if (typeof urlOrSpec === "string") {
-        const res = await fetch(urlOrSpec);
-        if (!res.ok) throw new Error("Failed to fetch spec: " + res.statusText);
-        spec = await res.json();
-      } else {
-        spec = JSON.parse(JSON.stringify(urlOrSpec)); // clone object
-      }
-    
-      // inject annotation layers at the end of top-level layer array
-      const layersToInject = buildAnnotationLayers(annotations);
-      // ensure spec.layer exists
-      if (!Array.isArray(spec.layer)) spec.layer = spec.layer ? [spec.layer] : [];
-    
-      // append only non-empty layers (skip if there are no values for a given layer)
-      for (const l of layersToInject) {
-        if (Array.isArray(l.data.values) && l.data.values.length > 0) {
-          spec.layer.push(l);
-        }
-      }
-    
-      // embed using same options as your embedSpec (disableDefaultStyle true kept)
-      try {
-        await vegaEmbed(target, spec, {
-          actions: false,
-          renderer: "canvas",
-          tooltip: {
-            theme: "custom",
-            disableDefaultStyle: true
-          }
-        });
-      } catch (err) {
-        // fallback: render error inside target
-        document.querySelector(target).innerHTML = "<div style='padding:12px;color:#900;'>Failed to render annotated viz: " + (err.message || err) + "</div>";
-        console.error("Annotated embed error", err);
-      }
-    }
-
-    // ------------------------
     // Dynamic maps (Australia and US) logic
     // ------------------------
 
@@ -764,7 +568,7 @@
       buildCombinedLegend();
 
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
-      await embedAnnotatedTornadoDensity("#viz-tornado-density", specs.tornadoDensity); // annotations are added before embedding
+      await embedSpec("#viz-tornado-density", specs.tornadoDensity);
       await embedSpec("#viz-severe-proportions", specs.severeProportions);
       await embedSpec("#viz-fastest-aus", specs.fastestAus);
 
@@ -782,5 +586,7 @@
     // run
     init();
   </script>
+</body>
+</html>
 </body>
 </html>
