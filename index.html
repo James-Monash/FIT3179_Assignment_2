@@ -229,13 +229,34 @@
       .row { flex-direction: column; }
     }
 
-    /* Simple legend/controls area */
-    #legend-checkboxes { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-    .legend-item { display:flex; align-items:center; gap:8px; user-select:none; cursor:pointer; }
-    .legend-item input { pointer-events:auto; }
-    .swatch { width:16px; height:12px; border-radius:2px; display:inline-block; border:1px solid rgba(0,0,0,0.12); }
-    .legend-label { font-size:13px; color:#222; }
-    .legend-item.disabled { opacity:0.35; }
+    /* container that centers the chart+legend group */
+    .viz-legend-wrapper { display: flex; justify-content: center; padding: 12px 0; }
+    
+    /* row holding chart and legend */
+    .viz-left { flex: 0 1 auto; min-width: 280px; }
+    .legend-right { flex: 0 0 auto; display: flex; align-items: flex-start; margin-left: 12px; }
+    
+    /* legend box styling */
+    .size-legend {
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(34,40,49,0.08);
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      color: #1f2a44;
+      pointer-events: auto;
+    }
+    
+    /* legend title */
+    .size-legend .legend-title { font-weight: 700; margin-bottom: 6px; }
+    
+    /* responsive: stack on narrow screens */
+    @media (max-width: 880px) {
+      .viz-legend-wrapper { flex-direction: column; align-items: center; }
+      .legend-right { margin-left: 0; margin-top: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -264,10 +285,20 @@
       <!-- 1) tornado_density_across_australia -->
       <section class="viz-card">
         <h3 class="viz-title">Tornado Density Across Australia between 1900 and 2025</h3>
-        <p class="viz-sub">
-          Aggregated by 3 degree bins and scaled by frequency.
-        </p>
-        <div id="viz-tornado-density" class="viz-embed"></div>
+        <p class="viz-sub">Aggregated by 3 degree bins and scaled by frequency.</p>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-tornado-density" class="viz-embed"></div>
+          </div>
+      
+          <div class="legend-right">
+            <div id="tornado-size-legend" class="size-legend" aria-hidden="false">
+              <div class="legend-title">Tornado count</div>
+              <svg id="tornado-size-legend-svg" width="260" height="80" role="img" aria-label="Tornado count legend"></svg>
+            </div>
+          </div>
+        </div>
       </section>
 
       <p class="intro-paragraph">
@@ -449,6 +480,65 @@
       }
     }
 
+    // ------------------------
+    // Creating legends 
+    // ------------------------
+
+    function drawTornadoSizeLegend(containerId = "tornado-size-legend-svg") {
+      const domain = [1, 160];
+      const rangeArea = [50, 800]; // same as Vega-Lite size scale (area in px^2)
+      const counts = [1, 30, 100, 150];
+      const svg = document.getElementById(containerId);
+      if (!svg) return;
+    
+      // helpers
+      const areaForCount = c => {
+        const t = (c - domain[0]) / (domain[1] - domain[0]);
+        return rangeArea[0] + t * (rangeArea[1] - rangeArea[0]);
+      };
+      const radiusForArea = a => Math.sqrt(a / Math.PI);
+    
+      // clear
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+    
+      // layout
+      const paddingLeft = 10;
+      const paddingTop = 28;
+      let x = paddingLeft;
+      const radii = counts.map(c => radiusForArea(areaForCount(c)));
+      const maxR = Math.max(...radii);
+      const baseline = paddingTop + maxR;
+    
+      counts.forEach((c, i) => {
+        const r = radii[i];
+    
+        const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circ.setAttribute("cx", x + r);
+        circ.setAttribute("cy", baseline);
+        circ.setAttribute("r", r);
+        circ.setAttribute("fill", "#0072B2");
+        circ.setAttribute("fill-opacity", "0.85");
+        circ.setAttribute("stroke", "#fff");
+        circ.setAttribute("stroke-width", "1");
+        svg.appendChild(circ);
+    
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x + 2 * r + 8);
+        label.setAttribute("y", baseline + 4);
+        label.setAttribute("fill", "#123047");
+        label.setAttribute("font-size", "12");
+        label.textContent = String(c);
+        svg.appendChild(label);
+    
+        x += Math.ceil(2 * r + 70);
+      });
+    
+      const totalWidth = Math.max(260, x + 8);
+      const totalHeight = baseline + maxR + 8;
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", totalHeight);
+    }
+    
     // ------------------------
     // Adding annotations
     // ------------------------
@@ -831,6 +921,8 @@
           }
         ]
       });
+
+      drawTornadoSizeLegend();
 
       await embedSpec("#viz-severe-proportions", specs.severeProportions);
       await embedSpec("#viz-fastest-aus", specs.fastestAus);
