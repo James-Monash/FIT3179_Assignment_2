@@ -450,8 +450,8 @@
         scale: 850
       }, options.projection || {});
     
-      // annotations: source point + boxed label and standalone top-left box
-      const annotations = options.annotations
+      // annotations array (must be provided via options.annotations)
+      const annotations = Array.isArray(options.annotations) ? options.annotations : [];
     
       // fetch or clone spec
       let spec;
@@ -463,7 +463,7 @@
         spec = JSON.parse(JSON.stringify(specUrlOrObject));
       }
     
-      // embed the spec as you normally do
+      // embed the spec
       const embedOptions = {
         actions: false,
         renderer: "canvas",
@@ -471,42 +471,57 @@
       };
     
       const result = await vegaEmbed(target, spec, embedOptions);
-      const view = result.view; // not used for projection here, but kept if needed
+      const view = result && result.view;
     
-      // prepare overlay elements inside container
+      // wait for Vega to finish rendering so the view size is final
+      if (view && typeof view.runAsync === "function") {
+        await view.runAsync();
+      }
+    
+      // ensure container exists and is positioned
       const container = document.querySelector(target);
-      // ensure container exists
       if (!container) throw new Error("Embed target not found: " + target);
+      if (getComputedStyle(container).position === "static") container.style.position = "relative";
     
-      // create overlay SVG if not present
+      // create/replace overlay SVG
       let overlay = container.querySelector(".annotation-overlay");
-      if (overlay) overlay.remove(); // reset
+      if (overlay) overlay.remove();
       overlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       overlay.setAttribute("class", "annotation-overlay");
       overlay.setAttribute("preserveAspectRatio", "xMinYMin meet");
+      overlay.style.position = "absolute";
+      overlay.style.left = "0";
+      overlay.style.top = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.pointerEvents = "none";
       container.appendChild(overlay);
     
-      // create HTML boxes container (we'll append boxes)
       // remove previous boxes
       Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
     
-      // projection using d3-geo: must match Vega-Lite projection params
-      // We'll set translate to [width/2, height/2] so center aligns to middle of embed
+      // projection factory that uses the Vega view size when available
       function makeProjection(width, height) {
-        const proj = d3.geoMercator()
+        const vw = (view && typeof view.width === "function") ? view.width() : width;
+        const vh = (view && typeof view.height === "function") ? view.height() : height;
+    
+        // ensure d3.geoMercator is available
+        const geo = (typeof d3 !== "undefined" && typeof d3.geoMercator === "function") ? d3 : null;
+        if (!geo) throw new Error("d3.geoMercator not available; include d3 (e.g. https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js)");
+    
+        return geo.geoMercator()
           .center(projOpts.center)
           .scale(projOpts.scale)
-          .translate([width / 2, height / 2]);
-        return proj;
+          .translate([vw / 2, vh / 2]);
       }
     
-      // function to (re)draw annotations
+      // draw annotations (uses annotations variable from outer scope)
       function drawAnnotations() {
         const bbox = container.getBoundingClientRect();
         const width = Math.max(20, Math.floor(bbox.width));
         const height = Math.max(20, Math.floor(bbox.height));
     
-        // set overlay svg size
+        // set overlay svg pixel size
         overlay.setAttribute("width", width);
         overlay.setAttribute("height", height);
         overlay.style.width = width + "px";
@@ -514,38 +529,43 @@
     
         const proj = makeProjection(width, height);
     
-        // map lon/lat to pixels relative to the container top-left
         function projectPoint(lon, lat) {
-          const p = proj([lon, lat]); // returns [x, y]
+          const p = proj([lon, lat]); // [x, y]
           return { x: p[0], y: p[1] };
         }
     
         // clear overlay children
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
     
-        // draw markers, leader lines, and boxes
+        // remove existing boxes (so we can re-create)
+        Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
+    
+        // draw each annotation
         annotations.forEach(a => {
-          // if source point exists, project and draw a small circle/marker
+          // project source point if present
           let srcPx = null;
-          if (a.src) {
+          if (a.src && typeof a.src.lon === "number" && typeof a.src.lat === "number") {
             srcPx = projectPoint(a.src.lon, a.src.lat);
             const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circ.setAttribute("cx", srcPx.x);
             circ.setAttribute("cy", srcPx.y);
-            circ.setAttribute("r", 8);
+            circ.setAttribute("r", a.markerRadius || 8);
             circ.setAttribute("class", "annotation-marker");
-            circ.setAttribute("fill", "#e07b39");
-            circ.setAttribute("stroke", "#ffffff");
-            circ.setAttribute("stroke-width", "1.5");
+            circ.setAttribute("fill", a.markerColor || "#e07b39");
+            circ.setAttribute("stroke", a.markerStroke || "#ffffff");
+            circ.setAttribute("stroke-width", (a.markerStrokeWidth || 1.5).toString());
             overlay.appendChild(circ);
           }
     
-          // compute box pixel position from a.boxLonLat
-          const boxLon = (a.boxLonLat && a.boxLonLat.lon) || (a.src && a.src.lon);
-          const boxLat = (a.boxLonLat && a.boxLonLat.lat) || (a.src && a.src.lat);
+          // compute box lon/lat (fallback to source lon/lat)
+          const boxLon = (a.boxLonLat && typeof a.boxLonLat.lon === "number") ? a.boxLonLat.lon : (a.src && a.src.lon);
+          const boxLat = (a.boxLonLat && typeof a.boxLonLat.lat === "number") ? a.boxLonLat.lat : (a.src && a.src.lat);
+    
+          if (typeof boxLon !== "number" || typeof boxLat !== "number") return; // skip if invalid
+    
           const boxPx = projectPoint(boxLon, boxLat);
     
-          // draw leader line if requested and src exists
+          // draw leader line if requested
           if (a.leader && srcPx) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", srcPx.x);
@@ -553,25 +573,24 @@
             line.setAttribute("x2", boxPx.x);
             line.setAttribute("y2", boxPx.y);
             line.setAttribute("class", "annotation-line");
+            line.setAttribute("stroke", a.lineColor || "#e07b39");
+            line.setAttribute("stroke-width", (a.lineWidth || 1.6).toString());
+            line.setAttribute("stroke-linecap", "round");
             overlay.appendChild(line);
           }
     
-          // create HTML box and position it at boxPx
+          // create HTML box
           const div = document.createElement("div");
           div.className = "annotation-box";
-          div.setAttribute("data-annotation-id", a.id || "");
-          // place box with its top-left at boxPx; you can adjust translate or offset here
-          const left = Math.round(boxPx.x + container.scrollLeft);
-          const top = Math.round(boxPx.y + container.scrollTop);
-          div.style.left = left + "px";
-          div.style.top = top + "px";
+          if (a.id) div.setAttribute("data-annotation-id", a.id);
     
-          // insert content
+          // multi-line support: convert \n to <br>
           const label = document.createElement("div");
           label.className = "annotation-label";
-          label.textContent = a.label || "";
+          label.innerHTML = (a.label || "").replace(/\n/g, "<br>");
           div.appendChild(label);
     
+          // optional small caption (kept if present)
           if (a.caption) {
             const cap = document.createElement("div");
             cap.className = "caption";
@@ -579,23 +598,48 @@
             div.appendChild(cap);
           }
     
-          // append box to container (on top of overlay)
+          // compute pixel left/top with optional nudges and container scroll
+          const nudgeX = Number.isFinite(a.nudgeX) ? a.nudgeX : 0;
+          const nudgeY = Number.isFinite(a.nudgeY) ? a.nudgeY : 0;
+    
+          // initial placement using projected box point
+          let left = Math.round(boxPx.x + container.scrollLeft + nudgeX);
+          let top  = Math.round(boxPx.y + container.scrollTop + nudgeY);
+    
+          // Clamp inside container so boxes don't overflow (simple heuristic)
+          const containerRect = container.getBoundingClientRect();
+          const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
+          const margin = 8;
+          if (left + margin + boxMaxWidth > containerRect.width) left = Math.max(margin, containerRect.width - boxMaxWidth - margin);
+          if (left < margin) left = margin;
+          if (top < margin) top = margin;
+          if (top > containerRect.height - 40) top = containerRect.height - 40;
+    
+          div.style.left = left + "px";
+          div.style.top  = top + "px";
+    
           container.appendChild(div);
         });
       }
     
-      // initial draw (run after a small delay to allow embed internals to layout)
-      setTimeout(drawAnnotations, 120);
+      // initial draw
+      drawAnnotations();
     
-      // redraw on window resize so boxes reflow with container / page edits
+      // redraw on window resize and container resize
       let resizeTimer;
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(drawAnnotations, 120);
       });
     
-      // return helpers in case you want to reproject or update annotations later
-      return { result, drawAnnotations, annotations };
+      const ro = new ResizeObserver(() => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(drawAnnotations, 120);
+      });
+      ro.observe(container);
+    
+      // return helpers
+      return { result, drawAnnotations, annotations, resizeObserver: ro };
     }
 
     // ------------------------
