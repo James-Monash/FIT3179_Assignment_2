@@ -166,9 +166,18 @@
       text-align: left;
     }
 
-    /* Container */
-    .viz-embed { position: relative; }
-    
+    /* Constrain Vega canvases and svgs strictly to the embed width/height */
+    .viz-embed canvas,
+    .viz-embed svg,
+    .viz-embed > div > canvas,
+    .viz-embed > div > svg {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      display: block;
+      position: relative !important;
+    }
+
     /* Overlay SVG for leader lines (on top of canvas/svg) */
     .viz-embed .annotation-overlay {
       position: absolute;
@@ -529,6 +538,7 @@
 
     async function embedSpec(target, urlOrSpec) {
       try {
+        document.querySelector(target).innerHTML = ''; 
         await vegaEmbed(target, urlOrSpec, { 
           actions: false, 
           renderer: "canvas",
@@ -1067,8 +1077,8 @@
     // Initialization: embed static specs and start dynamic maps
     // ------------------------
     async function init() {
-    buildCombinedLegend();
-    renderMaps();
+      buildCombinedLegend();
+      renderMaps();
 
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
       
