@@ -41,9 +41,9 @@
         "latitude": { "field": "centroid_lat", "type": "quantitative" },
         "url": { "field": "glyph_url", "type": "nominal" },
         "tooltip": [
-          { "field": "tornado", "type": "quantitative", "title": "Tornado" },
-          { "field": "rain", "type": "quantitative", "title": "Rain" },
-          { "field": "hail", "type": "quantitative", "title": "Hail" }
+          { "field": "tornado", "type": "quantitative", "title": "Tornado events:" },
+          { "field": "rain", "type": "quantitative", "title": "Rain events:" },
+          { "field": "hail", "type": "quantitative", "title": "Hail events:" }
         ]
       }
     },
