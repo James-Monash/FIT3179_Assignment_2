@@ -312,10 +312,20 @@
       <!-- 2) severe_weather_proportions_per_state -->
       <section class="viz-card">
         <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by State</h3>
-        <p class="viz-sub">
-          ACT was excluded due to its small data size.
-        </p>
-        <div id="viz-severe-proportions" class="viz-embed"></div>
+        <p class="viz-sub">ACT was excluded due to its small data size.</p>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-severe-proportions" class="viz-embed"></div>
+          </div>
+      
+          <div class="legend-right">
+            <div id="severe-legend" class="size-legend" aria-hidden="false">
+              <div class="legend-title">Severe weather</div>
+              <svg id="severe-legend-svg" width="200" height="140" role="img" aria-label="Severe weather legend"></svg>
+            </div>
+          </div>
+        </div>
       </section>
       
       <p>The Fujita rating is a scale for measuring tornado strength. It was proposed in 1971 by Japanese-American meterologist Dr. Tetsuya Fujita at the University of Chicago. A lot of the research into severe storms
@@ -549,6 +559,63 @@
       // finalize svg size
       const totalWidth = paddingLeft + circleColWidth + labelGap + labelColWidth + 12;
       const totalHeight = y + 8;
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", totalHeight);
+    }
+
+    function drawSevereLegendVertical(containerId = "severe-legend-svg") {
+      // color mapping (matches your glyph colors)
+      const items = [
+        { key: "rain_mentions", label: "Rain", color: "#0072B2" },
+        { key: "hail_mentions", label: "Hail", color: "#009E73" },
+        { key: "tornado_mentions", label: "Tornado", color: "#D55E00" }
+      ];
+    
+      const svg = document.getElementById(containerId);
+      if (!svg) return;
+    
+      // layout params chosen to match visual footprint of the tornado vertical legend
+      const paddingLeft = 12;
+      const paddingTop = 12;
+      const swatchSize = 18;    // square swatch size
+      const itemGap = 14;       // vertical gap between items
+      const labelGap = 10;      // horizontal gap between swatch and label
+      const labelFontSize = 12;
+    
+      // clear existing content
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+    
+      let y = paddingTop;
+    
+      items.forEach((it, i) => {
+        // swatch (rounded rect)
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", paddingLeft);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", swatchSize);
+        rect.setAttribute("height", swatchSize);
+        rect.setAttribute("rx", 3);
+        rect.setAttribute("ry", 3);
+        rect.setAttribute("fill", it.color);
+        rect.setAttribute("stroke", "#fff");
+        rect.setAttribute("stroke-width", "1");
+        svg.appendChild(rect);
+    
+        // label text
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", paddingLeft + swatchSize + labelGap);
+        label.setAttribute("y", y + swatchSize - 4);
+        label.setAttribute("fill", "#123047");
+        label.setAttribute("font-size", String(labelFontSize));
+        label.setAttribute("class", "severe-legend-swatch-label");
+        label.textContent = it.label;
+        svg.appendChild(label);
+    
+        y += swatchSize + itemGap;
+      });
+    
+      const totalWidth = paddingLeft + swatchSize + labelGap + 80;
+      const totalHeight = y + 6;
       svg.setAttribute("width", totalWidth);
       svg.setAttribute("height", totalHeight);
     }
@@ -925,7 +992,7 @@
             label: "Southern Victoria experienced the\nmost recorded tornadoes",
             leader: false,
             nudgeX: -160,
-            nudgeY: -90,
+            nudgeY: -250,
           },
           {
             id: "tropics-note",
@@ -939,6 +1006,8 @@
       drawTornadoSizeLegend();
 
       await embedSpec("#viz-severe-proportions", specs.severeProportions);
+      drawSevereLegendVertical(); 
+      
       await embedSpec("#viz-fastest-aus", specs.fastestAus);
 
       // other later static specs
