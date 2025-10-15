@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-tooltip@1.1.0"></script>
+  <script src="https://d3js.org/d3-geo.v3.min.js"></script> // we use this to calculate projections and ensure annotations remain in the correct position
 
   <style>
     /* Basic tooltip element and visibility behavior (matches plugin expectations) */
@@ -69,19 +70,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
-    /* Prepend small decorative chip to keys */
-    #vg-tooltip-element .key::before {
-      content: "";
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      margin-right: 8px;
-      vertical-align: middle;
-      border-radius: 2px;
-      background: #e07b39;            /* weathered orange chip */
-    }
-    
+        
     /* Value styling */
     #vg-tooltip-element table tr td.value,
     #vg-tooltip-element .value {
@@ -177,8 +166,61 @@
       text-align: left;
     }
 
-    /* Containers for vega-embed targets */
-    .viz-embed { width:100%; max-width:1100px; margin:0 auto; }
+    /* Container */
+    .viz-embed { position: relative; }
+    
+    /* Overlay SVG for leader lines (on top of canvas/svg) */
+    .viz-embed .annotation-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+    }
+    
+    /* HTML annotation boxes */
+    .annotation-box {
+      position: absolute;
+      transform: translate(-0%, -0%); /* we'll adjust with left/top; tweak if needed */
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(34,40,49,0.08);
+      padding: 10px 12px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      color: #1f2a44;
+      max-width: 320px;
+      pointer-events: auto; /* if you want interactive later */
+      z-index: 9999;
+    }
+    
+    /* smaller caption inside box */
+    .annotation-box .caption {
+      display: block;
+      margin-top: 6px;
+      color: #55607a;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* styling for the highlighted source marker (drawn in overlay SVG) */
+    .annotation-marker {
+      fill: #e07b39;
+      stroke: #fff;
+      stroke-width: 1.5px;
+      r: 8;
+    }
+    
+    /* leader line styling in SVG */
+    .annotation-line {
+      stroke: #e07b39;
+      stroke-width: 1.6px;
+      stroke-linecap: round;
+      opacity: 0.95;
+    }
 
     /* Row for side-by-side maps (dynamic) */
     .row { display:flex; gap:16px; align-items:flex-start; justify-content:center; }
@@ -399,6 +441,182 @@
     }
 
     // ------------------------
+    // Tornado Density
+    // ------------------------
+
+    async function embedWithHtmlAnnotations(target, specUrlOrObject, options = {}) {
+      // defaults to match your map spec
+      const projOpts = Object.assign({
+        type: "mercator",
+        center: [134, -28],
+        scale: 850
+      }, options.projection || {});
+    
+      // annotations: source point + boxed label and standalone top-left box
+      const annotations = options.annotations || [
+        {
+          id: "victoria-hotspot",
+          src: { lon: 144, lat: -39 },        // map point to highlight
+          boxLonLat: { lon: 128, lat: -38 }, // box anchor in lon/lat for bottom-left box
+          label: "Southern Victoria experienced the most recorded tornadoes",
+          caption: "Aggregated 1900–2024",
+          leader: true
+        },
+        {
+          id: "tropics-note",
+          boxLonLat: { lon: 113, lat: -12 },
+          label: "Tropics see more storms but fewer recorded tornadoes",
+          caption: "Observation from reporting data",
+          leader: false
+        }
+      ];
+    
+      // fetch or clone spec
+      let spec;
+      if (typeof specUrlOrObject === "string") {
+        const res = await fetch(specUrlOrObject);
+        if (!res.ok) throw new Error("Failed to fetch spec: " + res.statusText);
+        spec = await res.json();
+      } else {
+        spec = JSON.parse(JSON.stringify(specUrlOrObject));
+      }
+    
+      // embed the spec as you normally do
+      const embedOptions = {
+        actions: false,
+        renderer: "canvas",
+        tooltip: { theme: "custom", disableDefaultStyle: true }
+      };
+    
+      const result = await vegaEmbed(target, spec, embedOptions);
+      const view = result.view; // not used for projection here, but kept if needed
+    
+      // prepare overlay elements inside container
+      const container = document.querySelector(target);
+      // ensure container exists
+      if (!container) throw new Error("Embed target not found: " + target);
+    
+      // create overlay SVG if not present
+      let overlay = container.querySelector(".annotation-overlay");
+      if (overlay) overlay.remove(); // reset
+      overlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      overlay.setAttribute("class", "annotation-overlay");
+      overlay.setAttribute("preserveAspectRatio", "xMinYMin meet");
+      container.appendChild(overlay);
+    
+      // create HTML boxes container (we'll append boxes)
+      // remove previous boxes
+      Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
+    
+      // projection using d3-geo: must match Vega-Lite projection params
+      // We'll set translate to [width/2, height/2] so center aligns to middle of embed
+      function makeProjection(width, height) {
+        const proj = d3.geoMercator()
+          .center(projOpts.center)
+          .scale(projOpts.scale)
+          .translate([width / 2, height / 2]);
+        return proj;
+      }
+    
+      // function to (re)draw annotations
+      function drawAnnotations() {
+        const bbox = container.getBoundingClientRect();
+        const width = Math.max(20, Math.floor(bbox.width));
+        const height = Math.max(20, Math.floor(bbox.height));
+    
+        // set overlay svg size
+        overlay.setAttribute("width", width);
+        overlay.setAttribute("height", height);
+        overlay.style.width = width + "px";
+        overlay.style.height = height + "px";
+    
+        const proj = makeProjection(width, height);
+    
+        // map lon/lat to pixels relative to the container top-left
+        function projectPoint(lon, lat) {
+          const p = proj([lon, lat]); // returns [x, y]
+          return { x: p[0], y: p[1] };
+        }
+    
+        // clear overlay children
+        while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
+    
+        // draw markers, leader lines, and boxes
+        annotations.forEach(a => {
+          // if source point exists, project and draw a small circle/marker
+          let srcPx = null;
+          if (a.src) {
+            srcPx = projectPoint(a.src.lon, a.src.lat);
+            const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circ.setAttribute("cx", srcPx.x);
+            circ.setAttribute("cy", srcPx.y);
+            circ.setAttribute("r", 8);
+            circ.setAttribute("class", "annotation-marker");
+            circ.setAttribute("fill", "#e07b39");
+            circ.setAttribute("stroke", "#ffffff");
+            circ.setAttribute("stroke-width", "1.5");
+            overlay.appendChild(circ);
+          }
+    
+          // compute box pixel position from a.boxLonLat
+          const boxLon = (a.boxLonLat && a.boxLonLat.lon) || (a.src && a.src.lon);
+          const boxLat = (a.boxLonLat && a.boxLonLat.lat) || (a.src && a.src.lat);
+          const boxPx = projectPoint(boxLon, boxLat);
+    
+          // draw leader line if requested and src exists
+          if (a.leader && srcPx) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", srcPx.x);
+            line.setAttribute("y1", srcPx.y);
+            line.setAttribute("x2", boxPx.x);
+            line.setAttribute("y2", boxPx.y);
+            line.setAttribute("class", "annotation-line");
+            overlay.appendChild(line);
+          }
+    
+          // create HTML box and position it at boxPx
+          const div = document.createElement("div");
+          div.className = "annotation-box";
+          div.setAttribute("data-annotation-id", a.id || "");
+          // place box with its top-left at boxPx; you can adjust translate or offset here
+          const left = Math.round(boxPx.x + container.scrollLeft);
+          const top = Math.round(boxPx.y + container.scrollTop);
+          div.style.left = left + "px";
+          div.style.top = top + "px";
+    
+          // insert content
+          const label = document.createElement("div");
+          label.className = "annotation-label";
+          label.textContent = a.label || "";
+          div.appendChild(label);
+    
+          if (a.caption) {
+            const cap = document.createElement("div");
+            cap.className = "caption";
+            cap.textContent = a.caption;
+            div.appendChild(cap);
+          }
+    
+          // append box to container (on top of overlay)
+          container.appendChild(div);
+        });
+      }
+    
+      // initial draw (run after a small delay to allow embed internals to layout)
+      setTimeout(drawAnnotations, 120);
+    
+      // redraw on window resize so boxes reflow with container / page edits
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(drawAnnotations, 120);
+      });
+    
+      // return helpers in case you want to reproject or update annotations later
+      return { result, drawAnnotations, annotations };
+    }
+
+    // ------------------------
     // Dynamic maps (Australia and US) logic
     // ------------------------
 
@@ -568,7 +786,28 @@
       buildCombinedLegend();
 
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
-      await embedSpec("#viz-tornado-density", specs.tornadoDensity);
+      
+      await embedWithHtmlAnnotations("#viz-tornado-density", specs.tornadoDensity, { // embed the density visualisation and add annotations
+        projection: { center: [134, -28], scale: 850 },
+        annotations: [
+          {
+            id: "victoria-hotspot",
+            src: { lon: 144, lat: -39 },
+            boxLonLat: { lon: 128, lat: -38 },
+            label: "Southern Victoria experienced the most recorded tornadoes",
+            caption: "Aggregated 1900–2024",
+            leader: true
+          },
+          {
+            id: "tropics-note",
+            boxLonLat: { lon: 113, lat: -12 },
+            label: "Tropics see more storms but fewer recorded tornadoes",
+            caption: "Observation from reporting data",
+            leader: false
+          }
+        ]
+      });
+
       await embedSpec("#viz-severe-proportions", specs.severeProportions);
       await embedSpec("#viz-fastest-aus", specs.fastestAus);
 
