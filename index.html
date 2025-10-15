@@ -243,8 +243,7 @@
     <div class="page">
       <h1 class="page-title">Tornadoes from the United States to Australia</h1>
       <h2 class="page-subtitle">
-        When you think about tornadoes, you likely think about America.
-        But Australia experiences <span class="highlight">around 100 tornadoes</span> a year.
+        When you think about tornadoes, you likely think about America.\nBut Australia experiences <span class="highlight">around 100 tornadoes</span> a year.
       </h2>
       
       <p class="intro-paragraph">
@@ -443,17 +442,14 @@
     // ------------------------
 
     async function embedWithHtmlAnnotations(target, specUrlOrObject, options = {}) {
-      // defaults to match your map spec
       const projOpts = Object.assign({
         type: "mercator",
         center: [134, -28],
         scale: 850
       }, options.projection || {});
     
-      // annotations array (must be provided via options.annotations)
       const annotations = Array.isArray(options.annotations) ? options.annotations : [];
     
-      // fetch or clone spec
       let spec;
       if (typeof specUrlOrObject === "string") {
         const res = await fetch(specUrlOrObject);
@@ -463,7 +459,6 @@
         spec = JSON.parse(JSON.stringify(specUrlOrObject));
       }
     
-      // embed the spec
       const embedOptions = {
         actions: false,
         renderer: "canvas",
@@ -473,12 +468,10 @@
       const result = await vegaEmbed(target, spec, embedOptions);
       const view = result && result.view;
     
-      // wait for Vega to finish rendering so the view size is final
       if (view && typeof view.runAsync === "function") {
         await view.runAsync();
       }
     
-      // ensure container exists and is positioned
       const container = document.querySelector(target);
       if (!container) throw new Error("Embed target not found: " + target);
       if (getComputedStyle(container).position === "static") container.style.position = "relative";
@@ -500,97 +493,50 @@
       // remove previous boxes
       Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
     
-      // projection factory that uses the Vega view size when available
       function makeProjection(width, height) {
         const vw = (view && typeof view.width === "function") ? view.width() : width;
         const vh = (view && typeof view.height === "function") ? view.height() : height;
-    
-        // ensure d3.geoMercator is available
         const geo = (typeof d3 !== "undefined" && typeof d3.geoMercator === "function") ? d3 : null;
         if (!geo) throw new Error("d3.geoMercator not available; include d3 (e.g. https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js)");
-    
-        return geo.geoMercator()
-          .center(projOpts.center)
-          .scale(projOpts.scale)
-          .translate([vw / 2, vh / 2]);
+        return geo.geoMercator().center(projOpts.center).scale(projOpts.scale).translate([vw / 2, vh / 2]);
       }
     
-      // draw annotations (uses annotations variable from outer scope)
       function drawAnnotations() {
         const bbox = container.getBoundingClientRect();
         const width = Math.max(20, Math.floor(bbox.width));
         const height = Math.max(20, Math.floor(bbox.height));
     
-        // set overlay svg pixel size
         overlay.setAttribute("width", width);
         overlay.setAttribute("height", height);
         overlay.style.width = width + "px";
         overlay.style.height = height + "px";
     
         const proj = makeProjection(width, height);
-    
         function projectPoint(lon, lat) {
-          const p = proj([lon, lat]); // [x, y]
+          const p = proj([lon, lat]);
           return { x: p[0], y: p[1] };
         }
     
-        // clear overlay children
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
-    
-        // remove existing boxes (so we can re-create)
         Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
     
-        // draw each annotation
-        annotations.forEach(a => {
-          // project source point if present
-          let srcPx = null;
-          if (a.src && typeof a.src.lon === "number" && typeof a.src.lat === "number") {
-            srcPx = projectPoint(a.src.lon, a.src.lat);
-            const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circ.setAttribute("cx", srcPx.x);
-            circ.setAttribute("cy", srcPx.y);
-            circ.setAttribute("r", a.markerRadius || 8);
-            circ.setAttribute("class", "annotation-marker");
-            circ.setAttribute("fill", a.markerColor || "#e07b39");
-            circ.setAttribute("stroke", a.markerStroke || "#ffffff");
-            circ.setAttribute("stroke-width", (a.markerStrokeWidth || 1.5).toString());
-            overlay.appendChild(circ);
-          }
-    
-          // compute box lon/lat (fallback to source lon/lat)
+        // First create boxes so we can measure them for line endpoints
+        const createdBoxes = annotations.map(a => {
+          // compute box pixel position from lon/lat
           const boxLon = (a.boxLonLat && typeof a.boxLonLat.lon === "number") ? a.boxLonLat.lon : (a.src && a.src.lon);
           const boxLat = (a.boxLonLat && typeof a.boxLonLat.lat === "number") ? a.boxLonLat.lat : (a.src && a.src.lat);
-    
-          if (typeof boxLon !== "number" || typeof boxLat !== "number") return; // skip if invalid
-    
+          if (typeof boxLon !== "number" || typeof boxLat !== "number") return null;
           const boxPx = projectPoint(boxLon, boxLat);
     
-          // draw leader line if requested
-          if (a.leader && srcPx) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", srcPx.x);
-            line.setAttribute("y1", srcPx.y);
-            line.setAttribute("x2", boxPx.x);
-            line.setAttribute("y2", boxPx.y);
-            line.setAttribute("class", "annotation-line");
-            line.setAttribute("stroke", a.lineColor || "#e07b39");
-            line.setAttribute("stroke-width", (a.lineWidth || 1.6).toString());
-            line.setAttribute("stroke-linecap", "round");
-            overlay.appendChild(line);
-          }
-    
-          // create HTML box
           const div = document.createElement("div");
           div.className = "annotation-box";
           if (a.id) div.setAttribute("data-annotation-id", a.id);
     
-          // multi-line support: convert \n to <br>
           const label = document.createElement("div");
           label.className = "annotation-label";
           label.innerHTML = (a.label || "").replace(/\n/g, "<br>");
           div.appendChild(label);
     
-          // optional small caption (kept if present)
           if (a.caption) {
             const cap = document.createElement("div");
             cap.className = "caption";
@@ -598,15 +544,12 @@
             div.appendChild(cap);
           }
     
-          // compute pixel left/top with optional nudges and container scroll
           const nudgeX = Number.isFinite(a.nudgeX) ? a.nudgeX : 0;
           const nudgeY = Number.isFinite(a.nudgeY) ? a.nudgeY : 0;
     
-          // initial placement using projected box point
           let left = Math.round(boxPx.x + container.scrollLeft + nudgeX);
           let top  = Math.round(boxPx.y + container.scrollTop + nudgeY);
     
-          // Clamp inside container so boxes don't overflow (simple heuristic)
           const containerRect = container.getBoundingClientRect();
           const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
           const margin = 8;
@@ -619,26 +562,69 @@
           div.style.top  = top + "px";
     
           container.appendChild(div);
+    
+          // return data needed for line calculation
+          return {
+            a,
+            div,
+            left,
+            top,
+            width: Math.min(boxMaxWidth, div.getBoundingClientRect().width),
+            height: div.getBoundingClientRect().height,
+            anchorPx: boxPx
+          };
+        }).filter(Boolean);
+    
+        // Draw leader lines connecting source to nearest point on the box rectangle
+        createdBoxes.forEach(c => {
+          const a = c.a;
+          if (!a.leader || !a.src) return;
+    
+          const srcPx = projectPoint(a.src.lon, a.src.lat);
+    
+          // box rect in container coordinates
+          const boxRect = {
+            x1: c.left,
+            y1: c.top,
+            x2: c.left + c.width,
+            y2: c.top + c.height
+          };
+    
+          // find closest point on rect to srcPx
+          const clamp = (val, mn, mx) => Math.max(mn, Math.min(mx, val));
+          const closestX = clamp(srcPx.x, boxRect.x1, boxRect.x2);
+          const closestY = clamp(srcPx.y, boxRect.y1, boxRect.y2);
+    
+          // if src is diagonally outside, nearest point may be corner — we already handle via clamp
+          // draw SVG line from src to that closest point
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", srcPx.x);
+          line.setAttribute("y1", srcPx.y);
+          line.setAttribute("x2", closestX);
+          line.setAttribute("y2", closestY);
+          line.setAttribute("class", "annotation-line");
+          line.setAttribute("stroke", a.lineColor || "#e07b39");
+          line.setAttribute("stroke-width", (a.lineWidth || 1.6).toString());
+          line.setAttribute("stroke-linecap", "round");
+          overlay.appendChild(line);
         });
       }
     
       // initial draw
       drawAnnotations();
     
-      // redraw on window resize and container resize
+      // redraw on window + container resize
       let resizeTimer;
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(drawAnnotations, 120);
       });
-    
       const ro = new ResizeObserver(() => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(drawAnnotations, 120);
       });
       ro.observe(container);
     
-      // return helpers
       return { result, drawAnnotations, annotations, resizeObserver: ro };
     }
 
@@ -822,8 +808,8 @@
             boxLonLat: { lon: 128, lat: -38 },
             label: "Southern Victoria experienced the\nmost recorded tornadoes",
             leader: true,
-            nudgeX: -200,
-            nudgeY: -30
+            nudgeX: -160,
+            nudgeY: -90
           },
           {
             id: "tropics-note",
