@@ -9,8 +9,29 @@
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-tooltip@1.1.0"></script>
 
   <style>
+    /* Tooltip */
+    .custom-theme {
+      background-color: #fef3c7;
+      color: #111;
+      font-family: 'Helvetica Neue', sans-serif;
+      border: 1px solid #999;
+      border-radius: 4px;
+      padding: 8px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .custom-theme .key {
+      color: #1f77b4;
+      font-weight: bold;
+    }
+
+    .custom-theme .value {
+      color: #0b6aa6;
+    }
+    
     /* Page and container */
     html,body { height:100%; margin:0; font-family: Helvetica, Arial, sans-serif; color:#111; }
     
@@ -281,7 +302,11 @@
 
     async function embedSpec(target, urlOrSpec) {
       try {
-        await vegaEmbed(target, urlOrSpec, { actions: false, renderer: "canvas" });
+        await vegaEmbed(target, urlOrSpec, { 
+          actions: false, 
+          renderer: "canvas",
+          tooltip: { theme: 'custom' }
+        });
       } catch (err) {
         document.querySelector(target).innerHTML = "<div style='padding:12px;color:#900;'>Failed to render: " + (err.message || err) + "</div>";
         console.error("Embed error", err);
