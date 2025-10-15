@@ -66,7 +66,8 @@
           "scale": { 
             "domain": [1, 160],
             "range": [50, 800] 
-          }
+          },
+          "legend": null
         },
         "color": {
           "value": "#0072B2"
