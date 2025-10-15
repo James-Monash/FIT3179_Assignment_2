@@ -180,24 +180,34 @@
       z-index: 9998;
     }
     
-    /* HTML annotation boxes */
+    /* HTML annotation boxes: hug content, allow wrapping, standout font */
     .annotation-box {
       position: absolute;
-      transform: translate(-0%, -0%); /* we'll adjust with left/top; tweak if needed */
-      background: rgba(255,255,255,0.95);
+      display: inline-block;           /* hug content width */
+      transform: translate(0, 0);
+      background: rgba(255,255,255,0.96);
       border: 1px solid rgba(34,40,49,0.08);
-      padding: 10px 12px;
+      padding: 8px 10px;
       border-radius: 8px;
       box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 13px;
+      font-family: "Merriweather", Georgia, "Times New Roman", serif; /* standout serif */
+      font-size: 14px;
       color: #1f2a44;
-      max-width: 320px;
-      pointer-events: auto; /* if you want interactive later */
+      max-width: 320px;               /* max width before wrapping */
+      white-space: normal;            /* allow wrapping */
+      line-height: 1.25;
+      pointer-events: auto;
       z-index: 9999;
     }
     
-    /* smaller caption inside box */
+    /* label element inside the box — keep bolder weight if desired */
+    .annotation-box .annotation-label {
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: #123047;
+    }
+    
+    /* if you ever want a smaller secondary line, leave this in place (not used now) */
     .annotation-box .caption {
       display: block;
       margin-top: 6px;
@@ -206,21 +216,9 @@
       font-weight: 500;
     }
     
-    /* styling for the highlighted source marker (drawn in overlay SVG) */
-    .annotation-marker {
-      fill: #e07b39;
-      stroke: #fff;
-      stroke-width: 1.5px;
-      r: 8;
-    }
-    
-    /* leader line styling in SVG */
-    .annotation-line {
-      stroke: #e07b39;
-      stroke-width: 1.6px;
-      stroke-linecap: round;
-      opacity: 0.95;
-    }
+    /* marker and line unchanged */
+    .annotation-marker { fill: #e07b39; stroke: #fff; stroke-width: 1.5px; }
+    .annotation-line { stroke: #e07b39; stroke-width: 1.6px; stroke-linecap: round; opacity: 0.95; }
 
     /* Row for side-by-side maps (dynamic) */
     .row { display:flex; gap:16px; align-items:flex-start; justify-content:center; }
@@ -441,7 +439,7 @@
     }
 
     // ------------------------
-    // Tornado Density
+    // Adding annotations
     // ------------------------
 
     async function embedWithHtmlAnnotations(target, specUrlOrObject, options = {}) {
@@ -453,23 +451,7 @@
       }, options.projection || {});
     
       // annotations: source point + boxed label and standalone top-left box
-      const annotations = options.annotations || [
-        {
-          id: "victoria-hotspot",
-          src: { lon: 144, lat: -39 },        // map point to highlight
-          boxLonLat: { lon: 128, lat: -38 }, // box anchor in lon/lat for bottom-left box
-          label: "Southern Victoria experienced the most recorded tornadoes",
-          caption: "Aggregated 1900–2024",
-          leader: true
-        },
-        {
-          id: "tropics-note",
-          boxLonLat: { lon: 113, lat: -12 },
-          label: "Tropics see more storms but fewer recorded tornadoes",
-          caption: "Observation from reporting data",
-          leader: false
-        }
-      ];
+      const annotations = options.annotations
     
       // fetch or clone spec
       let spec;
@@ -792,17 +774,15 @@
         annotations: [
           {
             id: "victoria-hotspot",
-            src: { lon: 144, lat: -39 },
+            src: { lon: 129, lat: -39 },
             boxLonLat: { lon: 128, lat: -38 },
-            label: "Southern Victoria experienced the most recorded tornadoes",
-            caption: "Aggregated 1900–2024",
+            label: "Southern Victoria experienced the\nmost recorded tornadoes",
             leader: true
           },
           {
             id: "tropics-note",
-            boxLonLat: { lon: 113, lat: -12 },
-            label: "Tropics see more storms but fewer recorded tornadoes",
-            caption: "Observation from reporting data",
+            boxLonLat: { lon: 108, lat: -12 },
+            label: "Tropics see more storms but\nfewer recorded tornadoes",
             leader: false
           }
         ]
