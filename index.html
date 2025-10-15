@@ -487,7 +487,7 @@
     function drawTornadoSizeLegend(containerId = "tornado-size-legend-svg") {
       const domain = [1, 160];
       const rangeArea = [50, 800]; // same as Vega-Lite size scale (area in px^2)
-      const counts = [1, 30, 100, 150];
+      const counts = [150, 100, 30, 1]; // draw largest first (top) — change order if you prefer
       const svg = document.getElementById(containerId);
       if (!svg) return;
     
@@ -501,20 +501,31 @@
       // clear
       while (svg.firstChild) svg.removeChild(svg.firstChild);
     
-      // layout
-      const paddingLeft = 10;
-      const paddingTop = 28;
-      let x = paddingLeft;
+      // layout params
+      const paddingLeft = 12;
+      const paddingTop = 12;
+      const itemGap = 12;         // vertical gap between items
+      const labelGap = 8;         // horizontal gap between circle and label
+      const labelFontSize = 12;
+    
+      // compute radii and max width needed
       const radii = counts.map(c => radiusForArea(areaForCount(c)));
       const maxR = Math.max(...radii);
-      const baseline = paddingTop + maxR;
+      const circleColWidth = Math.ceil(2 * maxR); // column reserved for circle diameter
+      const labelColWidth = 70;                    // reserve for labels (adjust if needed)
+    
+      // initial positions
+      let y = paddingTop;
     
       counts.forEach((c, i) => {
         const r = radii[i];
+        const cx = paddingLeft + maxR;           // center circles in left column
+        const cy = y + r;
     
+        // circle
         const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circ.setAttribute("cx", x + r);
-        circ.setAttribute("cy", baseline);
+        circ.setAttribute("cx", cx);
+        circ.setAttribute("cy", cy);
         circ.setAttribute("r", r);
         circ.setAttribute("fill", "#0072B2");
         circ.setAttribute("fill-opacity", "0.85");
@@ -522,19 +533,22 @@
         circ.setAttribute("stroke-width", "1");
         svg.appendChild(circ);
     
+        // label to the right of circle
         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        label.setAttribute("x", x + 2 * r + 8);
-        label.setAttribute("y", baseline + 4);
+        label.setAttribute("x", paddingLeft + circleColWidth + labelGap);
+        label.setAttribute("y", cy + (labelFontSize / 3)); // vertically align text near center
         label.setAttribute("fill", "#123047");
-        label.setAttribute("font-size", "12");
+        label.setAttribute("font-size", String(labelFontSize));
         label.textContent = String(c);
         svg.appendChild(label);
     
-        x += Math.ceil(2 * r + 70);
+        // advance y for next item: circle diameter + gap
+        y += Math.ceil(2 * r + itemGap);
       });
     
-      const totalWidth = Math.max(260, x + 8);
-      const totalHeight = baseline + maxR + 8;
+      // finalize svg size
+      const totalWidth = paddingLeft + circleColWidth + labelGap + labelColWidth + 12;
+      const totalHeight = y + 8;
       svg.setAttribute("width", totalWidth);
       svg.setAttribute("height", totalHeight);
     }
