@@ -233,7 +233,14 @@
     .viz-legend-wrapper { display: flex; justify-content: center; padding: 12px 0; }
     
     /* row holding chart and legend */
-    .viz-left { flex: 0 1 auto; min-width: 280px; }
+    /* STACK the two maps vertically in the left column */
+    .viz-left {
+      flex: 0 1 auto;
+      min-width: 320px;
+      max-width: 760px;        /* match other viz widths so left edge lines up */
+      display: block;
+    }
+
     .legend-right { flex: 0 0 auto; display: flex; align-items: flex-start; margin-left: 12px; }
     
     /* legend box styling */
@@ -257,6 +264,28 @@
       .viz-legend-wrapper { flex-direction: column; align-items: center; }
       .legend-right { margin-left: 0; margin-top: 12px; }
     }
+
+    /* Scoped rules for the stacked maps group only */
+    .map-stack-left {
+      flex: 0 1 auto;
+      min-width: 320px;
+      max-width: 760px;      /* tune to match other viz group width */
+      display: block;
+    }
+    
+    /* stack the two maps vertically and keep full width of the left column */
+    .map-stack-left .map-stack-item {
+      margin-bottom: 18px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    /* make embedded canvases use the exact left-column width */
+    .map-stack-left .viz-embed {
+      width: 760px;          /* keep same left-edge alignment as other visualisations */
+      max-width: 100%;
+    }
+    
   </style>
 </head>
 <body>
@@ -328,22 +357,40 @@
         </div>
       </section>
       
-      <p>The Fujita rating is a scale for measuring tornado strength. It was proposed in 1971 by Japanese-American meterologist Dr. Tetsuya Fujita at the University of Chicago. A lot of the research into severe storms
-      has been focussed in the United States. This is because they experience a large number of tornadoes, compared to the rest of the world. It is hard to study tornadoes due to their unpredictable nature. Dr Fujita suggested
-      the use of a destruction scale as a way to determine wind strength. For example, it is known winds above 180km/h are required to destroy mobile homes. This means that if mobile homes have been destroyed then the tornado
-      must have had winds of this magnitude. Tornadoes are broadly categorised into F0-F5 ratings. In 2007 the Enhanced Fujita scale was introduced. This refined the damage rating categories.</p>
+      <p>
+        The <span class="highlight">Fujita rating</span> measures tornado strength.<br/>
+        It was proposed in 1971 by Dr. Tetsuya Fujita.<br/>
+        Dr. Fujita worked at the University of Chicago.<br/>
+        Much research into severe storms focuses in the United States.<br/>
+        The United States experiences a large number of <span class="highlight">tornadoes</span>.<br/>
+        Tornadoes are unpredictable and difficult to study.<br/>
+        Dr. Fujita proposed using a destruction scale to infer winds.<br/>
+        For example, destroying mobile homes requires winds above 180 km/h.<br/>
+        If mobile homes are destroyed, winds must have reached that magnitude.<br/>
+        Tornadoes are broadly categorised on the F0 to F5 scale.<br/>
+        In 2007 the <span class="highlight">Enhanced Fujita</span> scale was introduced.<br/>
+        The Enhanced Fujita refined the damage rating categories.
+      </p>
   
-      <!-- 3+4) dynamic maps row: Australian and US maps (side-by-side) -->
+      <!-- 3+4) dynamic maps row: Australian and US maps (vertically placed) -->
       <section class="viz-card">
         <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
         <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
-  
-        <!-- legend/checkboxes for rating toggles -->
-        <div id="legend-checkboxes" style="margin-bottom:12px;"></div>
-  
-        <div class="row">
-          <div id="aus-chart" class="col viz-embed"></div>
-          <div id="us-chart"  class="col viz-embed"></div>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left map-stack-left">
+            <!-- stacked maps (vertical) -->
+            <div id="aus-chart" class="viz-embed map-stack-item"></div>
+            <div id="us-chart"  class="viz-embed map-stack-item"></div>
+          </div>
+      
+          <div class="legend-right">
+            <!-- reuse the same legend container pattern used previously -->
+            <div id="combined-rating-legend" class="size-legend" aria-hidden="false">
+              <div class="legend-title">Fujita rating</div>
+              <div id="legend-checkboxes"></div>
+            </div>
+          </div>
         </div>
       </section>
   
@@ -815,6 +862,7 @@
     // Dynamic maps (Australia and US) logic
     // ------------------------
 
+    // Build legend/toggles into the right-column container
     function buildCombinedLegend() {
       const container = document.getElementById("legend-checkboxes");
       container.innerHTML = "";
@@ -822,7 +870,7 @@
         const item = document.createElement("div");
         item.className = "legend-item";
         item.dataset.rating = r;
-
+    
         // checkbox
         const cb = document.createElement("input");
         cb.type = "checkbox";
@@ -830,24 +878,24 @@
         cb.value = r;
         cb.setAttribute("aria-label", r + " toggle");
         cb.addEventListener("change", onLegendToggle);
-
-        // swatch
+    
+        // colored swatch (circle)
         const sw = document.createElement("span");
         sw.className = "swatch";
         sw.style.background = ratingColors[r];
-
+    
         // label
         const lbl = document.createElement("span");
         lbl.className = "legend-label";
         lbl.textContent = r;
-
-        // click on whole item toggles checkbox
+    
+        // click on whole item toggles checkbox (but not when clicking the checkbox itself)
         item.addEventListener("click", (e) => {
           if (e.target.tagName.toLowerCase() === "input") return;
           cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event("change"));
+          cb.dispatchEvent(new Event("change", { bubbles: true }));
         });
-
+    
         item.appendChild(cb);
         item.appendChild(sw);
         item.appendChild(lbl);
@@ -859,6 +907,7 @@
       const rating = e.target.value;
       const checked = e.target.checked;
       const item = e.target.closest(".legend-item");
+      if (!item) return;
       if (!checked) {
         selectedRatings.delete(rating);
         item.classList.add("disabled");
@@ -866,7 +915,7 @@
         selectedRatings.add(rating);
         item.classList.remove("disabled");
       }
-      renderMaps();
+      renderMaps(); // re-render maps with updated selectedRatings
     }
 
     async function renderMaps() {
@@ -874,7 +923,7 @@
       const ausLayers = [
         {
           data: { url: ausBaseTopo, format: { type: "topojson", feature: "ne_50m_admin_1_states_provinces" } },
-          mark: { type: "geoshape", fill: "#e0e0e0", stroke: "white", strokeWidth: 1 }
+          mark: { type: "geoshape", fill: "#f7f3ea", stroke: "#999", strokeWidth: 1 }
         },
         {
           data: { url: ausGraticules, format: { type: "topojson", feature: "ne_50m_graticules_10" } },
@@ -885,7 +934,7 @@
       const usLayers = [
         {
           data: { url: usBaseTopo, format: { type: "topojson", feature: "ne_50m_admin_1_states_provinces" } },
-          mark: { type: "geoshape", fill: "#e0e0e0", stroke: "white", strokeWidth: 1 }
+          mark: { type: "geoshape", fill: "#f7f3ea", stroke: "#999", strokeWidth: 1 }
         },
         {
           data: { url: usGraticules, format: { type: "topojson", feature: "ne_50m_graticules_10" } },
@@ -946,10 +995,10 @@
       // Construct final specs
       const ausSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
-        width: 700,
-        height: 540,
+        width: 800,
+        height: 600,
         background: "#c6dbef",
-        projection: { type: "mercator", center: [134, -25], scale: 700 },
+        projection: { type: "mercator", center: [134, -25], scale: 850 },
         title: { text: "Australian Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
         layer: ausLayers,
         config: { view: { stroke: null } }
@@ -957,28 +1006,41 @@
 
       const usSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
-        width: 700,
-        height: 540,
+        width: 800,
+        height: 600,
         background: "#c6dbef",
-        projection: { type: "mercator", center: [-98, 38], scale: 700 },
+        projection: { type: "mercator", center: [-98, 38], scale: 850 },
         title: { text: "U.S. Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
         layer: usLayers,
         config: { view: { stroke: null } }
       };
-
-      // embed into the two side-by-side containers
+      
       document.getElementById("aus-chart").innerHTML = "";
       document.getElementById("us-chart").innerHTML = "";
-      await vegaEmbed("#aus-chart", ausSpec, { actions: false, renderer: "canvas" });
-      await vegaEmbed("#us-chart", usSpec, { actions: false, renderer: "canvas" });
+      
+      // set spec widths consistent with CSS viz-left width (760)
+      ausSpec.width = 760;
+      usSpec.width = 760;
+      
+      // embed with same options you had
+      await vegaEmbed("#aus-chart", ausSpec, { 
+        actions: false, 
+        renderer: "canvas", 
+        tooltip: { theme: 'custom', disableDefaultStyle: true } 
+      });
+      await vegaEmbed("#us-chart", usSpec, { 
+        actions: false, 
+        renderer: "canvas", 
+        tooltip: { theme: 'custom', disableDefaultStyle: true } 
+      });
     }
 
     // ------------------------
     // Initialization: embed static specs and start dynamic maps
     // ------------------------
     async function init() {
-      // build legend toggles for dynamic maps
-      buildCombinedLegend();
+    buildCombinedLegend();
+    renderMaps();
 
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
       
@@ -992,7 +1054,7 @@
             label: "Southern Victoria experienced the\nmost recorded tornadoes",
             leader: false,
             nudgeX: -160,
-            nudgeY: -250,
+            nudgeY: 20,
           },
           {
             id: "tropics-note",
@@ -1016,9 +1078,6 @@
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
       await embedSpec("#viz-hodographs_first_two", specs.firstTwoHodographs); 
       await embedSpec("#viz-hodographs_second_two", specs.secondTwoHodographs); 
-
-      // Render dynamic maps row (Australia + US)
-      await renderMaps();
     }
 
     // run
