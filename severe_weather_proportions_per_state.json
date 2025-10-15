@@ -1,77 +1,74 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-  "width": 1000,
-  "height": 700,
+  "width": 800,
+  "height": 600,
   "background": "#c6dbef",
-  "projection": {"type": "mercator", "center": [134, -28], "scale": 900},
-  "title": {
-    "text": "Per-state severe weather composition",
-    "subtitle": "Each stacked bar chart shows the proportion of severe weather events that are rain, hail or tornadoes.",
-    "anchor": "start",
-    "fontSize": 16,
-    "font": "Helvetica",
-    "color": "#111"
+  "projection": {
+    "type": "mercator",
+    "center": [134, -28],
+    "scale": 850
   },
   "layer": [
     {
       "data": {
         "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/australia.json",
-        "format": {"type": "topojson", "feature": "ne_50m_admin_1_states_provinces"}
+        "format": { "type": "topojson", "feature": "ne_50m_admin_1_states_provinces" }
       },
-      "mark": {"type": "geoshape", "fill": "#f7f3ea", "stroke": "#999", "strokeWidth": 0.8}
+      "mark": { "type": "geoshape", "fill": "#f7f3ea", "stroke": "#999", "strokeWidth": 0.8 }
     },
     {
       "data": {
         "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/10_degree_graticules_for_australia.json",
-        "format": {"type": "topojson", "feature": "ne_50m_graticules_10"}
+        "format": { "type": "topojson", "feature": "ne_50m_graticules_10" }
       },
-      "mark": {"type": "geoshape", "stroke": "#ccc", "strokeWidth": 0.7}
+      "mark": { "type": "geoshape", "stroke": "#ccc", "strokeWidth": 0.7 }
     },
     {
       "data": {
         "values": [
-          {"state":"NSW","centroid_lon":147.0,"centroid_lat":-33.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/NSW.svg"},
-          {"state":"VIC","centroid_lon":145.0,"centroid_lat":-37.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/VIC.svg"},
-          {"state":"QLD","centroid_lon":145.0,"centroid_lat":-20.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/QLD.svg"},
-          {"state":"SA","centroid_lon":135.0,"centroid_lat":-30.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/SA.svg"},
-          {"state":"WA","centroid_lon":121.5,"centroid_lat":-25.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/WA.svg"},
-          {"state":"TAS","centroid_lon":146.5,"centroid_lat":-42.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/TAS.svg"},
-          {"state":"NT","centroid_lon":133.0,"centroid_lat":-19.0,"glyph_url":"https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/NT.svg"}
+          { "state": "NSW", "centroid_lon": 147.0, "centroid_lat": -33.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/NSW.svg", "tornado": 385, "hail": 1756, "rain": 1906 },
+          { "state": "VIC", "centroid_lon": 145.0, "centroid_lat": -37.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/VIC.svg", "tornado": 218, "hail": 590, "rain": 1095 },
+          { "state": "QLD", "centroid_lon": 145.0, "centroid_lat": -20.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/QLD.svg", "tornado": 131, "hail": 1118, "rain": 1343 },
+          { "state": "SA",  "centroid_lon": 135.0, "centroid_lat": -30.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/SA.svg",  "tornado": 228, "hail": 203, "rain": 523 },
+          { "state": "WA",  "centroid_lon": 121.5, "centroid_lat": -25.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/WA.svg",  "tornado": 213, "hail": 380, "rain": 1155 },
+          { "state": "TAS", "centroid_lon": 146.5, "centroid_lat": -42.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/TAS.svg", "tornado": 29, "hail": 53, "rain": 202  },
+          { "state": "NT",  "centroid_lon": 133.0, "centroid_lat": -19.0, "glyph_url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/NT.svg",  "tornado": 21, "hail": 43, "rain": 152  }
         ]
       },
-      "mark": {"type": "image", "width": 120, "height": 20},
+      "mark": { "type": "image", "width": 120, "height": 20 },
       "encoding": {
-        "longitude": {"field": "centroid_lon", "type": "quantitative"},
-        "latitude": {"field": "centroid_lat", "type": "quantitative"},
-        "url": {"field": "glyph_url", "type": "nominal"},
+        "longitude": { "field": "centroid_lon", "type": "quantitative" },
+        "latitude": { "field": "centroid_lat", "type": "quantitative" },
+        "url": { "field": "glyph_url", "type": "nominal" },
         "tooltip": [
-          {"field": "state", "type": "nominal", "title": "State"},
-          {"field": "glyph_url", "type": "nominal", "title": "Glyph URL"}
+          { "field": "tornado", "type": "quantitative", "title": "Tornado" },
+          { "field": "rain", "type": "quantitative", "title": "Rain" },
+          { "field": "hail", "type": "quantitative", "title": "Hail" }
         ]
       }
     },
     {
       "data": {
         "values": [
-          {"state":"NSW","centroid_lon":147.0,"centroid_lat":-33.0},
-          {"state":"VIC","centroid_lon":145.0,"centroid_lat":-37.0},
-          {"state":"QLD","centroid_lon":145.0,"centroid_lat":-20.0},
-          {"state":"SA","centroid_lon":135.0,"centroid_lat":-30.0},
-          {"state":"WA","centroid_lon":121.5,"centroid_lat":-25.0},
-          {"state":"TAS","centroid_lon":146.5,"centroid_lat":-42.0},
-          {"state":"NT","centroid_lon":133.0,"centroid_lat":-19.0}
+          { "state": "NSW", "centroid_lon": 147.0, "centroid_lat": -33.0 },
+          { "state": "VIC", "centroid_lon": 145.0, "centroid_lat": -37.0 },
+          { "state": "QLD", "centroid_lon": 145.0, "centroid_lat": -20.0 },
+          { "state": "SA", "centroid_lon": 135.0, "centroid_lat": -30.0 },
+          { "state": "WA", "centroid_lon": 121.5, "centroid_lat": -25.0 },
+          { "state": "TAS", "centroid_lon": 146.5, "centroid_lat": -42.0 },
+          { "state": "NT", "centroid_lon": 133.0, "centroid_lat": -19.0 }
         ]
       },
-      "mark": {"type": "text", "fontSize": 11, "fontWeight": "bold", "dx": 0, "dy": -14, "color": "#111"},
+      "mark": { "type": "text", "fontSize": 11, "fontWeight": "bold", "dx": 0, "dy": -14, "color": "#111" },
       "encoding": {
-        "longitude": {"field": "centroid_lon", "type": "quantitative"},
-        "latitude": {"field": "centroid_lat", "type": "quantitative"},
-        "text": {"field": "state", "type": "nominal"}
+        "longitude": { "field": "centroid_lon", "type": "quantitative" },
+        "latitude": { "field": "centroid_lat", "type": "quantitative" },
+        "text": { "field": "state", "type": "nominal" }
       }
     }
   ],
   "config": {
-    "title": {"font": "Helvetica"},
-    "view": {"stroke": null}
+    "title": { "font": "Helvetica" },
+    "view": { "stroke": null }
   }
 }
