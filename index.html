@@ -229,61 +229,91 @@
       .row { flex-direction: column; }
     }
 
-    /* container that centers the chart+legend group */
-    .viz-legend-wrapper { display: flex; justify-content: center; padding: 12px 0; }
-    
-    /* row holding chart and legend */
-    /* STACK the two maps vertically in the left column */
-    .viz-left {
-      flex: 0 1 auto;
-      min-width: 320px;
-      max-width: 760px;        /* match other viz widths so left edge lines up */
-      display: block;
-    }
-
-    .legend-right { flex: 0 0 auto; display: flex; align-items: flex-start; margin-left: 12px; }
-    
-    /* legend box styling */
-    .size-legend {
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.96);
-      border: 1px solid rgba(34,40,49,0.08);
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 13px;
-      color: #1f2a44;
-      pointer-events: auto;
-    }
-    
-    /* legend title */
-    .size-legend .legend-title { font-weight: 700; margin-bottom: 6px; }
-    
-    /* responsive: stack on narrow screens */
-    @media (max-width: 880px) {
-      .viz-legend-wrapper { flex-direction: column; align-items: center; }
-      .legend-right { margin-left: 0; margin-top: 12px; }
-    }
-
-    /* Scoped rules for the stacked maps group only */
-    .map-stack-left {
-      flex: 0 1 auto;
-      min-width: 320px;
-      max-width: 760px;      /* tune to match other viz group width */
-      display: block;
-    }
-    
-    /* stack the two maps vertically and keep full width of the left column */
-    .map-stack-left .map-stack-item {
-      margin-bottom: 18px;
-      width: 100%;
+    /* 1) two-column layout: left column reserves exact visual width */
+    .viz-legend-wrapper {
+      display: flex;
+      justify-content: center;      /* center the combined unit on the page */
+      align-items: flex-start;
+      gap: 18px;
       box-sizing: border-box;
     }
     
-    /* make embedded canvases use the exact left-column width */
-    .map-stack-left .viz-embed {
-      width: 760px;          /* keep same left-edge alignment as other visualisations */
+    /* left column: fixed basis so legend always has space to the right */
+    .viz-left {
+      flex: 0 0 800px;    
       max-width: 100%;
+      box-sizing: border-box;
+      position: relative;           /* contains absolute overlays inside the column */
+    }
+    
+    /* ensure the viz embed itself occupies the left-column width and cannot overflow */
+    .viz-left .viz-embed {
+      width: 100%;
+      max-width: 800px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: visible;            /* allow annotations to show but remain inside column */
+    }
+    
+    /* Constrain any direct child canvas/svg created by Vega so it cannot exceed column */
+    .viz-left .viz-embed > canvas,
+    .viz-left .viz-embed > svg,
+    .viz-left .viz-embed > div > canvas,
+    .viz-left .viz-embed > div > svg {
+      max-width: 100% !important;
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+      position: relative !important;
+      left: auto !important;
+      top: auto !important;
+    }
+    
+    /* If your annotation overlay uses absolute positioning, keep it inside viz-embed */
+    .viz-left .viz-embed .annotation-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      box-sizing: border-box;
+      z-index: 9998;
+    }
+    
+    /* stacked map variant (scoped) */
+    .map-stack-left { flex: 0 0 800px; }
+    .map-stack-left .map-stack-item { width: 100%; margin-bottom: 18px; box-sizing: border-box; }
+    
+    /* right column: the legend container that does not shrink */
+    .legend-right {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: flex-start;
+      min-width: 180px;
+      box-sizing: border-box;
+    }
+    
+    /* restore and lock legend styling (background, padding, shadow) */
+    .size-legend {
+      background: rgba(255,255,255,0.96) !important;
+      padding: 10px 12px !important;
+      border-radius: 8px !important;
+      border: 1px solid rgba(34,40,49,0.08) !important;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06) !important;
+      z-index: 10;
+      position: relative;
+    }
+    
+    /* small safety: prevent children escaping flow */
+    .viz-legend-wrapper > * { min-height: 1px; box-sizing: border-box; }
+    
+    /* responsive fallback: stack on small screens */
+    @media (max-width: 920px) {
+      .viz-legend-wrapper { flex-direction: column; align-items: center; gap: 12px; }
+      .viz-left, .map-stack-left { flex: 0 1 92vw; max-width: 92vw; }
+      .viz-left .viz-embed { width: 92vw; max-width: 92vw; }
+      .legend-right { margin-top: 8px; }
     }
     
   </style>
@@ -1016,9 +1046,9 @@
       document.getElementById("aus-chart").innerHTML = "";
       document.getElementById("us-chart").innerHTML = "";
       
-      // set spec widths consistent with CSS viz-left width (760)
-      ausSpec.width = 760;
-      usSpec.width = 760;
+      // set spec widths consistent with CSS viz-left width (800)
+      ausSpec.width = 800;
+      usSpec.width = 800;
       
       // embed with same options you had
       await vegaEmbed("#aus-chart", ausSpec, { 
