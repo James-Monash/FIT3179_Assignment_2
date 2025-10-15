@@ -94,9 +94,9 @@
     
     /* Outer poster container */
     .poster {
-      max-width: 1440px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 56px 20px 40px; /* 56px top, 20px left/right, 40px bottom */
       background-color: #f4f7fb; /* light grey poster background */
       box-shadow: 0 0 40px rgba(0,0,0,0.1);
       border-radius: 12px;
@@ -243,38 +243,50 @@
     <div class="page">
       <h1 class="page-title">Tornadoes from the United States to Australia</h1>
       <h2 class="page-subtitle">
-        When you think about tornadoes, you likely think about America.\nBut Australia experiences <span class="highlight">around 100 tornadoes</span> a year.
+        When you think about tornadoes, you likely think about America.<br/>
+        But Australia experiences <span class="highlight">around 100 tornadoes</span> a year.
       </h2>
       
       <p class="intro-paragraph">
-        Tornadoes are one of the most <span class="highlight">violent</span> weather phenomena.
-        They form under specific conditions: instability, moisture, and a lifting mechanism.
-        Australia’s geography and climate make it <span class="highlight">ripe for severe storms</span>.
-        Despite lower frequency than the U.S., tornadoes here can be <span class="highlight">just as destructive</span>.
+        Tornadoes are one of the most <span class="highlight">violent</span> weather phenomena.<br/>
+        They form under specific conditions: instability, moisture, and a lifting mechanism.<br/>
+        Australia’s geography and climate make it <span class="highlight">ripe for severe storms</span>.<br/>
+        Despite lower frequency than the U.S., tornadoes here can<br/>
+        be <span class="highlight">just as destructive</span>.<br/>
         This page explores their patterns, strength, and impact.
       </p>
 
       <p class="intro-paragraph">
-        Using the map below, inspect the locations where
+        Using the map below, inspect the locations where<br/>
         tornadoes are most common across Australia. 
       </p>
   
       <!-- 1) tornado_density_across_australia -->
       <section class="viz-card">
-        <h3 class="viz-title">Tornado Density Across Australia since 1900</h3>
+        <h3 class="viz-title">Tornado Density Across Australia between 1900 and 2025</h3>
         <p class="viz-sub">
           Aggregated by 3 degree bins and scaled by frequency.
         </p>
         <div id="viz-tornado-density" class="viz-embed"></div>
       </section>
+
+      <p class="intro-paragraph">
+        From the above map we can see that much of<br/>
+        Australia experiences <span class="highlight">tornadoes</span>. The Bureau of Metereology (BOM)<br/>
+        has a repository dedicated to <span class="highlight">severe weather</span>. Using this<br/>
+        we can see how prevelant tornadoes are in<br/>
+        comparison to other weather events.
+      </p>
   
       <!-- 2) severe_weather_proportions_per_state -->
       <section class="viz-card">
-        <p class="viz-sub">Much of Australia's wild weather isn't tornado related. Look at the distribution of rain, hail and tornado events, reported by the Bureau of Metereology (BOM) for each state.
-        ACT was excluded due to low amounts of data.</p>
+        <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by State</h3>
+        <p class="viz-sub">
+          ACT was excluded due to its small data size.
+        </p>
         <div id="viz-severe-proportions" class="viz-embed"></div>
       </section>
-  
+      
       <p>The Fujita rating is a scale for measuring tornado strength. It was proposed in 1971 by Japanese-American meterologist Dr. Tetsuya Fujita at the University of Chicago. A lot of the research into severe storms
       has been focussed in the United States. This is because they experience a large number of tornadoes, compared to the rest of the world. It is hard to study tornadoes due to their unpredictable nature. Dr Fujita suggested
       the use of a destruction scale as a way to determine wind strength. For example, it is known winds above 180km/h are required to destroy mobile homes. This means that if mobile homes have been destroyed then the tornado
@@ -807,7 +819,7 @@
             src: { lon: 129, lat: -39 },
             boxLonLat: { lon: 128, lat: -38 },
             label: "Southern Victoria experienced the\nmost recorded tornadoes",
-            leader: true,
+            leader: false
             nudgeX: -160,
             nudgeY: -90
           },
