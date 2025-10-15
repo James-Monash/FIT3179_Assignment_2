@@ -66,12 +66,6 @@
           "scale": { 
             "domain": [1, 160],
             "range": [50, 800] 
-          },
-          "legend": {
-            "orient": "right",
-            "offset": -20,
-            "title": "Tornado Count",
-            "values": [1, 30, 50, 100, 150]
           }
         },
         "color": {
