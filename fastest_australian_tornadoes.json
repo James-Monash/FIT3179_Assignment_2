@@ -103,32 +103,6 @@
           {"title": "Max wind speed", "field": "MaxSpeedFmt", "type": "nominal"}
         ]
       }
-    },
-    {
-      "data": {
-        "values": [
-          { "lon": 118, "lat": -24, "label": "Fastest tornadoes in WA occurred in the 21st century" }
-        ]
-      },
-      "mark": { "type": "text", "align": "left", "baseline": "middle", "fontSize": 12, "dx": -36, "dy": -18, "lineBreak": true, "color": "#111" },
-      "encoding": {
-        "longitude": { "field": "lon", "type": "quantitative" },
-        "latitude":  { "field": "lat", "type": "quantitative" },
-        "text": { "field": "label", "type": "nominal" }
-      }
-    },
-    {
-      "data": {
-        "values": [
-          { "lon": 151.2, "lat": -27.2, "label": "NSW and QLD witness the most tornadoes" }
-        ]
-      },
-      "mark": { "type": "text", "align": "left", "baseline": "middle", "fontSize": 12, "dx": -50, "dy": -130, "lineBreak": true, "color": "#111" },
-      "encoding": {
-        "longitude": { "field": "lon", "type": "quantitative" },
-        "latitude":  { "field": "lat", "type": "quantitative" },
-        "text": { "field": "label", "type": "nominal" }
-      }
     }
   ],
   "config": {
