@@ -234,7 +234,7 @@
 
     /* header block that matches viz-left width and centering */
     .viz-header { display:flex; justify-content:flex-start; margin-bottom:8px; }
-    .viz-title-block { width:100%; max-width:800px; box-sizing:border-box; }
+    .viz-title-block { width:100%; max-width:890px; box-sizing:border-box; }
     .viz-title, .viz-sub { margin:0; padding:0; }
 
     /* container that centers the chart+legend group */
@@ -247,7 +247,7 @@
 
     /* make the left viz container a positioned block that can be sized by embed */
     .viz-left {
-      flex: 0 0 800px;        /* fixed viz width that matches your Vega width */
+      flex: 0 0 890px;        /* fixed viz width that matches your Vega width */
       max-width: 100%;
       position: relative;
       box-sizing: border-box;
@@ -288,7 +288,7 @@
     .map-stack-left {
       flex: 0 1 auto;
       min-width: 320px;
-      max-width: 800px;      /* tune to match other viz group width */
+      max-width: 890px;      /* tune to match other viz group width */
       display: block;
     }
     
@@ -301,7 +301,7 @@
     
     /* make embedded canvases use the exact left-column width */
     .map-stack-left .viz-embed {
-      width: 800px;          /* keep same left-edge alignment as other visualisations */
+      width: 890px;          /* keep same left-edge alignment as other visualisations */
       max-width: 100%;
     }
 
@@ -730,7 +730,7 @@
 
     function drawTornadoSizeLegend(containerId = "tornado-size-legend-svg") {
       const domain = [1, 160];
-      const rangeArea = [50, 800]; // same as Vega-Lite size scale (area in px^2)
+      const rangeArea = [50, 890]; // same as Vega-Lite size scale (area in px^2)
       const counts = [150, 100, 30, 1]; // draw largest first (top) — change order if you prefer
       const svg = document.getElementById(containerId);
       if (!svg) return;
@@ -1237,7 +1237,7 @@
       // Construct final specs
       const ausSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
-        width: 800,
+        width: 890,
         height: 600,
         background: "#c6dbef",
         projection: { type: "mercator", center: [134, -28], scale: 850 },
@@ -1247,7 +1247,7 @@
 
       const usSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
-        width: 800,
+        width: 890,
         height: 600,
         background: "#c6dbef",
         projection: { type: "mercator", center: [-98, 38], scale: 750 },
@@ -1258,9 +1258,9 @@
       document.getElementById("aus-chart").innerHTML = "";
       document.getElementById("us-chart").innerHTML = "";
       
-      // set spec widths consistent with CSS viz-left width (800)
-      ausSpec.width = 800;
-      usSpec.width = 800;
+      // set spec widths consistent with CSS viz-left width (890)
+      ausSpec.width = 890;
+      usSpec.width = 890;
       
       // embed with same options you had
       await vegaEmbed("#aus-chart", ausSpec, { 
