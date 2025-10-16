@@ -149,7 +149,7 @@
     /* Each viz card */
     .viz-card {
       max-width: 1080px;
-      margin-left: 5cm;
+      margin-left: 1.5cm;
       margin-right: auto;
       position: relative;
     }
@@ -325,7 +325,7 @@
     }
     
     .fujita-legend .swatch {
-      width: 14px;
+      width: 24px;
       height: 14px;
       border-radius: 3px;
       border: 1px solid rgba(0,0,0,0.08);
@@ -438,7 +438,7 @@
       <section class="viz-card">
         <div class="viz-header">
           <div class="viz-title-block">
-            <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
+            <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S. bewteen 2010 and 2014.</h3>
             <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
           </div>
         </div>
@@ -467,14 +467,29 @@
           </div>
         </div>
       </section>
+
+      <p class="intro-paragraph">
+        Whilst Australia obviously experiences <span class="highlight">far fewer servere tornado events</span><br/>
+        than the United States, we still experience strong tornadoes<br/>
+        with the fastest being <span class="highlight">F4 rated</span>.<br/>
+        As noted before. Wind speeds are <span class="highlight">estimated based on damage</span>.<br/> 
+        When the BOM is surveying tornado damage, they estimate the<br/>
+        associated wind strength. Use the time sliders in the<br/>
+        below visualisation to see the <span class="highlight">fastest tornadoes</span><br/>
+        in a given period.
+      </p>
   
       <!-- 5) fastest_australian_tornadoes -->
       <section class="viz-card">
-        <p class="viz-sub">As noted before. Wind speeds are estimated based on damage. When the BOM is surveying tornado damage, they estimate the associated wind strength. Use the time sliders in the below visualisation to
-        see the fastest tornadoes in a given period.</p>
-        <div id="viz-fastest-aus" class="viz-embed"></div>
+        <h3 class="viz-title">Top Five Fastest Tornadoes by Wind Speed Since 1900</h3>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-fastest-aus" class="viz-embed"></div>
+          </div>
+        </div>
       </section>
-  
+        
       <p>Tornadoes are very seasonal events. They require certain conditions to occur, such as a lifting mechanism, a moist atmosphere, and also conditional instability. Because of this, Spring is the most common season to 
       see tornadoes, although they can happen at any time of the year. View below the distribution of tornadoes across months in Australia - a Southern Hemisphere country - and the United States - a Northern Hemisphere country.</p>
   
