@@ -11,7 +11,7 @@
       "as": "signed_percent"
     }
   ],
-  "width": 848, 
+  "width": 798, 
   "height": 450, 
   "mark": { "type": "bar", "cornerRadius": 2 },
   "encoding": {
