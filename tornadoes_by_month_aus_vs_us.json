@@ -11,15 +11,21 @@
       "as": "signed_percent"
     }
   ],
-  "width": 700,
-  "height": 420,
+  "width": 900, 
+  "height": 450, 
   "mark": { "type": "bar", "cornerRadius": 2 },
   "encoding": {
     "y": {
       "field": "month_name",
       "type": "ordinal",
       "sort": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-      "axis": { "title": "Month" }
+      "axis": {
+        "title": "Month",
+        "titleFont": "Inter",
+        "labelFont": "Inter",
+        "titleFontSize": 14,
+        "labelFontSize": 12
+      }
     },
     "x": {
       "field": "signed_percent",
@@ -27,7 +33,11 @@
       "scale": { "domain": [-25, 25] },
       "axis": {
         "title": "Percent of tornadoes (2000-2024)",
-        "labelExpr": "datum.value === 0 ? '0%' : (round(abs(datum.value) * 10) / 10) + '%'"
+        "labelExpr": "datum.value === 0 ? '0%' : (round(abs(datum.value) * 10) / 10) + '%'",
+        "titleFont": "Inter",
+        "labelFont": "Inter",
+        "titleFontSize": 14,
+        "labelFontSize": 12
       }
     },
     "color": {
@@ -37,7 +47,7 @@
         "domain": ["Australia", "America"],
         "range": ["#0072B2", "#D55E00"]
       },
-      "legend": { "title": "Country" }
+      "legend": null
     },
     "tooltip": [
       { "field": "country", "type": "nominal" },
@@ -47,7 +57,11 @@
     ]
   },
   "config": {
-    "axis": { "labelFontSize": 12, "titleFontSize": 13 },
-    "legend": { "labelFontSize": 12, "titleFontSize": 13 }
+    "axis": {
+      "labelFont": "Inter",
+      "titleFont": "Inter",
+      "labelFontSize": 12,
+      "titleFontSize": 13
+    }
   }
 }
