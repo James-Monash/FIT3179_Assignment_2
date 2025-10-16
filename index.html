@@ -96,7 +96,7 @@
     .poster {
       max-width: 1100px;
       margin: 0 auto;
-      padding-left: 64px; 
+      padding-left: 40px; 
       padding-right: 20px; 
       padding-top: 56px; 
       padding-bottom: 40px; 
@@ -147,8 +147,13 @@
     }
 
     /* Each viz card */
-    .viz-card { position: relative; }
-
+    .viz-card {
+      max-width: 1080px;
+      margin-left: 0;       /* align to poster left gutter */
+      margin-right: auto;
+      position: relative;
+    }
+    
     .viz-title {
       font-size: 20px;
       font-weight: 700;
@@ -228,56 +233,50 @@
     }
 
     /* header block that matches viz-left width and centering */
-    .viz-header { display:flex; justify-content:center; margin-bottom:8px; }
-    .viz-title-block { width:100%; max-width:800px; box-sizing:border-box; padding-left:0; padding-right:0; }
-    .viz-title, .viz-sub { margin-left:0; margin-right:0; }
+    .viz-header { display:flex; justify-content:flex-start; margin-bottom:8px; }
+    .viz-title-block { width:100%; max-width:800px; box-sizing:border-box; }
+    .viz-title, .viz-sub { margin:0; padding:0; }
 
     /* container that centers the chart+legend group */
     .viz-legend-wrapper {
-      position: relative;   /* positioning context for absolute legend */
-      display: block;
-      padding-left: 8px; 
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;              /* small gap between viz and legend */
+      padding: 12px 0;
     }
 
     /* make the left viz container a positioned block that can be sized by embed */
-    .viz-left { 
-      position: relative; 
-      width:100%; 
-      max-width:800px; 
-      margin:0 auto; 
+    .viz-left {
+      flex: 0 0 800px;        /* fixed viz width that matches your Vega width */
+      max-width: 100%;
+      position: relative;
+      box-sizing: border-box;
     }
     
-    /* stop forcing 800px on embed; allow it to fill the left column */
+    /* Ensure embed fills the left column */
     .viz-left .viz-embed,
     .viz-embed {
       width: 100% !important;
       max-width: 100% !important;
       height: auto;
-      position: relative;
     }
     
-    .legend-right {
-      position: absolute;
-      top: 12px;        /* vertical offset from top of viz-left */
-      right: 8px;       /* small horizontal gap between viz and legend */
-      z-index: 60;
-      display: block;
-      pointer-events: auto;
+    .legend-right { 
+      position: static !important; 
+      top: auto !important; 
+      right: auto !important; 
+      z-index: auto !important; 
     }
-
-    /* legend visual container */
+    
+    /* Legend styling */
     .size-legend {
-      padding: 6px 8px;
+      padding: 8px 10px;
       background: rgba(255,255,255,0.96);
       border-radius: 8px;
       box-shadow: 0 6px 18px rgba(16,24,40,0.06);
       border: 1px solid rgba(34,40,49,0.08);
-      width: auto;
-      max-width: 320px;
+      max-width: 300px;
     }
-
-    /* legend title */
-    .size-legend .legend-title { font-weight: 700; margin-bottom: 6px; }
     
     /* responsive: stack on narrow screens */
     @media (max-width: 880px) {
@@ -343,11 +342,12 @@
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-tornado-density" class="viz-embed"></div>
-            <div class="legend-right">
-              <div id="tornado-size-legend" class="size-legend" aria-hidden="false">
-                <div class="legend-title">Tornado count</div>
-                <svg id="tornado-size-legend-svg" role="img" aria-label="Tornado count legend"></svg>
-              </div>
+          </div>
+      
+          <div class="legend-right">
+            <div id="tornado-size-legend" class="size-legend" aria-hidden="false">
+              <div class="legend-title">Tornado count</div>
+              <svg id="tornado-size-legend-svg" role="img" aria-label="Tornado count legend"></svg>
             </div>
           </div>
         </div>
