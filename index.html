@@ -488,6 +488,13 @@
           <div class="viz-left">
             <div id="viz-total-tornadoes" class="viz-embed"></div>
           </div>
+
+          <div class="legend-right" aria-hidden="false" role="region" aria-label="Fujita scale legend">
+            <div id="fujita-static-legend" class="size-legend" role="group" aria-label="Fujita scale colours">
+              <div class="legend-title">Fujita Scale</div>
+              <div id="fujita-static-swatches" class="fujita-legend" role="list" aria-label="Fujita scale colours"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -512,10 +519,18 @@
           </div>
         </div>
       </section>
-        
-      <p>Tornadoes are very seasonal events. They require certain conditions to occur, such as a lifting mechanism, a moist atmosphere, and also conditional instability. Because of this, Spring is the most common season to 
-      see tornadoes, although they can happen at any time of the year. View below the distribution of tornadoes across months in Australia - a Southern Hemisphere country - and the United States - a Northern Hemisphere country.</p>
-  
+
+      <p class="intro-paragraph">
+        Tornadoes are <span class="highlight">very seasonal events</span>. They require certain conditions to<br/>
+        occur, such as a <span class="highlight">lifting mechanism</span>, a <span class="highlight">moist atmosphere</span><br/>
+        and also <span class="highlight">conditional instability</span>. Because of this,<br/>
+        <span class="highlight">Spring</span> is the most common season to experience tornadoes,<br/>
+        although they can happen at <span class="highlight">any time of the year</span>.<br/>
+        View below the distribution of tornadoes across months in<br/>
+        <span class="highlight">Australia</span> — a Southern Hemisphere country — and the<br/>
+        <span class="highlight">United States</span> — a Northern Hemisphere country.
+      </p>
+      
       <!-- 7) tornadoes_by_month_aus_vs_us -->
       <section class="viz-card">
         <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
@@ -945,6 +960,7 @@
       const container = document.getElementById(containerId);
       if (!container) return;
     
+      const interactive = opts.interactive !== false; // default to true
       const descriptions = opts.descriptions || {
         "F0": "Gale damage",
         "F1": "Moderate damage",
@@ -954,7 +970,6 @@
         "F5": "Incredible damage"
       };
     
-      // clear existing
       container.innerHTML = "";
     
       ratings.forEach(r => {
@@ -963,45 +978,38 @@
         row.setAttribute("role", "listitem");
         row.setAttribute("data-rating", r);
     
-        // checkbox
-        const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.className = "legend-checkbox";
-        cb.value = r;
-        cb.checked = selectedRatings.has(r);
-        cb.setAttribute("aria-label", r + " toggle");
+        if (interactive) {
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.className = "legend-checkbox";
+          cb.value = r;
+          cb.checked = selectedRatings.has(r);
+          cb.setAttribute("aria-label", r + " toggle");
+          cb.addEventListener("change", onLegendToggle);
+          row.appendChild(cb);
     
-        // wire up the existing onLegendToggle handler
-        cb.addEventListener("change", onLegendToggle);
+          row.addEventListener("click", (e) => {
+            if (e.target === cb) return;
+            cb.checked = !cb.checked;
+            cb.dispatchEvent(new Event("change", { bubbles: true }));
+          });
     
-        // swatch
+          if (!cb.checked) row.classList.add("disabled");
+        }
+    
         const sw = document.createElement("span");
         sw.className = "swatch";
         sw.style.background = ratingColors[r] || "#ccc";
         sw.setAttribute("aria-hidden", "true");
     
-        // label
         const label = document.createElement("span");
         label.className = "f-label legend-label";
         label.textContent = r;
     
-        // description
         const desc = document.createElement("span");
         desc.className = "f-desc legend-desc";
         desc.textContent = descriptions[r] || "";
     
-        // clicking the row (except the checkbox) toggles checkbox for convenience
-        row.addEventListener("click", (e) => {
-          if (e.target === cb) return;
-          cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event("change", { bubbles: true }));
-        });
-    
-        // apply disabled visual state if unchecked
-        if (!cb.checked) row.classList.add("disabled");
-    
-        // append in order: checkbox, swatch, label, desc
-        row.appendChild(cb);
         row.appendChild(sw);
         row.appendChild(label);
         row.appendChild(desc);
@@ -1199,6 +1207,7 @@
       });
 
       await embedSpec("#viz-total-tornadoes", specs.totalTornadoes);
+      drawFujitaColorLegend("fujita-static-swatches", { interactive: false }); // this chart shouldn't have the toggle effect
       
       // other later static specs
       await embedSpec("#viz-by-month", specs.byMonth);
