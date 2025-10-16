@@ -309,28 +309,41 @@
     // Country legend style
     // ----------------------------
 
+    /* Legend container: column layout with enforced vertical gap */
+    #country-legend-swatches,
+    #deadliest-country-swatches {
+      display: flex !important;
+      flex-direction: column !important;
+      row-gap: 16px !important;      /* vertical spacing between rows */
+      padding: 6px 0 !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* each row: fixed min-height and alignment */
     .f-row {
-      display: flex;
-      align-items: center;
-      padding: 6px 0;           /* gives internal vertical breathing room */
-      min-height: 28px;         /* ensures swatch and label don't touch adjacent rows */
+      display: flex !important;
+      align-items: center !important;
+      min-height: 28px !important;   /* ensures rows do not touch */
+      padding: 4px 0 !important;
+      box-sizing: border-box !important;
     }
     
-    /* swatch sizing (keeps visual spacing consistent) */
+    /* swatch: fixed block so vertical spacing is predictable */
     .swatch {
-      width: 18px;
-      height: 18px;
-      margin-right: 10px;
-      border-radius: 2px;
-      display: inline-block;
-      flex: 0 0 18px;
+      width: 18px !important;
+      height: 18px !important;
+      margin-right: 10px !important;
+      border-radius: 2px !important;
+      display: inline-block !important;
+      flex: 0 0 18px !important;
     }
     
-    /* label */
+    /* label: predictable line-height */
     .f-label {
       font-size: 14px;
       font-family: Inter, sans-serif;
-      line-height: 1;           /* keep label height predictable */
+      line-height: 1 !important;
+      display: inline-block;
     }
     
     // ----------------------------
@@ -882,6 +895,49 @@
       svg.setAttribute("height", totalHeight);
     }
 
+    function makeLegendRows(container, items, colors, opts = {}) {
+      const swatchSize = opts.swatchSize || 18;
+      const rowGap = opts.rowGap ?? 16;
+      const paddingY = opts.paddingY ?? 6;
+      if (!container) return;
+    
+      container.innerHTML = "";
+      container.style.display = "flex";
+      container.style.flexDirection = "column";
+      container.style.rowGap = rowGap + "px";
+      container.style.padding = paddingY + "px 0";
+      container.style.boxSizing = "border-box";
+    
+      items.forEach((labelText) => {
+        const row = document.createElement("div");
+        row.className = "f-row";
+        row.setAttribute("role", "listitem");
+        row.style.minHeight = (swatchSize + paddingY * 2) + "px";
+        row.style.boxSizing = "border-box";
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+    
+        const sw = document.createElement("span");
+        sw.className = "swatch";
+        sw.style.width = swatchSize + "px";
+        sw.style.height = swatchSize + "px";
+        sw.style.background = colors[labelText] || "#999";
+        sw.style.marginRight = "10px";
+        sw.style.display = "inline-block";
+        sw.setAttribute("aria-hidden", "true");
+    
+        const label = document.createElement("span");
+        label.className = "f-label";
+        label.textContent = labelText;
+        label.style.lineHeight = "1";
+        label.style.display = "inline-block";
+    
+        row.appendChild(sw);
+        row.appendChild(label);
+        container.appendChild(row);
+      });
+    }
+    
     function drawCountryLegend(containerId = "country-legend-swatches") {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -892,32 +948,26 @@
         "America": "#D55E00"
       };
     
-      container.innerHTML = "";
-    
-      countries.forEach(c => {
-        const row = document.createElement("div");
-        row.className = "f-row";
-        row.setAttribute("role", "listitem");
-    
-        const sw = document.createElement("span");
-        sw.className = "swatch";
-        sw.style.background = countryColors[c];
-        sw.setAttribute("aria-hidden", "true");
-    
-        const label = document.createElement("span");
-        label.className = "f-label";
-        label.textContent = c;
-    
-        row.appendChild(sw);
-        row.appendChild(label);
-        container.appendChild(row);
+      makeLegendRows(container, countries, countryColors, {
+        swatchSize: 18,
+        rowGap: 16,
+        paddingY: 6
       });
     }
+    
     function drawDeadliestCountryLegend(containerId = "deadliest-country-swatches") {
       const container = document.getElementById(containerId);
       if (!container) return;
     
-      const countries = ["Bangladesh", "United States", "Russia", "Italy", "Malta", "Argentina", "Australia"];
+      const countries = [
+        "Bangladesh",
+        "United States",
+        "Russia",
+        "Italy",
+        "Malta",
+        "Argentina",
+        "Australia"
+      ];
       const countryColors = {
         "Bangladesh": "#E69F00",
         "United States": "#56B4E9",
@@ -928,25 +978,10 @@
         "Australia": "#CC79A7"
       };
     
-      container.innerHTML = "";
-    
-      countries.forEach(c => {
-        const row = document.createElement("div");
-        row.className = "f-row";
-        row.setAttribute("role", "listitem");
-    
-        const sw = document.createElement("span");
-        sw.className = "swatch";
-        sw.style.background = countryColors[c];
-        sw.setAttribute("aria-hidden", "true");
-    
-        const label = document.createElement("span");
-        label.className = "f-label";
-        label.textContent = c;
-    
-        row.appendChild(sw);
-        row.appendChild(label);
-        container.appendChild(row);
+      makeLegendRows(container, countries, countryColors, {
+        swatchSize: 18,
+        rowGap: 16,
+        paddingY: 6
       });
     }
     
@@ -1307,9 +1342,7 @@
     // Initialization: embed static specs and start dynamic maps
     // ------------------------
     async function init() {
-      drawFujitaColorLegend('fujita-legend');
-      renderMaps();
-
+      
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
       
       await embedWithHtmlAnnotations("#viz-tornado-density", specs.tornadoDensity, { // embed the density visualisation and add annotations
@@ -1339,7 +1372,7 @@
           {
             id: "sa-tornado-proportion",
             src: { lon: 133.5, lat: -34.5 },         // stays near central SA
-            boxLonLat: { lon: 123.5, lat: -36.5 },   // moved ~4 degrees west
+            boxLonLat: { lon: 120.5, lat: -36.5 },
             label: "South Australia has the highest proportion\nof tornado-related severe weather — around 24%",
             leader: true,
             nudgeX: -40,                             // slightly reduced nudge
@@ -1348,6 +1381,9 @@
         ]
       });
       drawSevereLegendVertical(); 
+
+      drawFujitaColorLegend('fujita-legend');
+      renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
         projection: { center: [134, -28], scale: 850 },
