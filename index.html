@@ -241,7 +241,7 @@
     .viz-legend-wrapper {
       display: flex;
       align-items: flex-start;
-      gap: 90px;              /* small gap between viz and legend */
+      gap: 24px;              /* small gap between viz and legend */
       padding: 12px 0;
     }
 
@@ -343,6 +343,9 @@
       font-weight: 500;
       margin-left: 6px;
     }
+
+    .legend-item.disabled { opacity: 0.45; }
+    .legend-item .legend-checkbox { margin-right: 8px; }
     
   </style>
 </head>
@@ -955,7 +958,6 @@
       const container = document.getElementById(containerId);
       if (!container) return;
     
-      // optional custom text descriptions per rating
       const descriptions = opts.descriptions || {
         "F0": "Gale damage",
         "F1": "Moderate damage",
@@ -968,26 +970,51 @@
       // clear existing
       container.innerHTML = "";
     
-      // create rows in rating order
       ratings.forEach(r => {
         const row = document.createElement("div");
-        row.className = "f-row";
+        row.className = "f-row legend-item";
         row.setAttribute("role", "listitem");
         row.setAttribute("data-rating", r);
     
+        // checkbox
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "legend-checkbox";
+        cb.value = r;
+        cb.checked = selectedRatings.has(r);
+        cb.setAttribute("aria-label", r + " toggle");
+    
+        // wire up the existing onLegendToggle handler
+        cb.addEventListener("change", onLegendToggle);
+    
+        // swatch
         const sw = document.createElement("span");
         sw.className = "swatch";
         sw.style.background = ratingColors[r] || "#ccc";
         sw.setAttribute("aria-hidden", "true");
     
+        // label
         const label = document.createElement("span");
-        label.className = "f-label";
+        label.className = "f-label legend-label";
         label.textContent = r;
     
+        // description
         const desc = document.createElement("span");
-        desc.className = "f-desc";
+        desc.className = "f-desc legend-desc";
         desc.textContent = descriptions[r] || "";
     
+        // clicking the row (except the checkbox) toggles checkbox for convenience
+        row.addEventListener("click", (e) => {
+          if (e.target === cb) return;
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    
+        // apply disabled visual state if unchecked
+        if (!cb.checked) row.classList.add("disabled");
+    
+        // append in order: checkbox, swatch, label, desc
+        row.appendChild(cb);
         row.appendChild(sw);
         row.appendChild(label);
         row.appendChild(desc);
@@ -1160,9 +1187,34 @@
 
       await embedSpec("#viz-severe-proportions", specs.severeProportions);
       drawSevereLegendVertical(); 
-      
-      await embedSpec("#viz-fastest-aus", specs.fastestAus);
 
+      await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
+        projection: { center: [134, -28], scale: 850 },
+        annotations: [
+          // Western Australia note (on land in WA)
+          {
+            id: "wa-fastest",
+            src: { lon: 119.0, lat: -25.5 },        // marker location in WA
+            boxLonLat: { lon: 116.5, lat: -23.5 }, // where the annotation box should sit
+            label: "The fastest tornadoes in WA occurred in the 21st century",
+            leader: true,                           // draw a leader line to the marker
+            nudgeX: -180,                           // tune horizontal pixel offset for box
+            nudgeY: -10                             // tune vertical pixel offset for box
+          },
+      
+          // Queensland / NSW coastal note (placed offshore/coast)
+          {
+            id: "nsw-qld-note",
+            src: { lon: 153.0, lat: -20.5 },        // marker (off QLD coast)
+            boxLonLat: { lon: 152.0, lat: -23.0 }, // box near coast between QLD and NSW
+            label: "NSW and QLD witness the most tornadoes",
+            leader: true,
+            nudgeX: -40,
+            nudgeY: 8
+          }
+        ]
+      });
+      
       // other later static specs
       await embedSpec("#viz-by-month", specs.byMonth);
       await embedSpec("#viz-deadliest-bubble", specs.deadliestBubble);
