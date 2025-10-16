@@ -1,0 +1,59 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Stacked area chart of tornado counts by F-rating per year with x-axis ending at 2024 and legend hidden.",
+  "data": {
+    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_counts_by_year_long.csv",
+    "format": {"type": "csv", "parse": {"YEAR": "number", "COUNT": "number"}}
+  },
+  "width": 900,
+  "height": 450,
+  "transform": [
+    {"filter": "datum.YEAR <= 2024"},
+    {"aggregate": [{"op": "sum", "field": "COUNT", "as": "COUNT"}], "groupby": ["YEAR", "RATING"]}
+  ],
+  "mark": {"type": "area", "interpolate": "monotone", "opacity": 0.9},
+  "encoding": {
+    "x": {
+      "field": "YEAR",
+      "type": "quantitative",
+      "scale": {"domainMax": 2024},
+      "axis": {
+        "title": "Year",
+        "format": "d",
+        "labelAngle": 0,
+        "titleFont": "Inter",
+        "labelFont": "Inter",
+        "titleFontSize": 14,
+        "labelFontSize": 12
+      }
+    },
+    "y": {
+      "field": "COUNT",
+      "type": "quantitative",
+      "stack": "zero",
+      "axis": {
+        "title": "Number of tornadoes",
+        "titleFont": "Inter",
+        "labelFont": "Inter",
+        "titleFontSize": 14,
+        "labelFontSize": 12
+      }
+    },
+    "color": {
+      "field": "RATING",
+      "type": "nominal",
+      "scale": {
+        "domain": ["F0", "F1", "F2", "F3", "F4", "F5"],
+        "range": ["#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#984ea3"]
+      },
+      "legend": null
+    },
+    "order": {"field": "RATING", "type": "ordinal"},
+    "tooltip": [
+      {"field": "YEAR", "type": "quantitative", "title": "Year"},
+      {"field": "RATING", "type": "nominal", "title": "Rating"},
+      {"field": "COUNT", "type": "quantitative", "title": "Count"}
+    ]
+  },
+  "config": {"axis": {"labelFont": "Inter", "titleFont": "Inter"}}
+}
