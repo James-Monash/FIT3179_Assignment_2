@@ -19,7 +19,7 @@
       "field": "month_name",
       "type": "ordinal",
       "sort": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-      "axis": { "title": null }
+      "axis": { "title": "Month }
     },
     "x": {
       "field": "signed_percent",
