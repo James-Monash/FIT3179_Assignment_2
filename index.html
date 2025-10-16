@@ -481,8 +481,20 @@
         below visualisation to see the <span class="highlight">fastest tornadoes</span><br/>
         in a given period.
       </p>
+
+      <!-- 5) tornadoes_by_fujita_rating_and_year -->
+      <section class="viz-card">
+        <h3 class="viz-title">The Number of Recorded Tornadoes in the U.S. since 1950</h3>
+        <p class="viz-sub">The values are broken down by fujita rating.</p>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-total-tornadoes" class="viz-embed"></div>
+          </div>
+        </div>
+      </section>
   
-      <!-- 5) fastest_australian_tornadoes -->
+      <!-- 6) fastest_australian_tornadoes -->
       <section class="viz-card">
         <h3 class="viz-title">Top Five Fastest Tornadoes by Wind Speed Since 1900</h3>
       
@@ -496,7 +508,7 @@
       <p>Tornadoes are very seasonal events. They require certain conditions to occur, such as a lifting mechanism, a moist atmosphere, and also conditional instability. Because of this, Spring is the most common season to 
       see tornadoes, although they can happen at any time of the year. View below the distribution of tornadoes across months in Australia - a Southern Hemisphere country - and the United States - a Northern Hemisphere country.</p>
   
-      <!-- 6) tornadoes_by_month_aus_vs_us -->
+      <!-- 7) tornadoes_by_month_aus_vs_us -->
       <section class="viz-card">
         <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
         <div id="viz-by-month" class="viz-embed"></div>
@@ -504,7 +516,7 @@
   
       <p>With wind speeds high enough to shred a well built house off of its foundations, tornadoes sadly have killed many people. See below a chart of some of the deadliest tornadoes of all time.</p>
   
-      <!-- 7) deadliest_tornadoes_bubble_chart -->
+      <!-- 8) deadliest_tornadoes_bubble_chart -->
       <section class="viz-card">
         <h3 class="viz-title">Deadliest tornadoes — bubble chart</h3>
         <div id="viz-deadliest-bubble" class="viz-embed"></div>
@@ -512,7 +524,7 @@
   
       <p>See the general locations of the deadliest tornadoes visualised on a map.</p>
   
-      <!-- 8) deadliest_tornadoes_on_a_map -->
+      <!-- 9) deadliest_tornadoes_on_a_map -->
       <section class="viz-card">
         <h3 class="viz-title">Deadliest tornadoes on a map</h3>
         <div id="viz-deadliest-map" class="viz-embed"></div>
@@ -521,13 +533,13 @@
       <p>Wind shear is an important requirement for supercell development which is the type of thunderstorm that can produce a tornado. The wind needs to change in direction and magnitude with height. The El Reno 2013 tornado 
       was one of the largest tornadoes of all time. Look at the wind values across that day and note the curved shape in the last reading that was taken slightly after the tornado developed. This indicates rotation.</p>
   
-      <!-- 9) first two el_reno_hodographs -->
+      <!-- 10) first two el_reno_hodographs -->
       <section class="viz-card">
         <h3 class="viz-title">El Reno hodographs</h3>
         <div id="viz-hodographs_first_two" class="viz-embed"></div>
       </section>
   
-      <!-- 10) second two el_reno_hodographs -->
+      <!-- 11) second two el_reno_hodographs -->
       <section class="viz-card">
         <div id="viz-hodographs_second_two" class="viz-embed"></div>
       </section>
@@ -546,6 +558,7 @@
       tornadoDensity: "tornado_density_across_australia.json",
       severeProportions: "severe_weather_proportions_per_state.json",
       fastestAus: "fastest_australian_tornadoes.json",
+      totalTornadoes: "tornadoes_by_fujita_rating_and_year",
       byMonth: "tornadoes_by_month_aus_vs_us.json",
       deadliestBubble: "deadliest_tornadoes_bubble_chart.json",
       deadliestMap: "deadliest_tornadoes_on_a_map.json",
@@ -896,40 +909,6 @@
             anchorPx: boxPx
           };
         }).filter(Boolean);
-    
-        // Draw leader lines connecting source to nearest point on the box rectangle
-        createdBoxes.forEach(c => {
-          const a = c.a;
-          if (!a.leader || !a.src) return;
-    
-          const srcPx = projectPoint(a.src.lon, a.src.lat);
-    
-          // box rect in container coordinates
-          const boxRect = {
-            x1: c.left,
-            y1: c.top,
-            x2: c.left + c.width,
-            y2: c.top + c.height
-          };
-    
-          // find closest point on rect to srcPx
-          const clamp = (val, mn, mx) => Math.max(mn, Math.min(mx, val));
-          const closestX = clamp(srcPx.x, boxRect.x1, boxRect.x2);
-          const closestY = clamp(srcPx.y, boxRect.y1, boxRect.y2);
-    
-          // if src is diagonally outside, nearest point may be corner — we already handle via clamp
-          // draw SVG line from src to that closest point
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", srcPx.x);
-          line.setAttribute("y1", srcPx.y);
-          line.setAttribute("x2", closestX);
-          line.setAttribute("y2", closestY);
-          line.setAttribute("class", "annotation-line");
-          line.setAttribute("stroke", a.lineColor || "#e07b39");
-          line.setAttribute("stroke-width", (a.lineWidth || 1.6).toString());
-          line.setAttribute("stroke-linecap", "round");
-          overlay.appendChild(line);
-        });
       }
     
       // initial draw
@@ -1170,7 +1149,6 @@
             src: { lon: 129, lat: -39 },
             boxLonLat: { lon: 128, lat: -38 },
             label: "Southern Victoria experienced the\nmost recorded tornadoes",
-            leader: false,
             nudgeX: -160,
             nudgeY: 20,
           },
@@ -1178,7 +1156,6 @@
             id: "tropics-note",
             boxLonLat: { lon: 108, lat: -12 },
             label: "Tropics see more storms but\nfewer recorded tornadoes",
-            leader: false
           }
         ]
       });
@@ -1197,7 +1174,6 @@
             src: { lon: 119.0, lat: -25.5 },        // marker location in WA
             boxLonLat: { lon: 116.5, lat: -23.5 }, // where the annotation box should sit
             label: "The fastest tornadoes in WA occurred in the 21st century",
-            leader: true,                           // draw a leader line to the marker
             nudgeX: -180,                           // tune horizontal pixel offset for box
             nudgeY: -10                             // tune vertical pixel offset for box
           },
@@ -1208,12 +1184,13 @@
             src: { lon: 153.0, lat: -20.5 },        // marker (off QLD coast)
             boxLonLat: { lon: 152.0, lat: -23.0 }, // box near coast between QLD and NSW
             label: "NSW and QLD witness the most tornadoes",
-            leader: true,
             nudgeX: -40,
             nudgeY: 8
           }
         ]
       });
+
+      await embedSpec("viz-total-tornadoes", specs.totalTornadoes);
       
       // other later static specs
       await embedSpec("#viz-by-month", specs.byMonth);
