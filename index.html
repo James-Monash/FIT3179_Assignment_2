@@ -530,13 +530,25 @@
         <span class="highlight">Australia</span> — a Southern Hemisphere country — and the<br/>
         <span class="highlight">United States</span> — a Northern Hemisphere country.
       </p>
-      
+
       <!-- 7) tornadoes_by_month_aus_vs_us -->
       <section class="viz-card">
         <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
-        <div id="viz-by-month" class="viz-embed"></div>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-by-month" class="viz-embed"></div>
+          </div>
+
+        <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
+          <div id="country-legend" class="size-legend" role="group" aria-label="Country colours">
+            <div class="legend-title">Country</div>
+            <div id="country-legend-swatches" class="fujita-legend" role="list" aria-label="Country colour swatches"></div>
+          </div>
+        </div>
+        </div>
       </section>
-  
+        
       <p class="intro-paragraph">
         With <span class="highlight">wind speeds high enough to shred</span><br/>
         a well-built house off its foundations,<br/>
@@ -548,9 +560,21 @@
       <!-- 8) deadliest_tornadoes_bubble_chart -->
       <section class="viz-card">
         <h3 class="viz-title">Deadliest tornadoes — bubble chart</h3>
-        <div id="viz-deadliest-bubble" class="viz-embed"></div>
-      </section>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-deadliest-bubble" class="viz-embed"></div>
+          </div>
 
+          <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
+            <div id="deadliest-country-legend" class="size-legend" role="group" aria-label="Country colours">
+              <div class="legend-title">Country</div>
+              <div id="deadliest-country-swatches" class="fujita-legend" role="list" aria-label="Country colour swatches"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <p class="intro-paragraph">
         See the general locations of the deadliest<br/>
         tornadoes visualised on a map.
@@ -828,6 +852,74 @@
       const totalHeight = y + 6;
       svg.setAttribute("width", totalWidth);
       svg.setAttribute("height", totalHeight);
+    }
+
+    function drawCountryLegend(containerId = "country-legend-swatches") {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+    
+      const countries = ["Australia", "America"];
+      const countryColors = {
+        "Australia": "#0072B2",
+        "America": "#D55E00"
+      };
+    
+      container.innerHTML = "";
+    
+      countries.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "f-row";
+        row.setAttribute("role", "listitem");
+    
+        const sw = document.createElement("span");
+        sw.className = "swatch";
+        sw.style.background = countryColors[c];
+        sw.setAttribute("aria-hidden", "true");
+    
+        const label = document.createElement("span");
+        label.className = "f-label";
+        label.textContent = c;
+    
+        row.appendChild(sw);
+        row.appendChild(label);
+        container.appendChild(row);
+      });
+    }
+    function drawDeadliestCountryLegend(containerId = "deadliest-country-swatches") {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+    
+      const countries = ["Bangladesh", "United States", "Russia", "Italy", "Malta", "Argentina", "Australia"];
+      const countryColors = {
+        "Bangladesh": "#E69F00",
+        "United States": "#56B4E9",
+        "Russia": "#009E73",
+        "Italy": "#F0E442",
+        "Malta": "#0072B2",
+        "Argentina": "#D55E00",
+        "Australia": "#CC79A7"
+      };
+    
+      container.innerHTML = "";
+    
+      countries.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "f-row";
+        row.setAttribute("role", "listitem");
+    
+        const sw = document.createElement("span");
+        sw.className = "swatch";
+        sw.style.background = countryColors[c];
+        sw.setAttribute("aria-hidden", "true");
+    
+        const label = document.createElement("span");
+        label.className = "f-label";
+        label.textContent = c;
+    
+        row.appendChild(sw);
+        row.appendChild(label);
+        container.appendChild(row);
+      });
     }
     
     // ------------------------
@@ -1246,6 +1338,8 @@
       
       // other later static specs
       await embedSpec("#viz-by-month", specs.byMonth);
+      drawCountryLegend("country-legend-swatches");
+
       await embedSpec("#viz-deadliest-bubble", specs.deadliestBubble);
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
       await embedSpec("#viz-hodographs_first_two", specs.firstTwoHodographs); 
