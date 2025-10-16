@@ -309,41 +309,59 @@
     // Country legend style
     // ----------------------------
 
-    /* Legend container: column layout with enforced vertical gap */
     #country-legend-swatches,
     #deadliest-country-swatches {
       display: flex !important;
       flex-direction: column !important;
-      row-gap: 16px !important;      /* vertical spacing between rows */
-      padding: 6px 0 !important;
+      gap: 6px !important;          /* same as fujita */
+      margin-top: 8px !important;
+      padding: 0 !important;
       box-sizing: border-box !important;
     }
     
-    /* each row: fixed min-height and alignment */
-    .f-row {
+    /* Each row: mirror fujita row sizing and alignment */
+    #country-legend-swatches .f-row,
+    #deadliest-country-swatches .f-row {
       display: flex !important;
       align-items: center !important;
-      min-height: 28px !important;   /* ensures rows do not touch */
-      padding: 4px 0 !important;
+      gap: 8px !important;
+      font-size: 13px !important;   /* same as fujita */
+      color: #123047 !important;
+      padding: 0 !important;
+      min-height: 20px !important;
       box-sizing: border-box !important;
     }
     
-    /* swatch: fixed block so vertical spacing is predictable */
-    .swatch {
-      width: 18px !important;
-      height: 18px !important;
-      margin-right: 10px !important;
-      border-radius: 2px !important;
+    /* Swatch styling to match fujita look (rect-like) */
+    #country-legend-swatches .swatch,
+    #deadliest-country-swatches .swatch {
+      width: 24px !important;
+      height: 14px !important;
+      border-radius: 3px !important;
+      border: 1px solid rgba(0,0,0,0.08) !important;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06) !important;
+      margin-right: 0 !important;
+      flex: 0 0 auto !important;
       display: inline-block !important;
-      flex: 0 0 18px !important;
     }
     
-    /* label: predictable line-height */
-    .f-label {
-      font-size: 14px;
-      font-family: Inter, sans-serif;
+    /* Label weight and description style */
+    #country-legend-swatches .f-label,
+    #deadliest-country-swatches .f-label {
+      flex: 0 0 auto !important;
+      font-weight: 700 !important;
+      font-family: Inter, sans-serif !important;
       line-height: 1 !important;
-      display: inline-block;
+      color: inherit !important;
+    }
+    
+    /* Optional small description class if you use it */
+    #country-legend-swatches .f-desc,
+    #deadliest-country-swatches .f-desc {
+      color: #55607a !important;
+      font-weight: 500 !important;
+      margin-left: 6px !important;
+      font-size: 13px !important;
     }
     
     // ----------------------------
@@ -896,39 +914,46 @@
     }
 
     function makeLegendRows(container, items, colors, opts = {}) {
-      const swatchSize = opts.swatchSize || 18;
-      const rowGap = opts.rowGap ?? 16;
-      const paddingY = opts.paddingY ?? 6;
+      const swW = opts.swatchWidth || 24;
+      const swH = opts.swatchHeight || 14;
       if (!container) return;
     
       container.innerHTML = "";
       container.style.display = "flex";
       container.style.flexDirection = "column";
-      container.style.rowGap = rowGap + "px";
-      container.style.padding = paddingY + "px 0";
+      container.style.gap = "6px";
+      container.style.marginTop = "8px";
       container.style.boxSizing = "border-box";
     
-      items.forEach((labelText) => {
+      items.forEach(labelText => {
         const row = document.createElement("div");
         row.className = "f-row";
         row.setAttribute("role", "listitem");
-        row.style.minHeight = (swatchSize + paddingY * 2) + "px";
-        row.style.boxSizing = "border-box";
         row.style.display = "flex";
         row.style.alignItems = "center";
+        row.style.gap = "8px";
+        row.style.fontSize = "13px";
+        row.style.color = "#123047";
+        row.style.padding = "0";
+        row.style.minHeight = "20px";
+        row.style.boxSizing = "border-box";
     
         const sw = document.createElement("span");
         sw.className = "swatch";
-        sw.style.width = swatchSize + "px";
-        sw.style.height = swatchSize + "px";
+        sw.style.width = swW + "px";
+        sw.style.height = swH + "px";
         sw.style.background = colors[labelText] || "#999";
-        sw.style.marginRight = "10px";
+        sw.style.borderRadius = "3px";
+        sw.style.border = "1px solid rgba(0,0,0,0.08)";
+        sw.style.boxShadow = "inset 0 -1px 0 rgba(0,0,0,0.06)";
         sw.style.display = "inline-block";
         sw.setAttribute("aria-hidden", "true");
     
         const label = document.createElement("span");
         label.className = "f-label";
         label.textContent = labelText;
+        label.style.fontWeight = "700";
+        label.style.fontFamily = "Inter, sans-serif";
         label.style.lineHeight = "1";
         label.style.display = "inline-block";
     
@@ -941,33 +966,15 @@
     function drawCountryLegend(containerId = "country-legend-swatches") {
       const container = document.getElementById(containerId);
       if (!container) return;
-    
       const countries = ["Australia", "America"];
-      const countryColors = {
-        "Australia": "#0072B2",
-        "America": "#D55E00"
-      };
-    
-      makeLegendRows(container, countries, countryColors, {
-        swatchSize: 18,
-        rowGap: 16,
-        paddingY: 6
-      });
+      const countryColors = { "Australia": "#0072B2", "America": "#D55E00" };
+      makeLegendRows(container, countries, countryColors, { swatchWidth: 24, swatchHeight: 14 });
     }
     
     function drawDeadliestCountryLegend(containerId = "deadliest-country-swatches") {
       const container = document.getElementById(containerId);
       if (!container) return;
-    
-      const countries = [
-        "Bangladesh",
-        "United States",
-        "Russia",
-        "Italy",
-        "Malta",
-        "Argentina",
-        "Australia"
-      ];
+      const countries = ["Bangladesh","United States","Russia","Italy","Malta","Argentina","Australia"];
       const countryColors = {
         "Bangladesh": "#E69F00",
         "United States": "#56B4E9",
@@ -977,12 +984,7 @@
         "Argentina": "#D55E00",
         "Australia": "#CC79A7"
       };
-    
-      makeLegendRows(container, countries, countryColors, {
-        swatchSize: 18,
-        rowGap: 16,
-        paddingY: 6
-      });
+      makeLegendRows(container, countries, countryColors, { swatchWidth: 24, swatchHeight: 14 });
     }
     
     // ------------------------
