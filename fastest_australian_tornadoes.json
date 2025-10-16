@@ -5,8 +5,6 @@
   "projection": {"type": "mercator", "center": [134, -28], "scale": 850},
   "background": "#c6dbef",
   "title": {
-    "text": "Top Five Fastest Tornadoes by Wind Speed Since 1900",
-    "subtitle": "Change the time range to see to see the fastest tornadoes in certain periods",
     "anchor": "start",
     "fontSize": 18,
     "font": "Helvetica",
