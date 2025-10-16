@@ -1305,7 +1305,20 @@
 
       drawTornadoSizeLegend();
 
-      await embedSpec("#viz-severe-proportions", specs.severeProportions);
+      await embedWithHtmlAnnotations("#viz-severe-proportions", specs.severeProportions, {
+        projection: { center: [134, -28], scale: 850 },
+        annotations: [
+          {
+            id: "sa-tornado-proportion",
+            src: { lon: 133.5, lat: -34.5 },         // approximate location in South Australia
+            boxLonLat: { lon: 130.5, lat: -36.5 },   // southwest of SA for annotation box
+            label: "South Australia has the highest proportion\nof tornado-related severe weather — around 24%",
+            leader: true,
+            nudgeX: -60,
+            nudgeY: 10
+          }
+        ]
+      });
       drawSevereLegendVertical(); 
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
