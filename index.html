@@ -144,12 +144,7 @@
     }
 
     /* Each viz card */
-    .viz-card { 
-      display:block; 
-      margin-left:auto; 
-      margin-right:auto; 
-      max-width:1200px; 
-    }
+    .viz-card { position: relative; }
 
     .viz-title {
       font-size: 20px;
@@ -230,32 +225,50 @@
     }
 
     /* container that centers the chart+legend group */
-    .viz-legend-wrapper { display: flex; justify-content: center; padding: 12px 0; }
-    
-    /* row holding chart and legend */
-    /* STACK the two maps vertically in the left column */
-    .viz-left {
-      flex: 0 1 auto;
-      min-width: 320px;
-      max-width: 760px;        /* match other viz widths so left edge lines up */
+    .viz-legend-wrapper {
+      position: relative;   /* positioning context for absolute legend */
       display: block;
+      padding: 12px 0;
     }
 
-    .legend-right { flex: 0 0 auto; display: flex; align-items: flex-start; margin-left: 12px; }
+    /* make the left viz container a positioned block that can be sized by embed */
+    .viz-left {
+      position: relative;   /* anchor for any overlays/annotation SVGs */
+      display: block;
+      width: 100%;
+      max-width: 800px;     /* visual constraint, not forcing exact pixel width */
+      box-sizing: border-box;
+    }
     
-    /* legend box styling */
+    /* stop forcing 800px on embed; allow it to fill the left column */
+    .viz-left .viz-embed,
+    .viz-embed {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto;
+      position: relative;
+    }
+    
+    .legend-right {
+      position: absolute;
+      top: 16px;            /* adjust vertical offset here */
+      right: 16px;          /* adjust horizontal offset here */
+      z-index: 60;
+      display: block;
+      pointer-events: auto;
+    }
+
+    /* legend visual container */
     .size-legend {
       padding: 8px 12px;
       background: rgba(255,255,255,0.96);
-      border: 1px solid rgba(34,40,49,0.08);
       border-radius: 8px;
       box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 13px;
-      color: #1f2a44;
-      pointer-events: auto;
+      border: 1px solid rgba(34,40,49,0.08);
+      width: auto;
+      max-width: 320px;
     }
-    
+
     /* legend title */
     .size-legend .legend-title { font-weight: 700; margin-bottom: 6px; }
     
@@ -269,7 +282,7 @@
     .map-stack-left {
       flex: 0 1 auto;
       min-width: 320px;
-      max-width: 760px;      /* tune to match other viz group width */
+      max-width: 800px;      /* tune to match other viz group width */
       display: block;
     }
     
@@ -282,7 +295,7 @@
     
     /* make embedded canvases use the exact left-column width */
     .map-stack-left .viz-embed {
-      width: 760px;          /* keep same left-edge alignment as other visualisations */
+      width: 800px;          /* keep same left-edge alignment as other visualisations */
       max-width: 100%;
     }
     
@@ -357,7 +370,7 @@
         </div>
       </section>
       
-      <p>
+      <p class="intro-paragraph">
         The <span class="highlight">Fujita rating</span> measures tornado strength.<br/>
         It was proposed in 1971 by Dr. Tetsuya Fujita.<br/>
         Dr. Fujita worked at the University of Chicago.<br/>
@@ -998,8 +1011,7 @@
         width: 800,
         height: 600,
         background: "#c6dbef",
-        projection: { type: "mercator", center: [134, -25], scale: 850 },
-        title: { text: "Australian Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
+        projection: { type: "mercator", center: [134, -28], scale: 850 },
         layer: ausLayers,
         config: { view: { stroke: null } }
       };
@@ -1009,8 +1021,7 @@
         width: 800,
         height: 600,
         background: "#c6dbef",
-        projection: { type: "mercator", center: [-98, 38], scale: 850 },
-        title: { text: "U.S. Tornadoes (2010–2024)", anchor: "start", fontSize: 16, font: "Helvetica", color: "#222", subtitle: "Color-coded by Fujita rating" },
+        projection: { type: "mercator", center: [-98, 38], scale: 800 },
         layer: usLayers,
         config: { view: { stroke: null } }
       };
@@ -1018,9 +1029,9 @@
       document.getElementById("aus-chart").innerHTML = "";
       document.getElementById("us-chart").innerHTML = "";
       
-      // set spec widths consistent with CSS viz-left width (760)
-      ausSpec.width = 760;
-      usSpec.width = 760;
+      // set spec widths consistent with CSS viz-left width (800)
+      ausSpec.width = 800;
+      usSpec.width = 800;
       
       // embed with same options you had
       await vegaEmbed("#aus-chart", ausSpec, { 
@@ -1039,8 +1050,8 @@
     // Initialization: embed static specs and start dynamic maps
     // ------------------------
     async function init() {
-    buildCombinedLegend();
-    renderMaps();
+      buildCombinedLegend();
+      renderMaps();
 
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
       
