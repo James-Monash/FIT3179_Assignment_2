@@ -149,7 +149,7 @@
     /* Each viz card */
     .viz-card {
       max-width: 1080px;
-      margin-left: 0;       /* align to poster left gutter */
+      margin-left: 5cm;
       margin-right: auto;
       position: relative;
     }
@@ -241,7 +241,7 @@
     .viz-legend-wrapper {
       display: flex;
       align-items: flex-start;
-      gap: 12px;              /* small gap between viz and legend */
+      gap: 90px;              /* small gap between viz and legend */
       padding: 12px 0;
     }
 
@@ -303,6 +303,45 @@
     .map-stack-left .viz-embed {
       width: 800px;          /* keep same left-edge alignment as other visualisations */
       max-width: 100%;
+    }
+
+    // ----------------------------
+    // Fujita rating legend styles
+    // ----------------------------
+
+    .fujita-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    
+    .fujita-legend .f-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #123047;
+    }
+    
+    .fujita-legend .swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06);
+      flex: 0 0 auto;
+    }
+    
+    .fujita-legend .f-label {
+      flex: 0 0 auto;
+      font-weight: 700;
+    }
+    
+    .fujita-legend .f-desc {
+      color: #55607a;
+      font-weight: 500;
+      margin-left: 6px;
     }
     
   </style>
@@ -387,7 +426,7 @@
         Much research into severe storms focuses in the United States.<br/>
         The United States experiences a large number of <span class="highlight">tornadoes</span>.<br/>
         Tornadoes are unpredictable and difficult to study.<br/>
-        Dr. Fujita proposed using a destruction scale to infer winds.<br/>
+        Dr. Fujita proposed using a destruction scale to infer winds.<br/><br/>
         For example, destroying mobile homes requires winds above 180 km/h.<br/>
         If mobile homes are destroyed, winds must have reached that magnitude.<br/>
         Tornadoes are broadly categorised on the F0 to F5 scale.<br/>
@@ -397,21 +436,33 @@
   
       <!-- 3+4) dynamic maps row: Australian and US maps (vertically placed) -->
       <section class="viz-card">
-        <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
-        <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S.</h3>
+            <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
+          </div>
+        </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left map-stack-left">
             <!-- stacked maps (vertical) -->
-            <div id="aus-chart" class="viz-embed map-stack-item"></div>
-            <div id="us-chart"  class="viz-embed map-stack-item"></div>
+            <div id="aus-chart" class="viz-embed map-stack-item" aria-label="Australia tornado map"></div>
+            <div id="us-chart" class="viz-embed map-stack-item" aria-label="United States tornado map"></div>
           </div>
       
-          <div class="legend-right">
-            <!-- reuse the same legend container pattern used previously -->
-            <div id="combined-rating-legend" class="size-legend" aria-hidden="false">
+          <div class="legend-right" aria-hidden="false" role="region" aria-label="Map legend and controls">
+            <div id="combined-rating-legend" class="size-legend" role="group" aria-label="Fujita rating legend">
               <div class="legend-title">Fujita rating</div>
-              <div id="legend-checkboxes"></div>
+      
+              <div id="legend-checkboxes" aria-label="Fujita rating toggles" role="list"></div>
+      
+              <!-- color swatches + descriptions rendered by drawFujitaColorLegend -->
+              <div id="fujita-legend" class="fujita-legend" role="list" aria-label="Fujita scale colours"></div>
+      
+              <!-- optional small help text -->
+              <div class="legend-note" style="margin-top:8px; color:#55607a; font-size:12px;">
+                Toggle ratings to show or hide that class on the maps.
+              </div>
             </div>
           </div>
         </div>
@@ -885,44 +936,48 @@
     // Dynamic maps (Australia and US) logic
     // ------------------------
 
-    // Build legend/toggles into the right-column container
-    function buildCombinedLegend() {
-      const container = document.getElementById("legend-checkboxes");
+    function drawFujitaColorLegend(containerId = "fujita-legend", opts = {}) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+    
+      // optional custom text descriptions per rating
+      const descriptions = opts.descriptions || {
+        "F0": "Gale damage",
+        "F1": "Moderate damage",
+        "F2": "Considerable damage",
+        "F3": "Severe damage",
+        "F4": "Devastating damage",
+        "F5": "Incredible damage"
+      };
+    
+      // clear existing
       container.innerHTML = "";
+    
+      // create rows in rating order
       ratings.forEach(r => {
-        const item = document.createElement("div");
-        item.className = "legend-item";
-        item.dataset.rating = r;
+        const row = document.createElement("div");
+        row.className = "f-row";
+        row.setAttribute("role", "listitem");
+        row.setAttribute("data-rating", r);
     
-        // checkbox
-        const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.checked = true;
-        cb.value = r;
-        cb.setAttribute("aria-label", r + " toggle");
-        cb.addEventListener("change", onLegendToggle);
-    
-        // colored swatch (circle)
         const sw = document.createElement("span");
         sw.className = "swatch";
-        sw.style.background = ratingColors[r];
+        sw.style.background = ratingColors[r] || "#ccc";
+        sw.setAttribute("aria-hidden", "true");
     
-        // label
-        const lbl = document.createElement("span");
-        lbl.className = "legend-label";
-        lbl.textContent = r;
+        const label = document.createElement("span");
+        label.className = "f-label";
+        label.textContent = r;
     
-        // click on whole item toggles checkbox (but not when clicking the checkbox itself)
-        item.addEventListener("click", (e) => {
-          if (e.target.tagName.toLowerCase() === "input") return;
-          cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event("change", { bubbles: true }));
-        });
+        const desc = document.createElement("span");
+        desc.className = "f-desc";
+        desc.textContent = descriptions[r] || "";
     
-        item.appendChild(cb);
-        item.appendChild(sw);
-        item.appendChild(lbl);
-        container.appendChild(item);
+        row.appendChild(sw);
+        row.appendChild(label);
+        row.appendChild(desc);
+    
+        container.appendChild(row);
       });
     }
 
@@ -1060,7 +1115,7 @@
     // Initialization: embed static specs and start dynamic maps
     // ------------------------
     async function init() {
-      buildCombinedLegend();
+      drawFujitaColorLegend('fujita-legend');
       renderMaps();
 
       // Embed static JSON specs (they should be placed beside index.html or referenced by full path)
