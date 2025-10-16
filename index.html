@@ -306,6 +306,27 @@
     }
 
     // ----------------------------
+    // Country legend style
+    // ----------------------------
+    .f-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px; /* Adds vertical spacing between legend items */
+    }
+    
+    .swatch {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      border-radius: 2px;
+    }
+    
+    .f-label {
+      font-size: 14px;
+      font-family: Inter, sans-serif;
+    }
+
+    // ----------------------------
     // Fujita rating legend styles
     // ----------------------------
 
@@ -1310,11 +1331,11 @@
         annotations: [
           {
             id: "sa-tornado-proportion",
-            src: { lon: 133.5, lat: -34.5 },         // approximate location in South Australia
-            boxLonLat: { lon: 130.5, lat: -36.5 },   // southwest of SA for annotation box
+            src: { lon: 133.5, lat: -34.5 },         // stays near central SA
+            boxLonLat: { lon: 126.5, lat: -36.5 },   // moved ~4 degrees west
             label: "South Australia has the highest proportion\nof tornado-related severe weather — around 24%",
             leader: true,
-            nudgeX: -60,
+            nudgeX: -40,                             // slightly reduced nudge
             nudgeY: 10
           }
         ]
