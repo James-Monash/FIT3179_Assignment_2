@@ -3,7 +3,7 @@
   "description": "Bubble chart of deadliest tornadoes: year (x) vs fatalities (y); colour = country; size = fatalities.",
   "data": {
     "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/deadliest_tornadoes.csv",
-    "format": {"type": "csv"}
+    "format": { "type": "csv" }
   },
   "width": 900,
   "height": 480,
@@ -35,40 +35,40 @@
         "tickMinStep": 10,
         "format": "d"
       },
-      "scale": {"domain": [1800, 2020], "nice": false}
+      "scale": { "domain": [1800, 2020], "nice": false }
     },
     "y": {
       "field": "deaths_num",
       "type": "quantitative",
       "title": "Fatalities",
-      "scale": {"domain": [0, 1500], "nice": false}
+      "scale": { "domain": [0, 1500], "nice": false }
     },
     "size": {
       "field": "deaths_num",
       "type": "quantitative",
-      "scale": {"range": [80, 2200], "domain": [1, 1300]},
+      "scale": { "range": [80, 2200], "domain": [1, 1300] },
       "legend": null
     },
     "color": {
       "field": "country",
       "type": "nominal",
       "scale": {
-        "domain": ["Bangladesh","United States","Russia","Italy","Malta","Argentina","Australia"],
-        "range": ["#E69F00","#56B4E9","#009E73","#F0E442","#0072B2","#D55E00","#CC79A7"]
+        "domain": ["Bangladesh", "United States", "Russia", "Italy", "Malta", "Argentina", "Australia"],
+        "range": ["#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
       },
-      "legend": {"title": "Country"}
+      "legend": null
     },
     "tooltip": [
-      {"field": "event", "type": "nominal", "title": "Event"},
-      {"field": "country", "type": "nominal", "title": "Country"},
-      {"field": "year_num", "type": "quantitative", "title": "Year"},
-      {"field": "deaths_num", "type": "quantitative", "title": "Fatalities"},
-      {"field": "lat", "type": "quantitative", "title": "Lat"},
-      {"field": "lon", "type": "quantitative", "title": "Lon"}
+      { "field": "event", "type": "nominal", "title": "Event" },
+      { "field": "country", "type": "nominal", "title": "Country" },
+      { "field": "year_num", "type": "quantitative", "title": "Year" },
+      { "field": "deaths_num", "type": "quantitative", "title": "Fatalities" },
+      { "field": "lat", "type": "quantitative", "title": "Lat" },
+      { "field": "lon", "type": "quantitative", "title": "Lon" }
     ]
   },
   "config": {
-    "axis": {"labelFontSize": 12, "titleFontSize": 13},
-    "legend": {"labelFontSize": 12, "titleFontSize": 13}
+    "axis": { "labelFontSize": 12, "titleFontSize": 13 },
+    "legend": { "labelFontSize": 12, "titleFontSize": 13 }
   }
 }
