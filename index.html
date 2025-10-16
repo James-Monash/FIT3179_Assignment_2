@@ -831,7 +831,8 @@
           div.style.left = left + "px";
           div.style.top  = top + "px";
     
-          container.appendChild(div);
+          const embedEl = container.querySelector(".viz-embed");
+          embedEl.appendChild(div);
     
           // return data needed for line calculation
           return {
