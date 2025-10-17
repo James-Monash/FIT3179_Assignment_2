@@ -405,6 +405,30 @@
 
     .legend-item.disabled { opacity: 0.45; }
     .legend-item .legend-checkbox { margin-right: 8px; }
+
+    // ----------------------------
+    // El Reno
+    // ----------------------------
+
+    .el-reno-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    
+    .el-reno-image img { width: 100%; height: auto; display: block; border-radius: 6px; }
+    .el-reno-image figcaption { margin-top: 0.5rem; color: #555; font-size: 0.95rem; }
+    
+    .el-reno-hodographs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .hodograph-card .mini-title { margin: 0 0 0.5rem; font-size: 0.95rem; }
+    
+    .el-reno-text, .hodograph-text { color: #222; line-height: 1.4; }
+    
+    @media (max-width: 900px) {
+      .el-reno-grid { grid-template-columns: 1fr; }
+      .el-reno-hodographs { grid-template-columns: 1fr; }
+    }
     
   </style>
 </head>
@@ -638,15 +662,65 @@
         See the general locations of the deadliest<br/>
         tornadoes visualised on a map.
       </p>
-  
-      <p></p>
-  
+   
       <!-- 9) deadliest_tornadoes_on_a_map -->
       <section class="viz-card">
         <h3 class="viz-title">Deadliest tornadoes on a map</h3>
-        <div id="viz-deadliest-map" class="viz-embed"></div>
+      
+        <div class="viz-legend-wrapper">
+          <div class="viz-left">
+            <div id="viz-deadliest-map" class="viz-embed"></div>
+          </div>
+
+          <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
+            <div id="deadliest-country-legend-map" class="size-legend" role="group" aria-label="Country colours">
+              <div class="legend-title">Country</div>
+              <div id="deadliest-country-swatches-map" class="fujita-legend" role="list" aria-label="Country colour swatches"></div>
+            </div>
+          </div>
+        </div>
       </section>
-  
+
+      <section class="viz-card el-reno-section">
+        <h3 class="viz-title">El Reno Tornado and Hodographs</h3>
+      
+        <div class="el-reno-grid">
+          <figure class="el-reno-image">
+            <img src="el-reno.jpg" alt="El Reno tornado, 2013" loading="lazy">
+            <figcaption>The El Reno tornado, May 2013 — one of the largest observed.</figcaption>
+          </figure>
+      
+          <div class="el-reno-text">
+            <p class="intro-paragraph">
+              <strong>Wind shear</strong> that changes in direction and magnitude with height supports supercell development.
+              The curved hodograph in the final sounding indicates strong low-level rotation associated with the El Reno event.
+            </p>
+          </div>
+      
+          <div class="el-reno-hodographs">
+            <div class="hodograph-card">
+              <h4 class="mini-title">Hodograph 1</h4>
+              <div id="viz-hodographs_first_two" class="viz-embed"></div>
+              <p class="caption">Early profile showing turn with height.</p>
+            </div>
+      
+            <div class="hodograph-card">
+              <h4 class="mini-title">Hodograph 2</h4>
+              <div id="viz-hodographs_second_two" class="viz-embed"></div>
+              <p class="caption">Final profile after tornado development; curvature implies rotation.</p>
+            </div>
+          </div>
+      
+          <div class="hodograph-text">
+            <p class="intro-paragraph">
+              Note the low-level veering and increase in wind speed. This produces streamwise vorticity that
+              updrafts can tilt into rotation, increasing the risk of tornadogenesis.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      /*
       <p class="intro-paragraph">
         <span class="highlight">Wind shear</span> is a critical ingredient for<br/>
         <span class="highlight">supercell development</span> — the type of thunderstorm<br/>
@@ -670,6 +744,7 @@
       <section class="viz-card">
         <div id="viz-hodographs_second_two" class="viz-embed"></div>
       </section>
+      */
       
       <p class="intro-paragraph">
         In conclusion, <span class="highlight">Australia has experienced its share of tornadoes</span><br/>
@@ -1423,6 +1498,8 @@
       drawDeadliestCountryLegend()
       
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
+      drawDeadliestCountryLegend("#deadliest-country-swatches-map");
+      
       await embedSpec("#viz-hodographs_first_two", specs.firstTwoHodographs); 
       await embedSpec("#viz-hodographs_second_two", specs.secondTwoHodographs); 
     }
