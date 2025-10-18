@@ -410,45 +410,44 @@
     // El Reno
     // ----------------------------
     
-    /* Force the three-column row to use the hodograph height and center all children */
-    .el-reno-threecol {
-      display: flex !important;
-      flex-direction: row;
-      flex-wrap: nowrap !important;
-      align-items: center !important;   /* centre by vertical middles */
-      gap: 16px;
-      padding-left: 24px;
+    /* Two-column layout for El Reno: stable, predictable, and easy to nudge */
+    .el-reno-two-col {
+      display: grid;
+      grid-template-columns: 320px 1fr;   /* left column fixed, right column flexible */
+      column-gap: 28px;
+      align-items: center;                /* vertical centre children in the grid cell */
       box-sizing: border-box;
-      height: 480px !important;          /* make row the same height as the hodograph */
+      width: 100%;
+      max-width: 1080px;
+      padding-left: 24px;                 /* adjust poster left offset as needed */
     }
     
-    /* Ensure no stray vertical margins disturb centring */
-    .el-reno-threecol * { margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; }
-    
-    /* Text column: centre inside the shared-height row */
-    .el-reno-text-col {
-      flex: 0 0 260px !important;
-      max-width: 260px;
-      min-width: 0;
+    /* LEFT: text column */
+    .el-reno-left {
       display: flex;
-      align-items: center !important;
-      justify-content: center !important;
-      height: 100% !important;           /* fill the row height so centring uses same baseline */
+      align-items: center;                /* vertical centre inside the fixed column height */
+      justify-content: center;
+      min-height: 480px;                  /* make left column same visual height as hodograph */
+      box-sizing: border-box;
+    }
+    .el-reno-left .el-reno-narrow {
+      margin: 0;
+      max-width: 40ch;
+      text-align: center;
+      line-height: 1.6;
     }
     
-    /* Hodograph column: centre inside the shared-height row */
-    .el-reno-hodo-col {
-      flex: 0 0 480px !important;
-      max-width: 480px;
-      min-width: 0;
-      position: relative;
+    /* RIGHT: hodograph container */
+    .el-reno-right {
+      position: relative;                 /* legend will be absolutely positioned relative to this */
       display: flex;
-      align-items: center !important;
-      justify-content: center !important;
-      height: 100% !important;           /* fill the row height so centring uses same baseline */
+      align-items: center;                /* centre chart vertically */
+      justify-content: flex-start;        /* chart sits left within the right column, adjust with padding/margin */
+      min-height: 480px;                  /* match hodograph height */
+      box-sizing: border-box;
     }
     
-    /* Keep embed sized to the column */
+    /* Ensure the hodograph embed is exactly the size we expect */
     #viz-el-reno-hodograph.viz-embed,
     #viz-el-reno-hodograph.viz-embed > svg,
     #viz-el-reno-hodograph.viz-embed > div,
@@ -457,31 +456,52 @@
       width: 480px !important;
       height: 480px !important;
       box-sizing: border-box !important;
-      margin: 0 !important;
+      margin: 0;
     }
     
-    /* Legend visual box stays positioned relative to hodograph top */
-    .el-reno-hodo-col .el-reno-legend-box {
+    /* LEGEND: absolutely positioned relative to .el-reno-right so it cannot change layout flow */
+    .el-reno-right .el-reno-legend-box {
       position: absolute;
-      right: -128px;
-      top: 0;                 /* top aligned to chart top */
+      left: calc(480px + 12px);           /* places legend to the right of the 480px chart with 12px gap */
+      top: 0;                             /* aligns legend top with chart top */
       width: 112px;
+      padding: 6px;
+      background: rgba(255,255,255,0.98);
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+      border: 1px solid rgba(34,40,49,0.08);
       box-sizing: border-box;
+      z-index: 50;
     }
     
-    /* Structural legend column keeps spacing but not visual influence */
-    .el-reno-legend-col {
-      flex: 0 0 120px !important;
-      max-width: 120px !important;
-      min-width: 0;
-      display: block;
+    /* legend internals */
+    .el-reno-right .el-reno-legend-box .legend-title { font-size: 12px; font-weight:700; margin-bottom:6px; }
+    .el-reno-right .el-reno-legend-box #el-reno-order-swatches,
+    .el-reno-right .el-reno-legend-box #el-reno-order-swatches svg {
+      width: 64px !important;
+      height: auto !important;
+      display: block !important;
     }
     
-    /* responsive fallback: remove fixed height on small screens */
+    /* Nudges: horizontal micro adjustments */
+    /* Move the chart right by X px: adjust padding-left on .el-reno-right */
+    .el-reno-right { padding-left: 0; }    /* set to 0 initially; increase to nudge right, e.g., 24px */
+    
+    /* Move the text horizontally to the right: nudge the left column (positive = move right) */
+    .el-reno-left { padding-left: 0; }     /* set to 0 initially; increase to nudge right, e.g., 8px */
+    
+    /* Small responsive fallback: stack columns on narrow screens */
     @media (max-width: 980px) {
-      .el-reno-threecol { height: auto !important; flex-direction: column; align-items: stretch; padding-left: 0; gap: 12px; }
-      .el-reno-text-col, .el-reno-hodo-col, .el-reno-legend-col { height: auto !important; flex: 1 1 auto; max-width: 100%; }
-      .el-reno-hodo-col .el-reno-legend-box { position: static; right: auto; top: auto; width: 100%; }
+      .el-reno-two-col {
+        display: block;
+        padding-left: 0;
+      }
+      .el-reno-left, .el-reno-right { min-height: auto; padding-left: 0; }
+      #viz-el-reno-hodograph.viz-embed,
+      #viz-el-reno-hodograph.viz-embed > svg,
+      #viz-el-reno-hodograph.viz-embed > div,
+      #viz-el-reno-hodograph.viz-embed iframe { width: 100% !important; height: auto !important; }
+      .el-reno-right .el-reno-legend-box { position: static; left: auto; top: auto; width: 100%; margin-top: 8px; }
     }
     
   </style>
@@ -736,43 +756,27 @@
       </section>
 
       <!-- 10) El-reno example -->
-      <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
-        <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
-      
-        <!-- IMAGE ROW: sits on its own line and aligns with other viz cards -->
-        <div class="el-reno-image-row">
-          <figure class="el-reno-figure">
-            <img src="el-reno.jpg" alt="El Reno tornado, May 2013" width="900" height="506" loading="lazy">
-            <figcaption class="el-reno-caption">The El Reno tornado, May 2013 — one of the largest observed.</figcaption>
-          </figure>
+      <div class="el-reno-two-col" role="region" aria-label="El Reno text and hodograph">
+        <!-- LEFT: text column -->
+        <div class="el-reno-left">
+          <p class="el-reno-narrow">
+            Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
+            helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
+            low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
+          </p>
         </div>
       
-        <!-- THREE-COLUMN ROW: text | hodograph | legend on the same horizontal plane -->
-        <div class="el-reno-threecol" role="region" aria-label="El Reno text hodograph legend">
-          <!-- narrow text column -->
-          <div class="el-reno-text-col">
-            <p class="el-reno-narrow">
-              Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
-              helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
-              low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
-            </p>
-          </div>
+        <!-- RIGHT: hodograph column (chart + absolutely-positioned legend) -->
+        <div class="el-reno-right">
+          <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
       
-          <!-- hodograph embed column -->
-          <div class="el-reno-hodo-col">
-            <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
-        
-            <!-- absolutely-positioned visual legend box (keeps layout predictable) -->
-            <div class="el-reno-legend-box" aria-hidden="false">
-              <div class="legend-title">Altitude (m)</div>
-              <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
-            </div>
+          <!-- visual legend box placed inside the right column so its top lines with the chart top -->
+          <div class="el-reno-legend-box" aria-hidden="false">
+            <div class="legend-title">Altitude (m)</div>
+            <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
           </div>
-        
-          <!-- keep the original structural legend column but empty so layout spacing remains predictable -->
-          <div class="el-reno-legend-col" role="group" aria-label="Altitude colour legend"></div>
         </div>
-      </section>
+      </div>
       
       <p class="intro-paragraph">
         In conclusion, <span class="highlight">Australia has experienced its share of tornadoes</span><br/>
