@@ -1,0 +1,71 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Single hodograph for 1-06 00Z with tight layout and grid lines.",
+  "data": {
+    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/elreno_hodograph_combined.csv",
+    "format": { "type": "csv" }
+  },
+  "transform": [
+    { "calculate": "toNumber(datum.u)", "as": "u_num" },
+    { "calculate": "toNumber(datum.v)", "as": "v_num" },
+    { "calculate": "isFinite(toNumber(datum.altitude)) ? toNumber(datum.altitude) : toNumber(datum.level_index)", "as": "order_val" },
+    { "calculate": "isFinite(toNumber(datum.altitude)) ? toNumber(datum.altitude) : null", "as": "altitude_num" },
+    { "filter": "isFinite(datum.u_num) && isFinite(datum.v_num) && isFinite(datum.order_val)" },
+    { "filter": "datum.time_label === '1-06 00Z'" }
+  ],
+  "width": 640,
+  "height": 640,
+  "autosize": { "type": "fit", "contains": "padding" },
+  "layer": [
+    {
+      "mark": { "type": "line", "interpolate": "linear", "strokeWidth": 1.6 },
+      "encoding": {
+        "x": { "field": "u_num", "type": "quantitative", "scale": { "domain": [-40, 40] }, "title": "U (east, m/s)" },
+        "y": { "field": "v_num", "type": "quantitative", "scale": { "domain": [-40, 40] }, "title": "V (north, m/s)" },
+        "order": { "field": "order_val", "type": "quantitative" },
+        "color": { "value": "#0072B2" },
+        "opacity": { "value": 0.9 }
+      }
+    },
+    {
+      "mark": { "type": "point", "filled": true, "stroke": "#222", "strokeWidth": 0.6 },
+      "encoding": {
+        "x": { "field": "u_num", "type": "quantitative" },
+        "y": { "field": "v_num", "type": "quantitative" },
+        "color": {
+          "field": "order_val",
+          "type": "quantitative",
+          "scale": { "scheme": "viridis" },
+          "legend": null
+        },
+        "tooltip": [
+          { "field": "time_label", "type": "nominal", "title": "Sounding" },
+          { "field": "altitude", "type": "quantitative", "title": "Altitude (orig)" },
+          { "field": "level_index", "type": "quantitative", "title": "Level index" },
+          { "field": "speed_m_s", "type": "quantitative", "title": "Speed (m/s)" },
+          { "field": "dir_deg", "type": "quantitative", "title": "Dir (deg)" },
+          { "field": "u", "type": "quantitative", "title": "U (m/s)" },
+          { "field": "v", "type": "quantitative", "title": "V (m/s)" }
+        ],
+        "size": { "value": 60 },
+        "opacity": { "value": 0.95 }
+      }
+    }
+  ],
+  "config": {
+    "view": { "stroke": "transparent", "continuousWidth": 640, "continuousHeight": 640 },
+    "axis": {
+      "labelFontSize": 12,
+      "titleFontSize": 13,
+      "grid": true,
+      "gridColor": "#e6e6e6",
+      "gridWidth": 0.8,
+      "gridDash": [2, 2],
+      "domain": true,
+      "ticks": true
+    },
+    "legend": { "labelFontSize": 11, "titleFontSize": 12 },
+    "range": { "category": ["#0072B2"] },
+    "padding": 0
+  }
+}
