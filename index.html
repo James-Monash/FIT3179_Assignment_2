@@ -744,29 +744,43 @@
         </div>
       </section>
 
-      <div class="el-reno-threecol" role="region" aria-label="El Reno text hodograph legend">
-        <!-- narrow text column -->
-        <div class="el-reno-text-col">
-          <p class="el-reno-narrow">
-            Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
-            helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
-            low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
-          </p>
+      <!-- 10) El-reno example -->
+      <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
+        <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
+      
+        <!-- IMAGE ROW: sits on its own line and aligns with other viz cards -->
+        <div class="el-reno-image-row">
+          <figure class="el-reno-figure">
+            <img src="el-reno.jpg" alt="El Reno tornado, May 2013" width="900" height="506" loading="lazy">
+            <figcaption class="el-reno-caption">The El Reno tornado, May 2013 — one of the largest observed.</figcaption>
+          </figure>
         </div>
       
-        <!-- hodograph embed column -->
-        <div class="el-reno-hodo-col">
-          <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
-        </div>
+        <!-- THREE-COLUMN ROW: text | hodograph | legend on the same horizontal plane -->
+        <div class="el-reno-threecol" role="region" aria-label="El Reno text hodograph legend">
+          <!-- narrow text column -->
+          <div class="el-reno-text-col">
+            <p class="el-reno-narrow">
+              Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
+              helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
+              low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
+            </p>
+          </div>
       
-        <!-- compact legend column -->
-        <div class="el-reno-legend-col" role="group" aria-label="Altitude colour legend">
-          <div id="el-reno-order-legend" class="size-legend" aria-hidden="false">
-            <div class="legend-title">Altitude (m)</div>
-            <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
+          <!-- hodograph embed column -->
+          <div class="el-reno-hodo-col">
+            <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
+          </div>
+      
+          <!-- compact legend column -->
+          <div class="el-reno-legend-col" role="group" aria-label="Altitude colour legend">
+            <div id="el-reno-order-legend" class="size-legend" aria-hidden="false">
+              <div class="legend-title">Altitude (m)</div>
+              <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
       
       <p class="intro-paragraph">
         In conclusion, <span class="highlight">Australia has experienced its share of tornadoes</span><br/>
