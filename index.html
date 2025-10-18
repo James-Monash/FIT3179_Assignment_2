@@ -410,54 +410,87 @@
     // El Reno
     // ----------------------------
 
-    /* Ensure el-reno-block matches viz-card left offset and max width */
-    .el-reno-block { margin-left: 1.5cm; margin-right: auto; max-width: 1080px; }
-    
-    /* Image alignment: same visual width as viz-left (840px) so left edge lines up */
-    .el-reno-image-row { margin-bottom: 14px; }
-    .el-reno-figure { margin: 0; max-width: 840px; }
-    .el-reno-figure img { width: 100%; height: auto; display: block; border-radius: 8px; }
-    .el-reno-caption { margin-top: 8px; color: #55607a; font-size: 13px; }
-    
-    /* Three-column row: text | hodograph | legend */
+    /* Put the three items on the same baseline, legend top aligned, nudge everything right */
     .el-reno-threecol {
       display: flex;
-      align-items: center;        /* keeps all three on same baseline / middle */
-      gap: 16px;
+      align-items: flex-start;       /* top-align so legend sits at top of chart */
+      gap: 20px;
       width: 100%;
       max-width: 1080px;
       box-sizing: border-box;
+      padding-left: 24px;            /* move the whole group slightly to the right for better visual balance */
     }
     
-    /* Text column: narrow and constrained to ~40ch to keep ~10 words per line */
-    .el-reno-text-col { flex: 0 0 240px; max-width: 240px; }
-    .el-reno-narrow { max-width: 40ch; margin: 0; font-size: 16px; line-height: 1.6; color: #333; }
+    /* Text column: center text internally, keep ~10 words per line, and match highlight style */
+    .el-reno-text-col {
+      flex: 0 0 260px;               /* a bit wider so text centers nicely beside the chart */
+      max-width: 260px;
+      display: flex;
+      align-items: center;           /* vertically centre the paragraph within the row */
+      justify-content: center;
+      padding-right: 8px;
+    }
     
-    /* Hodograph column: fixed recommended width (change to 560 if desired) */
-    .el-reno-hodo-col { flex: 0 0 480px; max-width: 480px; position: relative; }
-    #viz-el-reno-hodograph.viz-embed { width: 480px !important; height: 480px !important; box-sizing: border-box; }
+    .el-reno-narrow {
+      max-width: 40ch;
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      text-align: center;            /* center the lines within the text column */
+    }
     
-    /* Legend column: compact, vertically centred, tight padding */
-    .el-reno-legend-col { flex: 0 0 120px; min-width: 120px; display: flex; align-items: center; justify-content: flex-start; }
+    /* use the same orange highlight used site-wide */
+    .el-reno-narrow .highlight,
+    .el-reno-text-col .highlight {
+      color: #e07b39;
+      font-weight: 600;
+    }
+    
+    /* Hodograph column: move to the right a touch, keep fixed width */
+    .el-reno-hodo-col {
+      flex: 0 0 480px;
+      max-width: 480px;
+      position: relative;
+      margin-left: 12px;             /* nudge chart to the right of the text column */
+    }
+    
+    /* Ensure the embed respects the chosen size */
+    #viz-el-reno-hodograph.viz-embed {
+      width: 480px !important;
+      height: 480px !important;
+      box-sizing: border-box;
+    }
+    
+    /* Legend column: compact and top aligned to the chart */
+    .el-reno-legend-col {
+      flex: 0 0 120px;
+      min-width: 120px;
+      display: flex;
+      align-items: flex-start;       /* ensure legend top sits at same baseline as chart top */
+      justify-content: flex-start;
+      padding-top: 6px;              /* a small nudge so title aligns visually with chart top */
+    }
+    
+    /* Remove heavy card chrome for the small legend and keep it tight */
     #el-reno-order-legend {
-      padding: 6px 6px;
+      padding: 4px 6px;
       background: transparent;
       border: none;
       box-shadow: none;
       max-width: 120px;
     }
-    #el-reno-order-legend .legend-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
     
-    /* Ensure the legend SVG is tight and uses full width */
+    /* Tight legend SVG placement */
     #el-reno-order-swatches svg { display: block; width: 100%; height: auto; }
     
-    /* Responsive: stack columns on small screens */
+    /* Smaller devices: stack and keep spacing tidy */
     @media (max-width: 900px) {
-      .el-reno-threecol { flex-direction: column; align-items: stretch; }
-      .el-reno-text-col { flex: none; width: 100%; max-width: none; margin-bottom: 10px; }
-      .el-reno-hodo-col { flex: 1 1 auto; width: 100%; }
+      .el-reno-threecol { flex-direction: column; align-items: stretch; padding-left: 0; gap: 12px; }
+      .el-reno-text-col { width: 100%; max-width: 100%; padding-right: 0; }
+      .el-reno-hodo-col { width: 100%; max-width: 100%; margin-left: 0; }
       #viz-el-reno-hodograph.viz-embed { width: 100% !important; height: auto !important; }
-      .el-reno-legend-col { width: 100%; margin-top: 8px; justify-content: flex-start; }
+      .el-reno-legend-col { width: 100%; min-width: 0; padding-top: 0; justify-content: flex-start; }
     }
     
   </style>
@@ -711,42 +744,29 @@
         </div>
       </section>
 
-      <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
-        <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
-      
-        <!-- Image row aligned to same left offset as viz-card -->
-        <div class="el-reno-image-row">
-          <figure class="el-reno-figure">
-            <img src="el-reno.jpg" alt="El Reno tornado, May 2013" width="900" height="506" loading="lazy">
-            <figcaption class="el-reno-caption">The El Reno tornado, May 2013 — one of the largest observed.</figcaption>
-          </figure>
+      <div class="el-reno-threecol" role="region" aria-label="El Reno text hodograph legend">
+        <!-- narrow text column -->
+        <div class="el-reno-text-col">
+          <p class="el-reno-narrow">
+            Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
+            helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
+            low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
+          </p>
         </div>
       
-        <!-- Row that contains text | hodograph | legend on the same baseline -->
-        <div class="el-reno-threecol" role="region" aria-label="El Reno text hodograph legend">
-          <!-- narrow text column -->
-          <div class="el-reno-text-col">
-            <p class="el-reno-narrow">
-              Wind shear that turns and increases with height helps create the rotation seen in the hodograph.
-              The final sounding after the tornado shows strong low‑level curvature and speed increases,
-              indicating streamwise vorticity being tilted into the updraft.
-            </p>
-          </div>
+        <!-- hodograph embed column -->
+        <div class="el-reno-hodo-col">
+          <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
+        </div>
       
-          <!-- hodograph embed column -->
-          <div class="el-reno-hodo-col">
-            <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
-          </div>
-      
-          <!-- compact legend column -->
-          <div class="el-reno-legend-col" role="group" aria-label="Altitude colour legend">
-            <div id="el-reno-order-legend" class="size-legend" aria-hidden="false">
-              <div class="legend-title">Altitude (m)</div>
-              <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
-            </div>
+        <!-- compact legend column -->
+        <div class="el-reno-legend-col" role="group" aria-label="Altitude colour legend">
+          <div id="el-reno-order-legend" class="size-legend" aria-hidden="false">
+            <div class="legend-title">Altitude (m)</div>
+            <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
           </div>
         </div>
-      </section>
+      </div>
       
       <p class="intro-paragraph">
         In conclusion, <span class="highlight">Australia has experienced its share of tornadoes</span><br/>
