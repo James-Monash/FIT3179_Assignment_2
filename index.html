@@ -410,50 +410,48 @@
     // El Reno
     // ----------------------------
 
-    /* your provided block (paste as-is) */
+    /* ensure parent row cannot wrap and children may shrink if needed */
     .el-reno-threecol {
       display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
+      flex-wrap: nowrap !important;
       align-items: center;
-      gap: 16px;
-      width: 100%;
-      max-width: 1080px;
-      box-sizing: border-box;
-      padding-left: 24px;
     }
-    .el-reno-text-col  { flex: 0 0 260px;  max-width: 260px; box-sizing: border-box; }
-    .el-reno-hodo-col  { flex: 0 0 480px;  max-width: 480px; box-sizing: border-box; }
-    .el-reno-legend-col{ flex: 0 0 120px;  max-width: 120px; box-sizing: border-box; }
-    .el-reno-text-col { display: flex; align-items: center; justify-content: center; padding-right: 8px; }
-    .el-reno-narrow { margin: 0; max-width: 40ch; text-align: center; }
-    #viz-el-reno-hodograph.viz-embed,
-    #viz-el-reno-hodograph.viz-embed > svg,
-    #viz-el-reno-hodograph.viz-embed > div,
-    #viz-el-reno-hodograph.viz-embed iframe {
-      display: block !important;
-      width: 480px !important;
-      height: 480px !important;
-      box-sizing: border-box;
-    }
+    
+    /* fixed column sizes (no growth) */
+    .el-reno-text-col  { flex: 0 0 260px; min-width: 0; }
+    .el-reno-hodo-col  { flex: 0 0 480px; min-width: 0; }
+    .el-reno-legend-col{ flex: 0 0 120px; min-width: 0; }
+    
+    /* force legend wrapper to not expand and to size to content */
     #el-reno-order-legend {
+      display: inline-flex !important;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 120px !important;      /* enforce compact width */
+      max-width: 120px !important;
+      box-sizing: border-box;
       padding: 4px 6px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      margin-top: 0;
     }
-    .el-reno-legend-col { display: flex; align-items: flex-start; justify-content: flex-start; }
+    
+    /* if .size-legend or other classes set width:100%, override them */
+    .size-legend,
+    .el-reno-legend-col .size-legend {
+      width: auto !important;
+      max-width: 120px !important;
+    }
+    
+    /* make sure SVG inside legend does not force expansion */
+    #el-reno-order-swatches,
+    #el-reno-order-swatches svg {
+      width: 100%;
+      max-width: 80px;              /* keep gradient narrow relative to the column */
+      height: auto;
+      display: block;
+    }
+    
+    /* ensure embed and other children do not force wrapping */
     .el-reno-threecol > * { min-width: 0; }
-    @media (max-width: 900px) {
-      .el-reno-threecol { flex-wrap: wrap; padding-left: 0; gap: 12px; align-items: stretch; }
-      .el-reno-text-col, .el-reno-hodo-col, .el-reno-legend-col { flex: 1 1 auto; max-width: 100%; }
-      #viz-el-reno-hodograph.viz-embed,
-      #viz-el-reno-hodograph.viz-embed > svg,
-      #viz-el-reno-hodograph.viz-embed > div,
-      #viz-el-reno-hodograph.viz-embed iframe { width: 100% !important; height: auto !important; }
-    }
-   
+
   </style>
 </head>
 <body>
