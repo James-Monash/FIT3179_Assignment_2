@@ -410,24 +410,38 @@
     // El Reno
     // ----------------------------
 
-    .el-reno-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      align-items: start;
-    }
+    /* keep left alignment equal to .viz-card left padding */
+    .el-reno-block { margin-left: 1.5cm; margin-right: auto; max-width: 1080px; }
     
-    .el-reno-image img { width: 100%; height: auto; display: block; border-radius: 6px; }
-    .el-reno-image figcaption { margin-top: 0.5rem; color: #555; font-size: 0.95rem; }
+    /* image row matches viz-left width visually but is full-bleed inside poster left padding */
+    .el-reno-image-row { display: block; margin-bottom: 18px; }
+    .el-reno-figure { margin: 0; max-width: 840px; }
+    .el-reno-figure img { width: 100%; height: auto; display: block; border-radius: 8px; }
+    .el-reno-caption { margin-top: 8px; color: #55607a; font-size: 13px; }
     
-    .el-reno-hodographs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .hodograph-card .mini-title { margin: 0 0 0.5rem; font-size: 0.95rem; }
+    /* narrow paragraph: limit characters per line to ~40ch (about 8–10 words) and centre left column */
+    .el-reno-text-block { max-width: 840px; margin-top: 14px; margin-bottom: 18px; }
+    .el-reno-narrow { max-width: 40ch; margin: 0; font-size: 16px; line-height: 1.6; color: #333; }
     
-    .el-reno-text, .hodograph-text { color: #222; line-height: 1.4; }
+    /* Hodograph + legend row */
+    .el-reno-hodo-row { display: flex; gap: 24px; align-items: flex-start; padding-top: 6px; }
+    .el-reno-hodograph-col { flex: 0 0 840px; max-width: 100%; position: relative; }
     
+    /* Ensure the viz embed fills the left column (matches your other viz-embed rules) */
+    #viz-el-reno-hodograph.viz-embed { width: 100% !important; height: auto; }
+    
+    /* Legend column */
+    .el-reno-legend-col { width: 240px; min-width: 180px; }
+    
+    /* Reuse existing .size-legend styling; minor tuning */
+    #el-reno-order-legend { padding: 10px; max-width: 240px; }
+    
+    /* Responsive */
     @media (max-width: 900px) {
-      .el-reno-grid { grid-template-columns: 1fr; }
-      .el-reno-hodographs { grid-template-columns: 1fr; }
+      .el-reno-hodo-row { flex-direction: column; }
+      .el-reno-hodograph-col { flex: 1 1 auto; }
+      .el-reno-legend-col { width: 100%; }
+      .el-reno-narrow { max-width: 100%; }
     }
     
   </style>
@@ -681,70 +695,40 @@
         </div>
       </section>
 
-      <section class="viz-card el-reno-section">
-        <h3 class="viz-title">El Reno Tornado and Hodographs</h3>
+      <!-- El Reno poster block (image, narrow paragraph, hodograph + legend) -->
+      <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
+        <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
       
-        <div class="el-reno-grid">
-          <figure class="el-reno-image">
-            <img src="el-reno.jpg" alt="El Reno tornado, 2013" loading="lazy">
-            <figcaption>The El Reno tornado, May 2013 — one of the largest observed.</figcaption>
+        <!-- full-width image row (keeps same left padding as viz-card) -->
+        <div class="el-reno-image-row">
+          <figure class="el-reno-figure">
+            <img src="el-reno.jpg" alt="El Reno tornado, May 2013" width="900" height="506" loading="lazy">
+            <figcaption class="el-reno-caption">The El Reno tornado, May 2013 — one of the largest observed.</figcaption>
           </figure>
+        </div>
       
-          <div class="el-reno-text">
-            <p class="intro-paragraph">
-              <strong>Wind shear</strong> that changes in direction and magnitude with height supports supercell development.
-              The curved hodograph in the final sounding indicates strong low-level rotation associated with the El Reno event.
-            </p>
+        <!-- short, narrow text on its own line (no more than ~10 words per line) -->
+        <div class="el-reno-text-block" role="region" aria-label="El Reno explanation">
+          <p class="el-reno-narrow">
+            Wind shear that turns and increases with height helps create the rotation seen in the hodograph.  
+            The final sounding after the tornado shows strong low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
+          </p>
+        </div>
+      
+        <!-- Hodograph + legend row -->
+        <div class="viz-legend-wrapper el-reno-hodo-row" role="region" aria-label="El Reno hodograph and legend">
+          <div class="viz-left el-reno-hodograph-col">
+            <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
           </div>
       
-          <div class="el-reno-hodographs">
-            <div class="hodograph-card">
-              <h4 class="mini-title">Hodograph 1</h4>
-              <div id="viz-hodographs_first_two" class="viz-embed"></div>
-              <p class="caption">Early profile showing turn with height.</p>
+          <div class="legend-right el-reno-legend-col" aria-hidden="false" role="region" aria-label="Hodograph colour legend">
+            <div id="el-reno-order-legend" class="size-legend" role="group" aria-label="Altitude colour legend">
+              <div class="legend-title">Altitude (m)</div>
+              <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
             </div>
-      
-            <div class="hodograph-card">
-              <h4 class="mini-title">Hodograph 2</h4>
-              <div id="viz-hodographs_second_two" class="viz-embed"></div>
-              <p class="caption">Final profile after tornado development; curvature implies rotation.</p>
-            </div>
-          </div>
-      
-          <div class="hodograph-text">
-            <p class="intro-paragraph">
-              Note the low-level veering and increase in wind speed. This produces streamwise vorticity that
-              updrafts can tilt into rotation, increasing the risk of tornadogenesis.
-            </p>
           </div>
         </div>
       </section>
-
-      /*
-      <p class="intro-paragraph">
-        <span class="highlight">Wind shear</span> is a critical ingredient for<br/>
-        <span class="highlight">supercell development</span> — the type of thunderstorm<br/>
-        that can produce a tornado. The wind must change<br/>
-        in both <span class="highlight">direction</span> and <span class="highlight">magnitude with height</span>.<br/>
-        The <span class="highlight">El Reno 2013 tornado</span> was one of the<br/>
-        <span class="highlight">largest tornadoes of all time</span>.<br/>
-        Look at the wind values across that day and note<br/>
-        the <span class="highlight">curved shape</span> in the final reading,<br/>
-        taken shortly after the tornado developed —<br/>
-        this curvature indicates <span class="highlight">rotation</span>.
-      </p>
-  
-      <!-- 10) first two el_reno_hodographs -->
-      <section class="viz-card">
-        <h3 class="viz-title">El Reno hodographs</h3>
-        <div id="viz-hodographs_first_two" class="viz-embed"></div>
-      </section>
-  
-      <!-- 11) second two el_reno_hodographs -->
-      <section class="viz-card">
-        <div id="viz-hodographs_second_two" class="viz-embed"></div>
-      </section>
-      */
       
       <p class="intro-paragraph">
         In conclusion, <span class="highlight">Australia has experienced its share of tornadoes</span><br/>
@@ -778,8 +762,7 @@
       byMonth: "tornadoes_by_month_aus_vs_us.json",
       deadliestBubble: "deadliest_tornadoes_bubble_chart.json",
       deadliestMap: "deadliest_tornadoes_on_a_map.json",
-      firstTwoHodographs: "el_reno_first_two_hodographs.json",
-      secondTwoHodographs: "el_reno_second_two_hodographs.json"
+      elRenoHodograph: "el-reno_hodograph.json",
     };
 
     // CSV / topo repo used for dynamic maps (the repo you used previously)
@@ -1416,6 +1399,93 @@
     }
 
     // ------------------------
+    // El Reno hodograph
+    // ------------------------
+
+    
+    // 2) Render the altitude colour legend (single-colour gradient mimic of viridis)
+    //    If your hodograph uses a viridis scale, we can create a simple vertical gradient legend.
+    //    This creates a small SVG gradient and ticks mapped to a domain you supply.
+    
+    function renderAltitudeLegend(containerId, domainMax) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+    
+      // Clear existing
+      container.innerHTML = '';
+    
+      const width = 28;
+      const height = 220;
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('width', width);
+      svg.setAttribute('height', height);
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', 'Altitude colour scale');
+    
+      // defs + gradient using viridis stops
+      const defs = document.createElementNS(svgNS, 'defs');
+      const grad = document.createElementNS(svgNS, 'linearGradient');
+      grad.setAttribute('id', 'viridisGradient');
+      grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
+    
+      // viridis-like colour stops (approx)
+      const stops = [
+        { o: 0, c: '#440154' },
+        { o: 0.25, c: '#3b528b' },
+        { o: 0.5, c: '#21918c' },
+        { o: 0.75, c: '#5ec962' },
+        { o: 1, c: '#fde725' }
+      ];
+      stops.forEach(s => {
+        const stop = document.createElementNS(svgNS, 'stop');
+        stop.setAttribute('offset', `${s.o * 100}%`);
+        stop.setAttribute('stop-color', s.c);
+        grad.appendChild(stop);
+      });
+      defs.appendChild(grad);
+      svg.appendChild(defs);
+    
+      // gradient rect
+      const rect = document.createElementNS(svgNS, 'rect');
+      rect.setAttribute('x', 0);
+      rect.setAttribute('y', 0);
+      rect.setAttribute('width', width);
+      rect.setAttribute('height', height - 40);
+      rect.setAttribute('fill', 'url(#viridisGradient)');
+      svg.appendChild(rect);
+    
+      // ticks and labels (simple)
+      const tickGroup = document.createElementNS(svgNS, 'g');
+      tickGroup.setAttribute('transform', `translate(${width + 6},0)`);
+      const ticks = [0, 50, 100, 150, 200, 250, 300, 350, 400];
+      const gHeight = height - 40;
+      ticks.forEach(t => {
+        const y = (1 - (t / domainMax)) * gHeight;
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', 0);
+        line.setAttribute('x2', 6);
+        line.setAttribute('y1', y);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', '#333');
+        line.setAttribute('stroke-width', '0.6');
+        tickGroup.appendChild(line);
+    
+        const text = document.createElementNS(svgNS, 'text');
+        text.setAttribute('x', 10);
+        text.setAttribute('y', y + 4);
+        text.setAttribute('font-size', '11');
+        text.setAttribute('fill', '#222');
+        text.textContent = String(t);
+        tickGroup.appendChild(text);
+      });
+      svg.appendChild(tickGroup);
+    
+      container.appendChild(svg);
+    }
+    
+    // ------------------------
     // Initialization: embed static specs and start dynamic maps
     // ------------------------
     async function init() {
@@ -1499,9 +1569,9 @@
       
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
       drawDeadliestCountryLegend("#deadliest-country-swatches-map");
-      
-      await embedSpec("#viz-hodographs_first_two", specs.firstTwoHodographs); 
-      await embedSpec("#viz-hodographs_second_two", specs.secondTwoHodographs); 
+
+      await embedSpec("#viz-el-reno-hodograph", specs.elRenoHodograph);
+      renderAltitudeLegend('el-reno-order-swatches', 400);
     }
 
     // run
