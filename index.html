@@ -410,29 +410,45 @@
     // El Reno
     // ----------------------------
 
-    /* Force a single non-wrapping horizontal row and vertical centring */
+    /* FORCE non-wrapping row and fixed columns */
     .el-reno-threecol {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;            /* prevent wrapping into multiple lines */
-      align-items: center;          /* vertically centre the three children */
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
       gap: 16px;
-      width: 100%;
-      max-width: 1080px;
-      box-sizing: border-box;
       padding-left: 24px;
+      box-sizing: border-box;
     }
     
-    /* Make each column a fixed-size flex item (won't grow/shrink unexpectedly) */
-    .el-reno-text-col  { flex: 0 0 260px;  max-width: 260px; box-sizing: border-box; }
-    .el-reno-hodo-col  { flex: 0 0 480px;  max-width: 480px; box-sizing: border-box; }
-    .el-reno-legend-col{ flex: 0 0 120px;  max-width: 120px; box-sizing: border-box; }
+    /* fixed columns — cannot grow */
+    .el-reno-text-col  { flex: 0 0 260px !important; max-width: 260px; min-width: 0; box-sizing: border-box; }
+    .el-reno-hodo-col  { flex: 0 0 480px !important; max-width: 480px; min-width: 0; box-sizing: border-box; }
+    .el-reno-legend-col{ flex: 0 0 120px !important; max-width: 120px; min-width: 0; box-sizing: border-box; }
     
-    /* Ensure the text is centred within its column but doesn't affect vertical alignment */
-    .el-reno-text-col { display: flex; align-items: center; justify-content: center; padding-right: 8px; }
-    .el-reno-narrow { margin: 0; max-width: 40ch; text-align: center; }
+    /* ensure children don't expand to full width */
+    .el-reno-threecol > * { min-width: 0; }
     
-    /* Ensure the embed is a block-level element of the desired size, and target common embed outputs (svg/div/iframe) */
+    /* Legend wrapper: force compact inline sizing and prevent width:100% overrides */
+    #el-reno-order-legend,
+    #el-reno-order-legend .size-legend,
+    .size-legend#el-reno-order-legend {
+      display: inline-flex !important;
+      width: auto !important;
+      max-width: 120px !important;
+      box-sizing: border-box !important;
+      padding: 4px 6px !important;
+    }
+    
+    /* SVG: responsive and cannot push parent wider */
+    #el-reno-order-swatches,
+    #el-reno-order-swatches svg {
+      width: 100% !important;
+      max-width: 80px !important;
+      height: auto !important;
+      display: block !important;
+    }
+    
+    /* Make sure the viz embed is block and fixed size (targets svg/div/iframe that vega-embed creates) */
     #viz-el-reno-hodograph.viz-embed,
     #viz-el-reno-hodograph.viz-embed > svg,
     #viz-el-reno-hodograph.viz-embed > div,
@@ -440,27 +456,12 @@
       display: block !important;
       width: 480px !important;
       height: 480px !important;
-      box-sizing: border-box;
+      box-sizing: border-box !important;
     }
     
-    /* Tight legend card (no heavy chrome) and keep top aligned visually with chart top */
-    #el-reno-order-legend {
-      padding: 4px 6px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      margin-top: 0;
-    }
-    
-    /* Make legend content align to the top of its column so its top lines up with the chart top */
-    .el-reno-legend-col { display: flex; align-items: flex-start; justify-content: flex-start; }
-    
-    /* Prevent children inside columns from forcing line breaks */
-    .el-reno-threecol > * { min-width: 0; }  /* allows flex children to shrink correctly */
-    
-    /* Fallback: if container is too narrow, explicitly allow a single small wrap at a known breakpoint */
-    @media (max-width: 900px) {
-      .el-reno-threecol { flex-wrap: wrap; padding-left: 0; gap: 12px; align-items: stretch; }
+    /* small responsive fallback */
+    @media (max-width: 980px) {
+      .el-reno-threecol { flex-wrap: wrap; padding-left: 0; gap: 12px; }
       .el-reno-text-col, .el-reno-hodo-col, .el-reno-legend-col { flex: 1 1 auto; max-width: 100%; }
       #viz-el-reno-hodograph.viz-embed,
       #viz-el-reno-hodograph.viz-embed > svg,
@@ -1434,113 +1435,74 @@
       if (!container) return;
       container.innerHTML = '';
     
-      // Force compact container sizing to prevent it expanding the column
+      // compact container sizing
       container.style.display = 'inline-block';
-      container.style.boxSizing = 'border-box';
       container.style.width = '120px';
       container.style.maxWidth = '120px';
+      container.style.boxSizing = 'border-box';
       container.style.padding = '0';
       container.style.margin = '0';
     
-      const svgW = 28;            // visual gradient width (px)
-      const svgH = 160;           // gradient height (px)
-      const paddingRight = 34;    // space for tick labels on the right
+      const svgW = 28;
+      const svgH = 160;
+      const paddingRight = 34;
       const totalW = svgW + paddingRight;
-    
       const svgNS = 'http://www.w3.org/2000/svg';
+    
       const svg = document.createElementNS(svgNS, 'svg');
-    
-      // Use viewBox for responsive rendering; do NOT set a large fixed width attribute
       svg.setAttribute('viewBox', `0 0 ${totalW} ${svgH}`);
-      svg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
-      svg.setAttribute('role', 'img');
-      svg.setAttribute('aria-label', `Altitude colour scale ${domainMin} to ${domainMax} metres`);
-    
-      // Apply tight CSS so the svg only occupies the container width
-      svg.style.display = 'block';
       svg.style.width = '100%';
       svg.style.height = 'auto';
-      svg.style.maxWidth = `${totalW}px`;
+      svg.style.display = 'block';
     
-      // Gradient defs (viridis-like)
       const defs = document.createElementNS(svgNS, 'defs');
       const grad = document.createElementNS(svgNS, 'linearGradient');
-      const gradId = `viridisGradient_${containerId}`; // unique id per container
+      const gradId = `viridis_${containerId}`;
       grad.setAttribute('id', gradId);
       grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
-    
-      const stops = [
-        { o: 0, c: '#440154' },
-        { o: 0.25, c: '#3b528b' },
-        { o: 0.5, c: '#21918c' },
-        { o: 0.75, c: '#5ec962' },
-        { o: 1, c: '#fde725' }
-      ];
-      stops.forEach(s => {
-        const stop = document.createElementNS(svgNS, 'stop');
-        stop.setAttribute('offset', `${s.o * 100}%`);
-        stop.setAttribute('stop-color', s.c);
-        grad.appendChild(stop);
-      });
+      [['0','#440154'],['25','#3b528b'],['50','#21918c'],['75','#5ec962'],['100','#fde725']]
+        .forEach(([o,c]) => {
+          const stop = document.createElementNS(svgNS,'stop');
+          stop.setAttribute('offset', `${o}%`);
+          stop.setAttribute('stop-color', c);
+          grad.appendChild(stop);
+        });
       defs.appendChild(grad);
       svg.appendChild(defs);
     
-      // Gradient rect
       const rect = document.createElementNS(svgNS, 'rect');
-      rect.setAttribute('x', 0);
-      rect.setAttribute('y', 8);
-      rect.setAttribute('width', svgW);
-      rect.setAttribute('height', svgH - 16);
+      rect.setAttribute('x', 0); rect.setAttribute('y', 8);
+      rect.setAttribute('width', svgW); rect.setAttribute('height', svgH - 16);
       rect.setAttribute('fill', `url(#${gradId})`);
       svg.appendChild(rect);
     
-      // Ticks and labels group
-      const labelX = svgW + 6;
       const g = document.createElementNS(svgNS, 'g');
-      g.setAttribute('transform', `translate(${labelX},0)`);
-    
+      g.setAttribute('transform', `translate(${svgW + 6},0)`);
       const gradientInterior = svgH - 16;
       const ticks = [domainMin, domainMax * 0.25, domainMax * 0.5, domainMax * 0.75, domainMax];
       ticks.forEach(t => {
         const y = 8 + gradientInterior * (1 - (t - domainMin) / (domainMax - domainMin));
-    
         const line = document.createElementNS(svgNS, 'line');
-        line.setAttribute('x1', 0);
-        line.setAttribute('x2', 6);
-        line.setAttribute('y1', y);
-        line.setAttribute('y2', y);
-        line.setAttribute('stroke', '#333');
-        line.setAttribute('stroke-width', '0.6');
+        line.setAttribute('x1', 0); line.setAttribute('x2', 6);
+        line.setAttribute('y1', y); line.setAttribute('y2', y);
+        line.setAttribute('stroke', '#333'); line.setAttribute('stroke-width', '0.6');
         g.appendChild(line);
-    
         const txt = document.createElementNS(svgNS, 'text');
-        txt.setAttribute('x', 10);
-        txt.setAttribute('y', y + 4);
-        txt.setAttribute('font-size', '11');
-        txt.setAttribute('fill', '#222');
+        txt.setAttribute('x', 10); txt.setAttribute('y', y + 4);
+        txt.setAttribute('font-size', '11'); txt.setAttribute('fill', '#222');
         txt.textContent = Math.round(t);
         g.appendChild(txt);
       });
-    
       svg.appendChild(g);
       container.appendChild(svg);
     
-      // Ensure ancestor .size-legend or wrapper doesn't force width:100%
+      // ensure ancestor wrapper not forcing width
       const sizeLegend = container.closest('.size-legend');
       if (sizeLegend) {
         sizeLegend.style.width = 'auto';
         sizeLegend.style.maxWidth = '140px';
-        sizeLegend.style.padding = '0';
         sizeLegend.style.boxSizing = 'border-box';
-      }
-    
-      // Final safety: ensure parent columns remain compact
-      const legendCol = container.closest('.el-reno-legend-col');
-      if (legendCol) {
-        legendCol.style.flex = '0 0 120px';
-        legendCol.style.maxWidth = '120px';
-        legendCol.style.boxSizing = 'border-box';
-        legendCol.style.minWidth = '0';
+        sizeLegend.style.padding = '0';
       }
     }
     
