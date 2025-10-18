@@ -409,46 +409,41 @@
     // ----------------------------
     // El Reno
     // ----------------------------
-
-    /* FORCE non-wrapping row and fixed columns */
+    
+    /* 1) Keep the three columns horizontally aligned; ensure text is centred */
     .el-reno-threecol {
       display: flex !important;
       flex-wrap: nowrap !important;
-      align-items: center !important;
+      align-items: center !important; /* vertical centre baseline of children */
       gap: 16px;
       padding-left: 24px;
       box-sizing: border-box;
     }
     
-    /* fixed columns — cannot grow */
-    .el-reno-text-col  { flex: 0 0 260px !important; max-width: 260px; min-width: 0; box-sizing: border-box; }
-    .el-reno-hodo-col  { flex: 0 0 480px !important; max-width: 480px; min-width: 0; box-sizing: border-box; }
-    .el-reno-legend-col{ flex: 0 0 120px !important; max-width: 120px; min-width: 0; box-sizing: border-box; }
+    /* 2) Text column: center paragraph vertically and horizontally */
+    .el-reno-text-col {
+      flex: 0 0 260px !important;
+      max-width: 260px;
+      min-width: 0;
+      display: flex;
+      align-items: center;      /* vertical centre */
+      justify-content: center;  /* horizontal centre */
+      padding-right: 8px;
+    }
+    .el-reno-narrow { text-align: center; margin: 0; }
     
-    /* ensure children don't expand to full width */
-    .el-reno-threecol > * { min-width: 0; }
-    
-    /* Legend wrapper: force compact inline sizing and prevent width:100% overrides */
-    #el-reno-order-legend,
-    #el-reno-order-legend .size-legend,
-    .size-legend#el-reno-order-legend {
-      display: inline-flex !important;
-      width: auto !important;
-      max-width: 120px !important;
-      box-sizing: border-box !important;
-      padding: 4px 6px !important;
+    /* 3) Hodograph column: fixed width; shift it so its right edge lines up with 840px left-column width */
+    .el-reno-hodo-col {
+      flex: 0 0 480px !important;
+      max-width: 480px;
+      min-width: 0;
+      position: relative;
+      /* Align the hodograph's right edge to an 840px left-column baseline used elsewhere:
+         shift right by (840 - hodograph width). Adjust 840 if your other viz-left is different. */
+      margin-left: calc(840px - 480px); /* = 360px; moves the chart right so its right edge aligns at 840px */
     }
     
-    /* SVG: responsive and cannot push parent wider */
-    #el-reno-order-swatches,
-    #el-reno-order-swatches svg {
-      width: 100% !important;
-      max-width: 80px !important;
-      height: auto !important;
-      display: block !important;
-    }
-    
-    /* Make sure the viz embed is block and fixed size (targets svg/div/iframe that vega-embed creates) */
+    /* Ensure the embedded viz behaves as a block at the requested size */
     #viz-el-reno-hodograph.viz-embed,
     #viz-el-reno-hodograph.viz-embed > svg,
     #viz-el-reno-hodograph.viz-embed > div,
@@ -459,10 +454,44 @@
       box-sizing: border-box !important;
     }
     
+    /* 4) Legend: make smaller and raise so its top aligns with chart top */
+    .el-reno-legend-col {
+      flex: 0 0 100px !important;    /* slightly smaller column */
+      max-width: 100px !important;
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;       /* keep legend content starting at top */
+      justify-content: flex-start;
+      margin-left: 8px;              /* small horizontal separation from chart */
+      /* small negative translate to nudge legend up so its top aligns with chart top */
+      transform: translateY(-6px);
+      box-sizing: border-box;
+    }
+    
+    /* Compact legend card override */
+    #el-reno-order-legend,
+    .el-reno-legend-col .size-legend {
+      display: inline-flex !important;
+      width: auto !important;
+      max-width: 100px !important;
+      padding: 2px 4px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Make the SVG gradient narrow and prevent it from expanding the column */
+    #el-reno-order-swatches,
+    #el-reno-order-swatches svg {
+      display: block !important;
+      width: 100% !important;
+      max-width: 64px !important;   /* smaller swatch width */
+      height: auto !important;
+    }
+    
     /* small responsive fallback */
     @media (max-width: 980px) {
-      .el-reno-threecol { flex-wrap: wrap; padding-left: 0; gap: 12px; }
-      .el-reno-text-col, .el-reno-hodo-col, .el-reno-legend-col { flex: 1 1 auto; max-width: 100%; }
+      .el-reno-threecol { flex-wrap: wrap; padding-left: 0; gap: 12px; align-items: stretch; transform: none !important; margin: 0; }
+      .el-reno-text-col, .el-reno-hodo-col, .el-reno-legend-col { flex: 1 1 auto; max-width: 100%; min-width: 0; }
       #viz-el-reno-hodograph.viz-embed,
       #viz-el-reno-hodograph.viz-embed > svg,
       #viz-el-reno-hodograph.viz-embed > div,
@@ -1589,10 +1618,10 @@
       drawDeadliestCountryLegend()
       
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
-      drawDeadliestCountryLegend("#deadliest-country-swatches-map");
+      drawDeadliestCountryLegend("deadliest-country-swatches-map");
 
       await embedSpec("#viz-el-reno-hodograph", specs.elRenoHodograph);
-      renderAltitudeLegend("#el-reno-order-swatches", 0, 400);
+      renderAltitudeLegend("el-reno-order-swatches", 0, 400);
     }
 
     // run
