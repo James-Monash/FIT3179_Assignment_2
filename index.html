@@ -410,51 +410,52 @@
     // El Reno
     // ----------------------------
 
-    /* Inner wrapper aligns hodograph and legend on same baseline and keeps them tightly grouped */
-    .el-reno-hodo-inner {
+    /* Ensure el-reno-block matches viz-card left offset and max width */
+    .el-reno-block { margin-left: 1.5cm; margin-right: auto; max-width: 1080px; }
+    
+    /* Image alignment: same visual width as viz-left (840px) so left edge lines up */
+    .el-reno-image-row { margin-bottom: 14px; }
+    .el-reno-figure { margin: 0; max-width: 840px; }
+    .el-reno-figure img { width: 100%; height: auto; display: block; border-radius: 8px; }
+    .el-reno-caption { margin-top: 8px; color: #55607a; font-size: 13px; }
+    
+    /* Three-column row: text | hodograph | legend */
+    .el-reno-threecol {
       display: flex;
-      align-items: center;        /* keeps hodograph and legend vertically aligned */
-      gap: 12px;
+      align-items: center;        /* keeps all three on same baseline / middle */
+      gap: 16px;
       width: 100%;
-    }
-    
-    /* Reduce hodograph column to recommended width */
-    .el-reno-hodograph-col { flex: 0 0 560px; max-width: 560px; }
-    
-    /* Make embed fill that width and use a fixed height (matches the recommended size) */
-    #viz-el-reno-hodograph.viz-embed {
-      width: 560px !important;
-      height: 560px !important;
+      max-width: 1080px;
       box-sizing: border-box;
     }
     
-    /* Tight legend column: remove extra white space and shrink to fit */
-    .el-reno-legend-col { width: 120px; min-width: 120px; display: flex; align-items: center; }
+    /* Text column: narrow and constrained to ~40ch to keep ~10 words per line */
+    .el-reno-text-col { flex: 0 0 240px; max-width: 240px; }
+    .el-reno-narrow { max-width: 40ch; margin: 0; font-size: 16px; line-height: 1.6; color: #333; }
     
-    /* Make the size-legend compact */
+    /* Hodograph column: fixed recommended width (change to 560 if desired) */
+    .el-reno-hodo-col { flex: 0 0 480px; max-width: 480px; position: relative; }
+    #viz-el-reno-hodograph.viz-embed { width: 480px !important; height: 480px !important; box-sizing: border-box; }
+    
+    /* Legend column: compact, vertically centred, tight padding */
+    .el-reno-legend-col { flex: 0 0 120px; min-width: 120px; display: flex; align-items: center; justify-content: flex-start; }
     #el-reno-order-legend {
-      padding: 6px 8px;
-      background: transparent;         /* let it blend unless you want the card look */
+      padding: 6px 6px;
+      background: transparent;
       border: none;
       box-shadow: none;
       max-width: 120px;
     }
+    #el-reno-order-legend .legend-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
     
-    /* Legend svg container — remove whitespace and force tight layout */
+    /* Ensure the legend SVG is tight and uses full width */
     #el-reno-order-swatches svg { display: block; width: 100%; height: auto; }
     
-    /* Legend title styling smaller to fit compact layout */
-    #el-reno-order-legend .legend-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #123047;
-      margin-bottom: 6px;
-    }
-    
-    /* Reduce gap for mobile and stack */
+    /* Responsive: stack columns on small screens */
     @media (max-width: 900px) {
-      .el-reno-hodo-inner { flex-direction: column; align-items: stretch; }
-      .el-reno-hodograph-col { flex: 1 1 auto; width: 100%; }
+      .el-reno-threecol { flex-direction: column; align-items: stretch; }
+      .el-reno-text-col { flex: none; width: 100%; max-width: none; margin-bottom: 10px; }
+      .el-reno-hodo-col { flex: 1 1 auto; width: 100%; }
       #viz-el-reno-hodograph.viz-embed { width: 100% !important; height: auto !important; }
       .el-reno-legend-col { width: 100%; margin-top: 8px; justify-content: flex-start; }
     }
@@ -710,11 +711,10 @@
         </div>
       </section>
 
-      <!-- El Reno poster block (image, narrow paragraph, hodograph + legend) -->
       <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
         <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
       
-        <!-- full-width image row (keeps same left padding as viz-card) -->
+        <!-- Image row aligned to same left offset as viz-card -->
         <div class="el-reno-image-row">
           <figure class="el-reno-figure">
             <img src="el-reno.jpg" alt="El Reno tornado, May 2013" width="900" height="506" loading="lazy">
@@ -722,26 +722,27 @@
           </figure>
         </div>
       
-        <!-- short, narrow text on its own line (no more than ~10 words per line) -->
-        <div class="el-reno-text-block" role="region" aria-label="El Reno explanation">
-          <p class="el-reno-narrow">
-            Wind shear that turns and increases with height helps create the rotation seen in the hodograph.  
-            The final sounding after the tornado shows strong low‑level curvature and speed increases, indicating streamwise vorticity being tilted into the updraft.
-          </p>
-        </div>
+        <!-- Row that contains text | hodograph | legend on the same baseline -->
+        <div class="el-reno-threecol" role="region" aria-label="El Reno text hodograph legend">
+          <!-- narrow text column -->
+          <div class="el-reno-text-col">
+            <p class="el-reno-narrow">
+              Wind shear that turns and increases with height helps create the rotation seen in the hodograph.
+              The final sounding after the tornado shows strong low‑level curvature and speed increases,
+              indicating streamwise vorticity being tilted into the updraft.
+            </p>
+          </div>
       
-        <!-- Hodograph + legend row -->
-        <div class="viz-legend-wrapper el-reno-hodo-row" role="region" aria-label="El Reno hodograph and legend">
-          <div class="el-reno-hodo-inner">
-            <div class="viz-left el-reno-hodograph-col">
-              <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
-            </div>
-        
-            <div class="legend-right el-reno-legend-col" aria-hidden="false" role="region" aria-label="Hodograph colour legend">
-              <div id="el-reno-order-legend" class="size-legend" role="group" aria-label="Altitude colour legend">
-                <div class="legend-title">Altitude (m)</div>
-                <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
-              </div>
+          <!-- hodograph embed column -->
+          <div class="el-reno-hodo-col">
+            <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
+          </div>
+      
+          <!-- compact legend column -->
+          <div class="el-reno-legend-col" role="group" aria-label="Altitude colour legend">
+            <div id="el-reno-order-legend" class="size-legend" aria-hidden="false">
+              <div class="legend-title">Altitude (m)</div>
+              <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
             </div>
           </div>
         </div>
@@ -1422,12 +1423,11 @@
     function renderAltitudeLegend(containerId, domainMin = 0, domainMax = 400) {
       const container = document.getElementById(containerId);
       if (!container) return;
-      container.innerHTML = ''; // clear
+      container.innerHTML = '';
     
-      const svgW = 40;            // narrow gradient width
-      const svgH = 220;           // gradient height
-      const labelLeft = svgW + 6; // x offset for ticks/labels
-    
+      const svgW = 28;             // narrow gradient width
+      const svgH = 160;            // reduce height to fit layout
+      const labelLeft = svgW + 6;
       const svgNS = 'http://www.w3.org/2000/svg';
       const svg = document.createElementNS(svgNS, 'svg');
       svg.setAttribute('viewBox', `0 0 ${svgW + 60} ${svgH}`);
@@ -1436,12 +1436,11 @@
       svg.setAttribute('role', 'img');
       svg.setAttribute('aria-label', `Altitude colour scale ${domainMin} to ${domainMax} metres`);
     
-      // defs and linearGradient (viridis-like)
+      // gradient defs (viridis-ish)
       const defs = document.createElementNS(svgNS, 'defs');
       const grad = document.createElementNS(svgNS, 'linearGradient');
-      grad.setAttribute('id', 'viridisGradientCompact');
+      grad.setAttribute('id', 'viridisGradientCompact2');
       grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
-    
       const stops = [
         { o: 0, c: '#440154' },
         { o: 0.25, c: '#3b528b' },
@@ -1458,16 +1457,16 @@
       defs.appendChild(grad);
       svg.appendChild(defs);
     
-      // gradient rect
+      // rect
       const rect = document.createElementNS(svgNS, 'rect');
       rect.setAttribute('x', 0);
       rect.setAttribute('y', 8);
       rect.setAttribute('width', svgW);
       rect.setAttribute('height', svgH - 16);
-      rect.setAttribute('fill', 'url(#viridisGradientCompact)');
+      rect.setAttribute('fill', 'url(#viridisGradientCompact2)');
       svg.appendChild(rect);
     
-      // ticks and numeric labels (compact)
+      // ticks and labels
       const ticks = [domainMin, domainMax * 0.25, domainMax * 0.5, domainMax * 0.75, domainMax];
       const g = document.createElementNS(svgNS, 'g');
       g.setAttribute('transform', `translate(${labelLeft},0)`);
