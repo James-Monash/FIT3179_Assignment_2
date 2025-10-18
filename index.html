@@ -410,24 +410,23 @@
     // El Reno
     // ----------------------------
 
-    /* Put the three items on the same baseline, legend top aligned, nudge everything right */
+    /* El Reno three-column row: center items vertically so text, chart and legend align */
     .el-reno-threecol {
       display: flex;
-      align-items: flex-start;       /* top-align so legend sits at top of chart */
-      gap: 20px;
+      align-items: center;       /* vertical centre the three columns */
+      gap: 16px;
       width: 100%;
       max-width: 1080px;
       box-sizing: border-box;
-      padding-left: 24px;            /* move the whole group slightly to the right for better visual balance */
+      padding-left: 24px;        /* small global nudge to the right for visual balance */
     }
     
-    /* Text column: center text internally, keep ~10 words per line, and match highlight style */
+    /* Text column: do NOT vertically centre the paragraph internally;
+       allow the parent flex alignment to position it. Keep text centered horizontally. */
     .el-reno-text-col {
-      flex: 0 0 260px;               /* a bit wider so text centers nicely beside the chart */
+      flex: 0 0 260px;
       max-width: 260px;
-      display: flex;
-      align-items: center;           /* vertically centre the paragraph within the row */
-      justify-content: center;
+      display: block;            /* avoid internal flex centring that moves text vertically */
       padding-right: 8px;
     }
     
@@ -437,42 +436,36 @@
       font-size: 16px;
       line-height: 1.6;
       color: #333;
-      text-align: center;            /* center the lines within the text column */
+      text-align: center;
     }
     
-    /* use the same orange highlight used site-wide */
-    .el-reno-narrow .highlight,
-    .el-reno-text-col .highlight {
-      color: #e07b39;
-      font-weight: 600;
-    }
-    
-    /* Hodograph column: move to the right a touch, keep fixed width */
+    /* Hodograph column: fixed width and no extra margin that shifts vertical alignment */
     .el-reno-hodo-col {
       flex: 0 0 480px;
       max-width: 480px;
       position: relative;
-      margin-left: 12px;             /* nudge chart to the right of the text column */
+      margin-left: 0;            /* remove left nudge so alignment is controlled by gap only */
     }
     
-    /* Ensure the embed respects the chosen size */
+    /* Enforce embed sizing and make it behave like a block-level element */
     #viz-el-reno-hodograph.viz-embed {
+      display: block;
       width: 480px !important;
       height: 480px !important;
       box-sizing: border-box;
     }
     
-    /* Legend column: compact and top aligned to the chart */
+    /* Legend column: compact, top-aligned to the chart visually by centring within parent */
     .el-reno-legend-col {
       flex: 0 0 120px;
       min-width: 120px;
       display: flex;
-      align-items: flex-start;       /* ensure legend top sits at same baseline as chart top */
+      align-items: flex-start;   /* keep legend content starting at top of its column */
       justify-content: flex-start;
-      padding-top: 6px;              /* a small nudge so title aligns visually with chart top */
+      padding-top: 0;            /* remove extra top padding */
     }
     
-    /* Remove heavy card chrome for the small legend and keep it tight */
+    /* Legend card: remove heavy chrome and keep tight */
     #el-reno-order-legend {
       padding: 4px 6px;
       background: transparent;
@@ -481,14 +474,19 @@
       max-width: 120px;
     }
     
-    /* Tight legend SVG placement */
+    /* Legend SVG: fit tight to its container */
     #el-reno-order-swatches svg { display: block; width: 100%; height: auto; }
     
-    /* Smaller devices: stack and keep spacing tidy */
+    /* Mobile: stack in the same order and keep spacing tidy */
     @media (max-width: 900px) {
-      .el-reno-threecol { flex-direction: column; align-items: stretch; padding-left: 0; gap: 12px; }
-      .el-reno-text-col { width: 100%; max-width: 100%; padding-right: 0; }
-      .el-reno-hodo-col { width: 100%; max-width: 100%; margin-left: 0; }
+      .el-reno-threecol {
+        flex-direction: column;
+        align-items: stretch;
+        padding-left: 0;
+        gap: 12px;
+      }
+      .el-reno-text-col { width: 100%; max-width: none; padding-right: 0; }
+      .el-reno-hodo-col { width: 100%; max-width: none; }
       #viz-el-reno-hodograph.viz-embed { width: 100% !important; height: auto !important; }
       .el-reno-legend-col { width: 100%; min-width: 0; padding-top: 0; justify-content: flex-start; }
     }
