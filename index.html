@@ -1431,15 +1431,54 @@
       usSpec.width = 840;
       
       // embed with same options you had
-      await vegaEmbed("#aus-chart", ausSpec, { 
-        actions: false, 
-        renderer: "canvas", 
-        tooltip: { theme: 'custom', disableDefaultStyle: true } 
+      await embedWithHtmlAnnotations("#aus-chart", ausSpec, {
+        projection: { center: [134, -28], scale: 850 },
+        annotations: [
+          // Alice Springs (Central Australia) — tornadoes extremely rare in the interior
+          {
+            id: "alice-springs-note",
+            src: { lon: 133.8836, lat: -23.6975 },    // Alice Springs coordinates.
+            boxLonLat: { lon: 133.5, lat: -22.5 },    // box slightly north-east of marker
+            label: "Recorded tornadoes in central Australia are extremely rare",
+            nudgeX: -40,
+            nudgeY: -10
+          },
+      
+          // South of Western Australia, over the ocean — note about recording bias
+          {
+            id: "wa-coast-note",
+            src: { lon: 115.0, lat: -33.5 },          // offshore south of WA / near Perth latitude band.
+            boxLonLat: { lon: 114.0, lat: -31.5 },   // annotation box nearer the coast
+            label: "Notice tornadoes cluster near populated areas; others may occur unrecorded offshore or remote inland",
+            nudgeX: -180,
+            nudgeY: 8
+          }
+        ]
       });
-      await vegaEmbed("#us-chart", usSpec, { 
-        actions: false, 
-        renderer: "canvas", 
-        tooltip: { theme: 'custom', disableDefaultStyle: true } 
+
+      await embedWithHtmlAnnotations("#us-chart", usSpec, {
+        projection: { center: [-95, 37], scale: 900 },
+        annotations: [
+          // South of California, over the Pacific Ocean — less common in the west but still happen
+          {
+            id: "ca-offshore-note",
+            src: { lon: -120.0, lat: 33.0 },          // offshore southern California / near San Diego latitude band.
+            boxLonLat: { lon: -118.0, lat: 32.0 },   // box closer to the coast
+            label: "Tornadoes are less common in the western US but still occur",
+            nudgeX: -60,
+            nudgeY: 12
+          },
+      
+          // Beneath Alabama — dangerous tornadoes concentrated in the southeast
+          {
+            id: "alabama-note",
+            src: { lon: -86.9023, lat: 32.3182 },     // Alabama approx center coordinates.
+            boxLonLat: { lon: -86.5, lat: 30.8 },    // box slightly south of the marker (near the Gulf-facing region)
+            label: "Dangerous tornadoes are concentrated in the southeast states",
+            nudgeX: -40,
+            nudgeY: 10
+          }
+        ]
       });
     }
 
