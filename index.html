@@ -410,48 +410,64 @@
     // El Reno
     // ----------------------------
 
-    /* ensure parent row cannot wrap and children may shrink if needed */
+    /* Force a single non-wrapping horizontal row and vertical centring */
     .el-reno-threecol {
       display: flex;
-      flex-wrap: nowrap !important;
-      align-items: center;
-    }
-    
-    /* fixed column sizes (no growth) */
-    .el-reno-text-col  { flex: 0 0 260px; min-width: 0; }
-    .el-reno-hodo-col  { flex: 0 0 480px; min-width: 0; }
-    .el-reno-legend-col{ flex: 0 0 120px; min-width: 0; }
-    
-    /* force legend wrapper to not expand and to size to content */
-    #el-reno-order-legend {
-      display: inline-flex !important;
-      flex-direction: column;
-      align-items: flex-start;
-      width: 120px !important;      /* enforce compact width */
-      max-width: 120px !important;
-      box-sizing: border-box;
-      padding: 4px 6px;
-    }
-    
-    /* if .size-legend or other classes set width:100%, override them */
-    .size-legend,
-    .el-reno-legend-col .size-legend {
-      width: auto !important;
-      max-width: 120px !important;
-    }
-    
-    /* make sure SVG inside legend does not force expansion */
-    #el-reno-order-swatches,
-    #el-reno-order-swatches svg {
+      flex-direction: row;
+      flex-wrap: nowrap;            /* prevent wrapping into multiple lines */
+      align-items: center;          /* vertically centre the three children */
+      gap: 16px;
       width: 100%;
-      max-width: 80px;              /* keep gradient narrow relative to the column */
-      height: auto;
-      display: block;
+      max-width: 1080px;
+      box-sizing: border-box;
+      padding-left: 24px;
     }
     
-    /* ensure embed and other children do not force wrapping */
-    .el-reno-threecol > * { min-width: 0; }
-
+    /* Make each column a fixed-size flex item (won't grow/shrink unexpectedly) */
+    .el-reno-text-col  { flex: 0 0 260px;  max-width: 260px; box-sizing: border-box; }
+    .el-reno-hodo-col  { flex: 0 0 480px;  max-width: 480px; box-sizing: border-box; }
+    .el-reno-legend-col{ flex: 0 0 120px;  max-width: 120px; box-sizing: border-box; }
+    
+    /* Ensure the text is centred within its column but doesn't affect vertical alignment */
+    .el-reno-text-col { display: flex; align-items: center; justify-content: center; padding-right: 8px; }
+    .el-reno-narrow { margin: 0; max-width: 40ch; text-align: center; }
+    
+    /* Ensure the embed is a block-level element of the desired size, and target common embed outputs (svg/div/iframe) */
+    #viz-el-reno-hodograph.viz-embed,
+    #viz-el-reno-hodograph.viz-embed > svg,
+    #viz-el-reno-hodograph.viz-embed > div,
+    #viz-el-reno-hodograph.viz-embed iframe {
+      display: block !important;
+      width: 480px !important;
+      height: 480px !important;
+      box-sizing: border-box;
+    }
+    
+    /* Tight legend card (no heavy chrome) and keep top aligned visually with chart top */
+    #el-reno-order-legend {
+      padding: 4px 6px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      margin-top: 0;
+    }
+    
+    /* Make legend content align to the top of its column so its top lines up with the chart top */
+    .el-reno-legend-col { display: flex; align-items: flex-start; justify-content: flex-start; }
+    
+    /* Prevent children inside columns from forcing line breaks */
+    .el-reno-threecol > * { min-width: 0; }  /* allows flex children to shrink correctly */
+    
+    /* Fallback: if container is too narrow, explicitly allow a single small wrap at a known breakpoint */
+    @media (max-width: 900px) {
+      .el-reno-threecol { flex-wrap: wrap; padding-left: 0; gap: 12px; align-items: stretch; }
+      .el-reno-text-col, .el-reno-hodo-col, .el-reno-legend-col { flex: 1 1 auto; max-width: 100%; }
+      #viz-el-reno-hodograph.viz-embed,
+      #viz-el-reno-hodograph.viz-embed > svg,
+      #viz-el-reno-hodograph.viz-embed > div,
+      #viz-el-reno-hodograph.viz-embed iframe { width: 100% !important; height: auto !important; }
+    }
+    
   </style>
 </head>
 <body>
@@ -1418,22 +1434,41 @@
       if (!container) return;
       container.innerHTML = '';
     
-      const svgW = 28;             // narrow gradient width
-      const svgH = 160;            // reduce height to fit layout
-      const labelLeft = svgW + 6;
+      // Force compact container sizing to prevent it expanding the column
+      container.style.display = 'inline-block';
+      container.style.boxSizing = 'border-box';
+      container.style.width = '120px';
+      container.style.maxWidth = '120px';
+      container.style.padding = '0';
+      container.style.margin = '0';
+    
+      const svgW = 28;            // visual gradient width (px)
+      const svgH = 160;           // gradient height (px)
+      const paddingRight = 34;    // space for tick labels on the right
+      const totalW = svgW + paddingRight;
+    
       const svgNS = 'http://www.w3.org/2000/svg';
       const svg = document.createElementNS(svgNS, 'svg');
-      svg.setAttribute('viewBox', `0 0 ${svgW + 60} ${svgH}`);
-      svg.setAttribute('width', svgW + 60);
-      svg.setAttribute('height', svgH);
+    
+      // Use viewBox for responsive rendering; do NOT set a large fixed width attribute
+      svg.setAttribute('viewBox', `0 0 ${totalW} ${svgH}`);
+      svg.setAttribute('preserveAspectRatio', 'xMinYMin meet');
       svg.setAttribute('role', 'img');
       svg.setAttribute('aria-label', `Altitude colour scale ${domainMin} to ${domainMax} metres`);
     
-      // gradient defs (viridis-ish)
+      // Apply tight CSS so the svg only occupies the container width
+      svg.style.display = 'block';
+      svg.style.width = '100%';
+      svg.style.height = 'auto';
+      svg.style.maxWidth = `${totalW}px`;
+    
+      // Gradient defs (viridis-like)
       const defs = document.createElementNS(svgNS, 'defs');
       const grad = document.createElementNS(svgNS, 'linearGradient');
-      grad.setAttribute('id', 'viridisGradientCompact2');
+      const gradId = `viridisGradient_${containerId}`; // unique id per container
+      grad.setAttribute('id', gradId);
       grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
+    
       const stops = [
         { o: 0, c: '#440154' },
         { o: 0.25, c: '#3b528b' },
@@ -1450,22 +1485,25 @@
       defs.appendChild(grad);
       svg.appendChild(defs);
     
-      // rect
+      // Gradient rect
       const rect = document.createElementNS(svgNS, 'rect');
       rect.setAttribute('x', 0);
       rect.setAttribute('y', 8);
       rect.setAttribute('width', svgW);
       rect.setAttribute('height', svgH - 16);
-      rect.setAttribute('fill', 'url(#viridisGradientCompact2)');
+      rect.setAttribute('fill', `url(#${gradId})`);
       svg.appendChild(rect);
     
-      // ticks and labels
-      const ticks = [domainMin, domainMax * 0.25, domainMax * 0.5, domainMax * 0.75, domainMax];
+      // Ticks and labels group
+      const labelX = svgW + 6;
       const g = document.createElementNS(svgNS, 'g');
-      g.setAttribute('transform', `translate(${labelLeft},0)`);
+      g.setAttribute('transform', `translate(${labelX},0)`);
+    
       const gradientInterior = svgH - 16;
+      const ticks = [domainMin, domainMax * 0.25, domainMax * 0.5, domainMax * 0.75, domainMax];
       ticks.forEach(t => {
         const y = 8 + gradientInterior * (1 - (t - domainMin) / (domainMax - domainMin));
+    
         const line = document.createElementNS(svgNS, 'line');
         line.setAttribute('x1', 0);
         line.setAttribute('x2', 6);
@@ -1483,9 +1521,27 @@
         txt.textContent = Math.round(t);
         g.appendChild(txt);
       });
-      svg.appendChild(g);
     
+      svg.appendChild(g);
       container.appendChild(svg);
+    
+      // Ensure ancestor .size-legend or wrapper doesn't force width:100%
+      const sizeLegend = container.closest('.size-legend');
+      if (sizeLegend) {
+        sizeLegend.style.width = 'auto';
+        sizeLegend.style.maxWidth = '140px';
+        sizeLegend.style.padding = '0';
+        sizeLegend.style.boxSizing = 'border-box';
+      }
+    
+      // Final safety: ensure parent columns remain compact
+      const legendCol = container.closest('.el-reno-legend-col');
+      if (legendCol) {
+        legendCol.style.flex = '0 0 120px';
+        legendCol.style.maxWidth = '120px';
+        legendCol.style.boxSizing = 'border-box';
+        legendCol.style.minWidth = '0';
+      }
     }
     
     // ------------------------
