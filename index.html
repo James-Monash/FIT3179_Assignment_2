@@ -1942,18 +1942,24 @@
         annotations: [
           {
             id: "peak-2011",
-            // keep start anchored to the data point (or use lineStart if you prefer)
+            // anchor at the data point (line start is projected from this)
             src: { x: 2011, y: 2074 },
+      
+            // HTML box location (unchanged)
             boxXY: { x: 1986, y: 2300 },
-          
-            // nudge start slightly if needed (optional)
-            anchorNudgeX: -47,
-            anchorNudgeY: 6,
-          
-            // explicit end in pixels (tweak visually)
-            lineStart: { x: 1876, y: 1979 },        // data coords, will be projected
-            lineEnd:   { x: 1011, y: 273, coords: "px" }, // example: 1200-142, 380-113
-          
+            nudgeX: 0,
+            nudgeY: 0,
+      
+            // small pixel nudge applied to the anchor if you need micro-adjustment (keep 0 if not needed)
+            anchorNudgeX: 0,
+            anchorNudgeY: 0,
+      
+            // explicit pixel end point (coords: "px") — tweak these if you want to move the end visually
+            // This example moves current end by about -47px in x and +6px in y (1.5cm left, couple mm down)
+            // Change the numbers if you want a different absolute position.
+            lineEnd: { x: 1011 - 47, y: 273 + 6, coords: "px" },
+      
+            // You can also omit lineStart here and the code will use src as the start.
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
             maxWidth: 320,
             lineColor: "#000000",
