@@ -398,7 +398,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin: 0;               /* let .size-legend gap control spacing above it */
+      margin: 0;    
       padding: 0;
     }
     
@@ -428,6 +428,19 @@
       color: #55607a;
       font-weight: 500;
       margin-left: 6px;
+    }
+
+    .fujita-legend .legend-checkbox {
+      margin: 0;
+      padding: 0;
+      width: 16px;
+      height: 16px;
+      box-sizing: border-box;
+      vertical-align: middle;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .legend-item.disabled { opacity: 0.45; }
@@ -1673,7 +1686,9 @@
       };
     
       container.innerHTML = "";
-    
+      container.classList.toggle('interactive-legend', interactive);
+      container.classList.toggle('static-legend', !interactive);
+      
       ratings.forEach(r => {
         const row = document.createElement("div");
         row.className = "f-row legend-item";
@@ -2044,7 +2059,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      applyLegendNudge('fujita-legend', -16);
+      //applyLegendNudge('fujita-legend', -16);
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
