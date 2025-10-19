@@ -1176,6 +1176,32 @@
         return { x: px, y: py };
       }
     
+      function toPixelPoint(pt, chartOffset = { left: 0, top: 0 }) {
+        if (!pt) return null;
+        // if coords explicitly 'px' assume already pixel coords
+        if (pt.coords === "px") return { x: pt.x + (chartOffset.left || 0), y: pt.y + (chartOffset.top || 0) };
+        // otherwise treat as data coords
+        if (typeof pt.x === "number" && typeof pt.y === "number") {
+          const p = dataToPixels(pt.x, pt.y);
+          if (p.x == null || p.y == null) return null;
+          return { x: p.x + (chartOffset.left || 0), y: p.y + (chartOffset.top || 0) };
+        }
+        return null;
+      }
+    
+      function getChartOffset() {
+        const containerRect = container.getBoundingClientRect();
+        const canvas = container.querySelector("canvas");
+        const svg = Array.from(container.querySelectorAll("svg")).find(s => !s.classList.contains("annotation-overlay"));
+        const chartEl = canvas || svg || null;
+        if (!chartEl) return { left: 0, top: 0 };
+        const chartRect = chartEl.getBoundingClientRect();
+        return {
+          left: Math.round(chartRect.left - containerRect.left),
+          top: Math.round(chartRect.top - containerRect.top)
+        };
+      }
+    
       function drawAnnotations() {
         const bbox = container.getBoundingClientRect();
         const width = Math.max(20, Math.floor(bbox.width));
@@ -1185,6 +1211,9 @@
         overlay.setAttribute("height", height);
         overlay.style.width = width + "px";
         overlay.style.height = height + "px";
+    
+        // compute chart element offset once per draw
+        const chartOffset = getChartOffset();
     
         // clear overlay lines and boxes
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
@@ -1197,7 +1226,7 @@
           let anchorPx = null;
           if (typeof src.x === "number" && typeof src.y === "number") {
             const pt = dataToPixels(src.x, src.y);
-            if (pt.x != null && pt.y != null) anchorPx = pt;
+            if (pt.x != null && pt.y != null) anchorPx = { x: pt.x + (chartOffset.left || 0), y: pt.y + (chartOffset.top || 0) };
           }
     
           // compute box position from boxXY (preferred) or fallback to src
@@ -1206,8 +1235,9 @@
             : (typeof src.x === "number" && typeof src.y === "number" ? { x: src.x, y: src.y } : null);
     
           if (!boxCoord) return null;
-          const boxPx = dataToPixels(boxCoord.x, boxCoord.y);
-          if (boxPx.x == null || boxPx.y == null) return null;
+          const boxPxRaw = dataToPixels(boxCoord.x, boxCoord.y);
+          if (boxPxRaw.x == null || boxPxRaw.y == null) return null;
+          const boxPx = { x: boxPxRaw.x + (chartOffset.left || 0), y: boxPxRaw.y + (chartOffset.top || 0) };
     
           const div = document.createElement("div");
           div.className = "annotation-box";
@@ -1230,7 +1260,7 @@
           const nudgeX = Number.isFinite(a.nudgeX) ? a.nudgeX : 0;
           const nudgeY = Number.isFinite(a.nudgeY) ? a.nudgeY : 0;
     
-          // default placement: box at projected boxPx + nudges
+          // default placement: box at projected boxPx + nudges (box is not affected by anchor nudges)
           let leftPx = boxPx.x + nudgeX;
           let topPx  = boxPx.y + nudgeY;
     
@@ -1253,31 +1283,62 @@
           div.style.left = Math.round(leftPx) + "px";
           div.style.top  = Math.round(topPx) + "px";
     
-          return { a, div, anchorPx, left: leftPx, top: topPx, width: w, height: h };
+          return { a, div, anchorPx, left: leftPx, top: topPx, width: w, height: h, boxPx };
         }).filter(Boolean);
     
-        // draw leader lines from (possibly nudged) anchor to inset box edge; no marker drawn
+        // draw lines according to explicit lineStart/lineEnd if present, otherwise use anchor->box logic
         created.forEach(c => {
+          const ann = c.a;
+          // helper to resolve a point (data or px) to pixel coords
+          const resolvePoint = (pt) => {
+            if (!pt) return null;
+            // if coords === 'px' treat as pixel and include chartOffset if provided
+            if (pt.coords === "px") return { x: pt.x + (chartOffset.left || 0), y: pt.y + (chartOffset.top || 0) };
+            // otherwise treat as data coords
+            if (typeof pt.x === "number" && typeof pt.y === "number") {
+              const p = dataToPixels(pt.x, pt.y);
+              if (p.x == null || p.y == null) return null;
+              return { x: p.x + (chartOffset.left || 0), y: p.y + (chartOffset.top || 0) };
+            }
+            return null;
+          };
+    
+          // If explicit lineStart/lineEnd provided, draw between those two points (user-controlled)
+          const explicitStart = resolvePoint(ann.lineStart);
+          const explicitEnd   = resolvePoint(ann.lineEnd);
+          if (explicitStart && explicitEnd) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", Math.round(explicitStart.x));
+            line.setAttribute("y1", Math.round(explicitStart.y));
+            line.setAttribute("x2", Math.round(explicitEnd.x));
+            line.setAttribute("y2", Math.round(explicitEnd.y));
+            line.setAttribute("class", "annotation-line");
+            line.setAttribute("stroke", (ann && typeof ann.lineColor === "string") ? ann.lineColor : "#000000");
+            line.setAttribute("stroke-width", (ann && ann.lineWidth) ? String(ann.lineWidth) : "1.6");
+            line.setAttribute("stroke-opacity", (ann && ann.lineOpacity) ? String(ann.lineOpacity) : "0.95");
+            overlay.appendChild(line);
+            return; // done for this annotation
+          }
+    
+          // fallback: anchor->inset box edge approach
           const rawAnchor = c.anchorPx;
           if (!rawAnchor) return;
-        
+    
           // apply optional per-annotation anchor nudges (pixels)
-          const aNudgeX = Number.isFinite(c.a.anchorNudgeX) ? c.a.anchorNudgeX : 0;
-          const aNudgeY = Number.isFinite(c.a.anchorNudgeY) ? c.a.anchorNudgeY : 0;
+          const aNudgeX = Number.isFinite(ann.anchorNudgeX) ? ann.anchorNudgeX : 0;
+          const aNudgeY = Number.isFinite(ann.anchorNudgeY) ? ann.anchorNudgeY : 0;
           const anchor = { x: rawAnchor.x + aNudgeX, y: rawAnchor.y + aNudgeY };
-        
+    
           const boxLeft = c.left;
           const boxRight = c.left + c.width;
           const boxTop = c.top;
           const boxBottom = c.top + c.height;
-        
+    
           // inset from the box edge to avoid touching the corner
-          const edgeInset = 6;
-        
+          const edgeInset = Number.isFinite(ann.edgeInset) ? ann.edgeInset : 6;
+    
           // pick best edge and compute attach point (then inset away from corners)
           let attachX, attachY;
-        
-          // If anchor is horizontally outside the box, use nearest vertical edge
           if (anchor.x > boxRight) {
             attachX = boxRight - edgeInset;
             attachY = Math.min(Math.max(anchor.y, boxTop + edgeInset), boxBottom - edgeInset);
@@ -1285,28 +1346,26 @@
             attachX = boxLeft + edgeInset;
             attachY = Math.min(Math.max(anchor.y, boxTop + edgeInset), boxBottom - edgeInset);
           } else if (anchor.y < boxTop) {
-            // anchor is above box -> attach to top edge, inset horizontally
             attachY = boxTop + edgeInset;
             attachX = Math.min(Math.max(anchor.x, boxLeft + edgeInset), boxRight - edgeInset);
           } else {
-            // anchor below box -> attach to bottom edge, inset horizontally
             attachY = boxBottom - edgeInset;
             attachX = Math.min(Math.max(anchor.x, boxLeft + edgeInset), boxRight - edgeInset);
           }
-        
+    
           const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           line.setAttribute("x1", Math.round(anchor.x));
           line.setAttribute("y1", Math.round(anchor.y));
           line.setAttribute("x2", Math.round(attachX));
           line.setAttribute("y2", Math.round(attachY));
           line.setAttribute("class", "annotation-line");
-          line.setAttribute("stroke", (c.a && typeof c.a.lineColor === "string") ? c.a.lineColor : "#000000");
-          line.setAttribute("stroke-width", (c.a && c.a.lineWidth) ? String(c.a.lineWidth) : "1.2");
-          line.setAttribute("stroke-opacity", (c.a && c.a.lineOpacity) ? String(c.a.lineOpacity) : "0.95");
+          line.setAttribute("stroke", (ann && typeof ann.lineColor === "string") ? ann.lineColor : "#000000");
+          line.setAttribute("stroke-width", (ann && ann.lineWidth) ? String(ann.lineWidth) : "1.6");
+          line.setAttribute("stroke-opacity", (ann && ann.lineOpacity) ? String(ann.lineOpacity) : "0.95");
           overlay.appendChild(line);
         });
-
-        return created; 
+    
+        return created;
       }
     
       // initial draw
@@ -1328,6 +1387,7 @@
     
       return { result, drawAnnotations, annotations, resizeObserver: ro };
     }
+    
     /* Map annotations */
     
     async function embedWithHtmlAnnotations(target, specUrlOrObject, options = {}) {
@@ -1860,7 +1920,7 @@
           // Western Australia note (on land in WA)
           {
             id: "wa-fastest",
-            boxLonLat: { lon: 125.5, lat: -43.5 }, // where the annotation box should sit
+            boxLonLat: { lon: 125.5, lat: -33.5 }, // where the annotation box should sit
             label: "The fastest tornadoes in WA occurred in the 21st century",
             nudgeX: -180,                           // tune horizontal pixel offset for box
             nudgeY: -10                             // tune vertical pixel offset for box
@@ -1882,20 +1942,18 @@
         annotations: [
           {
             id: "peak-2011",
-            // exact data point anchor (line start)
+            // start at the exact data point (lineStart will be projected)
             src: { x: 2011, y: 2074 },
-          
-            // move the HTML box noticeably right and slightly lower so line avoids overlapping box
+      
+            // where the HTML box sits (unchanged)
             boxXY: { x: 1986, y: 2300 },
-          
-            // box stays where placed; no box-level nudges by default
             nudgeX: 0,
             nudgeY: 0,
-          
-            // keep anchor nudges zero so the line starts at the true data point
-            anchorNudgeX: 0,
-            anchorNudgeY: 0,
-          
+      
+            // explicit line start/end (start uses src if omitted; shown here for clarity)
+            lineStart: { x: 2011, y: 2074 },        // data coords (will be projected)
+            lineEnd:   { x: 1200, y: 380, coords: "px" }, // pixel coords — tweak these
+      
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
             maxWidth: 320,
             lineColor: "#000000",
