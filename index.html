@@ -2010,7 +2010,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      nudgeInteractiveFujitaLegend({ containerId: 'fujita-legend', extraPx: 14 });
+      nudgeFujitaLegendContainer({ containerId: 'fujita-legend', extraPx: 14 });
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
