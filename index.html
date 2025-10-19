@@ -1922,7 +1922,7 @@
             lineEnd:   { x: 100, y: 100, coords: "px" },
           
             // HTML box placement for the label 
-            boxXY: { x: 1886, y: 1800 },
+            boxXY: { x: 250, y: 290, coords: "px" },   // left inset, vertically centered
           
             // box nudges (keep box fixed unless you want tiny shifts)
             nudgeX: 0,
@@ -1949,6 +1949,17 @@
             nudgeX: 0,
             nudgeY: 0,
             label: "Australia's tornado season\nis a lot less pronounced\nthan America's.",
+            maxWidth: 260,
+            lineColor: "#000000",
+            lineWidth: 1.2,
+            lineOpacity: 0.95
+          },
+          {
+            id: "au-season-note-unique-2025",
+            boxXY: { x: 250, y: 290, coords: "px" },   // left inset, vertically centered
+            nudgeX: 0,
+            nudgeY: 0,
+            label: "America has over 20%\nof its recorded tornadoes in May.",
             maxWidth: 260,
             lineColor: "#000000",
             lineWidth: 1.2,
