@@ -452,7 +452,7 @@
     .el-reno-two-col {
       display: grid;
       grid-template-columns: 320px 1fr;
-      column-gap: 40px;
+      column-gap: 90px;
       align-items: center;
       box-sizing: border-box;
       width: 840px;             /* match image width */
@@ -567,7 +567,22 @@
         margin-top: 8px;
       }
     }
-  
+
+    /* Add spacing below El Reno section */
+    .el-reno-block {
+      margin-bottom: 64px; /* creates clear separation before footer text */
+    }
+
+    /* Footer metadata styling */
+    .footer-metadata {
+      font-size: 13px;
+      color: #5c6e8c; /* soft steel grey */
+      line-height: 1.5;
+      margin-top: 48px; /* visual gap above */
+      margin-bottom: 24px;
+      max-width: 840px;
+    }
+    
   </style>
 </head>
 <body>
@@ -872,22 +887,21 @@
       Understanding them supports <span class="highlight">better safety</span> and <span class="highlight">preparedness</span>.<br/>
     </p>
 
-    <p>
-      Created by James Talbot
-      Licensed under Creative Commons Attribution 4.0 
-
-      Image 1 Source: https://shelterbox.org/disasters-explained/tornadoes/
-      Image 2 Source: https://inside.nssl.noaa.gov/nsslnews/2015/07/significant-paper-kuster-c-m-heinselman-p-l-austin-m/
-
-      The images have been used under fair use.
-
-      Data sources: 
-
-      - Australian tornado data: https://www.bom.gov.au/australia/stormarchive/
-      - U.S. tornado data: https://www.ncei.noaa.gov/stormevents/ftp.jsp
-      - Deadliest tornado data: https://www.discoverwalks.com/blog/world/25-deadliest-tornadoes-in-recorded-history/
-      - Hodograph data: https://weather.uwyo.edu/upperair/sounding.shtml
-      - Map data: https://www.naturalearthdata.com/downloads/
+    <p class="footer-metadata">
+      Created by James Talbot<br>
+      Licensed under Creative Commons Attribution 4.0<br><br>
+    
+      Image 1 Source: https://shelterbox.org/disasters-explained/tornadoes/<br>
+      Image 2 Source: https://inside.nssl.noaa.gov/nsslnews/2015/07/significant-paper-kuster-c-m-heinselman-p-l-austin-m/<br><br>
+    
+      The images have been used under fair use.<br><br>
+    
+      Data sources:<br>
+      – Australian tornado data: https://www.bom.gov.au/australia/stormarchive/<br>
+      – U.S. tornado data: https://www.ncei.noaa.gov/stormevents/ftp.jsp<br>
+      – Deadliest tornado data: https://www.discoverwalks.com/blog/world/25-deadliest-tornadoes-in-recorded-history/<br>
+      – Hodograph data: https://weather.uwyo.edu/upperair/sounding.shtml<br>
+      – Map data: https://www.naturalearthdata.com/downloads/
     </p>
     
   </div>
