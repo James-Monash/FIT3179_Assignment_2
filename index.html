@@ -966,7 +966,7 @@
       "F1": "#E69F00",
       "F2": "#56B4E9",
       "F3": "#009E73",
-      "F4": "#F0E442",
+      "F4": "#D6B216",
       "F5": "#984ea3"
     };
     const ratings = ["F0","F1","F2","F3","F4","F5"];
@@ -1205,8 +1205,8 @@
     function drawCountryLegend(containerId = "country-legend-swatches") {
       const container = document.getElementById(containerId);
       if (!container) return;
-      const countries = ["Australia", "America"];
-      const countryColors = { "Australia": "#0072B2", "America": "#D55E00" };
+      const countries = ["Australia", "U.S."];
+      const countryColors = { "Australia": "#0072B2", "U.S.": "#D55E00" };
       makeLegendRows(container, countries, countryColors, { swatchWidth: 24, swatchHeight: 14 });
     }
     
@@ -1956,7 +1956,7 @@
           {
             id: "victoria-hotspot",
             boxLonLat: { lon: 128, lat: -38 },
-            label: "Southern Victoria experienced the\nmost recorded tornadoes",
+            label: "Southern Victoria experienced the\nmost recorded tornadoes (154)",
             nudgeX: -160,
             nudgeY: 20,
           },
@@ -2066,7 +2066,7 @@
             boxXY: { x: 70, y: 250, coords: "px" },   // left inset, vertically centered
             nudgeX: 0,
             nudgeY: 0,
-            label: "Australia's tornado season\nis a lot less pronounced\nthan America's.",
+            label: "Australia's tornado season\nis a lot less pronounced\nthan the United States'",
             maxWidth: 260,
             lineColor: "#000000",
             lineWidth: 1.2,
@@ -2077,7 +2077,7 @@
             boxXY: { x: 550, y: 320, coords: "px" },   // left inset, vertically centered
             nudgeX: 0,
             nudgeY: 0,
-            label: "America has over 20%\nof its recorded tornadoes in May.",
+            label: "The U.S. has over 20%\nof its recorded tornadoes in May",
             maxWidth: 260,
             lineColor: "#000000",
             lineWidth: 1.2,
@@ -2101,7 +2101,7 @@
             nudgeY: 0,
       
             // content
-            label: "Deadliest recent tornado (Daulatpur-Saturia): densely populated areas with limited warning systems led to catastrophic loss of life.",
+            label: "Deadliest recent tornado (Daulatpur-Saturia): densely populated areas with limited warning systems led to catastrophic loss of life",
       
             // visual tuning
             maxWidth: 340,
