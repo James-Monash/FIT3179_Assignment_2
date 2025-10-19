@@ -1965,7 +1965,7 @@
             lineEnd:   { x: 100, y: 100, coords: "px" },
           
             // HTML box placement for the label 
-            boxXY: { x: 1986, y: 1800 },
+            boxXY: { x: 1886, y: 1800 },
           
             // box nudges (keep box fixed unless you want tiny shifts)
             nudgeX: 0,
@@ -1984,19 +1984,28 @@
       });
       drawFujitaColorLegend("fujita-static-swatches", { interactive: false }); // this chart shouldn't have the toggle effect
       
+      // ensure container can host absolutely positioned children
+      const _c = document.querySelector("#viz-by-month");
+      if (_c && getComputedStyle(_c).position === "static') _c.style.position = 'relative';
+      
+      // compute center Y based on actual container height
+      const _rect = document.querySelector("#viz-by-month").getBoundingClientRect();
+      const _leftPx = 12;
+      const _topPx = Math.round(_rect.height / 2);
+      
       await embedWithHtmlAnnotationsForCartesian("#viz-by-month", specs.byMonth, {
         annotations: [
           {
-            id: "au-season-note",
-            lineStart: { x: 0, y: 0, coords: "px" },
-            lineEnd:   { x: 100, y: 100, coords: "px" },
-            boxXY:     { x: 1980, y: 1800, coords: "px" }, 
+            id: "au-season-note-unique-2025",
+            // container pixels so no projection needed
+            boxXY: { x: _leftPx, y: _topPx, coords: "px" },
             nudgeX: 0,
             nudgeY: 0,
+            // no leader line
             label: "Australia's tornado season is a lot less pronounced than America's.",
-            maxWidth: 340,
+            maxWidth: 260,
             lineColor: "#000000",
-            lineWidth: 1.6,
+            lineWidth: 1.2,
             lineOpacity: 0.95
           }
         ]
