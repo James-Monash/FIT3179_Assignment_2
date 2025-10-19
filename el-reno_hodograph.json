@@ -73,7 +73,6 @@
       "titleFontWeight": 600,
       "labelAngle": 0,
       "labelAlign": "right",
-      "labelPadding": 8,
       "gridColor": "#e6e6e6",
       "gridWidth": 0.8,
       "tickSize": 4
