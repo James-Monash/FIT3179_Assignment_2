@@ -5,7 +5,7 @@
     "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_counts_by_year_long.csv",
     "format": { "type": "csv", "parse": { "YEAR": "number", "COUNT": "number" } }
   },
-  "width": 798,
+  "width": 788,
   "height": 450,
   "transform": [
     { "filter": "datum.YEAR <= 2024" },
@@ -79,7 +79,7 @@
       "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "labelFontSize": 12,
-      "titleFontSize": 13
+      "titleFontSize": 14
     }
   }
 }
