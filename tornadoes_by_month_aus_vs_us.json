@@ -11,8 +11,8 @@
       "as": "signed_percent"
     }
   ],
-  "width": 798, 
-  "height": 450, 
+  "width": 798,
+  "height": 450,
   "mark": { "type": "bar", "cornerRadius": 2 },
   "encoding": {
     "y": {
@@ -21,10 +21,13 @@
       "sort": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
       "axis": {
         "title": "Month",
-        "titleFont": "Inter",
-        "labelFont": "Inter",
+        "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
         "titleFontSize": 14,
-        "labelFontSize": 12
+        "labelFontSize": 12,
+        "labelFontWeight": 600,
+        "titleFontWeight": 600,
+        "labelAlign": "right"
       }
     },
     "x": {
@@ -34,10 +37,12 @@
       "axis": {
         "title": "Percent of tornadoes (2000-2024)",
         "labelExpr": "datum.value === 0 ? '0%' : (round(abs(datum.value) * 10) / 10) + '%'",
-        "titleFont": "Inter",
-        "labelFont": "Inter",
+        "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
         "titleFontSize": 14,
-        "labelFontSize": 12
+        "labelFontSize": 12,
+        "labelFontWeight": 600,
+        "titleFontWeight": 600
       }
     },
     "color": {
@@ -57,9 +62,22 @@
     ]
   },
   "config": {
+    "font": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "view": { "stroke": "transparent" },
     "axis": {
-      "labelFont": "Inter",
-      "titleFont": "Inter",
+      "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": 600,
+      "titleFontSize": 14,
+      "titleFontWeight": 600,
+      "gridColor": "#e6e6e6",
+      "gridWidth": 0.8,
+      "tickSize": 4
+    },
+    "legend": {
+      "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "labelFontSize": 12,
       "titleFontSize": 13
     }
