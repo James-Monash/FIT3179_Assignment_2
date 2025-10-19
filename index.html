@@ -112,6 +112,22 @@
       gap: 28px;
     }
 
+    /* Image at the top of the page */
+    .opening-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .opening-img {
+      max-width: 640px;
+      width: 80%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+
     /* Main page title */
     .page-title {
       font-size: 36px;
@@ -496,6 +512,11 @@
 <body>
   <div class="poster">
     <div class="page">
+      
+      <div class="opening-image" aria-hidden="false" role="img" aria-label="Tornado illustration">
+        <img src="tornado.jpg" alt="Tornado" class="opening-img" />
+      </div>
+      
       <h1 class="page-title">Tornadoes from the United States to Australia</h1>
       <h2 class="page-subtitle">
         When you think about tornadoes, you likely think about America.<br/>
@@ -1430,25 +1451,24 @@
       ausSpec.width = 840;
       usSpec.width = 840;
       
-      // embed with same options you had
       await embedWithHtmlAnnotations("#aus-chart", ausSpec, {
         projection: { center: [134, -28], scale: 850 },
         annotations: [
-          // Alice Springs (Central Australia) — tornadoes extremely rare in the interior
+          // Alice Springs area — moved further left and line break after "central"
           {
             id: "alice-springs-note",
-            src: { lon: 133.8836, lat: -23.6975 },    // Alice Springs coordinates.
-            boxLonLat: { lon: 133.5, lat: -22.5 },    // box slightly north-east of marker
-            label: "Recorded tornadoes in central Australia are extremely rare",
-            nudgeX: -40,
+            src: { lon: 129.5, lat: -23.7 },     // marker moved ~4.4° west from Alice Springs
+            boxLonLat: { lon: 128.5, lat: -22.5 },
+            label: "Recorded tornadoes in central\nAustralia are extremely rare",
+            nudgeX: -60,
             nudgeY: -10
           },
       
-          // South of Western Australia, over the ocean — note about recording bias
+          // Offshore south of WA — moved ~5° south and a bit east
           {
             id: "wa-coast-note",
-            src: { lon: 115.0, lat: -33.5 },          // offshore south of WA / near Perth latitude band.
-            boxLonLat: { lon: 114.0, lat: -31.5 },   // annotation box nearer the coast
+            src: { lon: 117.0, lat: -38.5 },     // ~5° further south and ~2° east from prior point
+            boxLonLat: { lon: 116.0, lat: -36.5 },
             label: "Notice tornadoes cluster near populated areas; others may occur unrecorded offshore or remote inland",
             nudgeX: -180,
             nudgeY: 8
@@ -1456,24 +1476,24 @@
         ]
       });
 
-      await embedWithHtmlAnnotations("#us-chart", usSpec, {
+      await embedWithHtmlAnnotations("#us-chart, usSpec, {
         projection: { center: [-95, 37], scale: 900 },
         annotations: [
-          // South of California, over the Pacific Ocean — less common in the west but still happen
+          // Offshore south of California — moved further south
           {
             id: "ca-offshore-note",
-            src: { lon: -120.0, lat: 33.0 },          // offshore southern California / near San Diego latitude band.
-            boxLonLat: { lon: -118.0, lat: 32.0 },   // box closer to the coast
+            src: { lon: -120.0, lat: 30.0 },     // moved ~3° further south
+            boxLonLat: { lon: -118.0, lat: 29.0 },
             label: "Tornadoes are less common in the western US but still occur",
             nudgeX: -60,
             nudgeY: 12
           },
       
-          // Beneath Alabama — dangerous tornadoes concentrated in the southeast
+          // Southeast states note — keep marker near AL but place the annotation box above Montana (white space)
           {
-            id: "alabama-note",
-            src: { lon: -86.9023, lat: 32.3182 },     // Alabama approx center coordinates.
-            boxLonLat: { lon: -86.5, lat: 30.8 },    // box slightly south of the marker (near the Gulf-facing region)
+            id: "southeast-note",
+            src: { lon: -86.9, lat: 32.3 },      // marker anchored near Alabama
+            boxLonLat: { lon: -110.0, lat: 48.0 }, // annotation box placed above Montana / in the available white space
             label: "Dangerous tornadoes are concentrated in the southeast states",
             nudgeX: -40,
             nudgeY: 10
