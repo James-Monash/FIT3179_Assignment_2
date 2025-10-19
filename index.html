@@ -542,6 +542,7 @@
       gap: 8px;              /* space between title, subtitle and paragraph */
       align-items: stretch;  /* ensure children fill the column width */
       box-sizing: border-box;
+      text-align: center;
     }
     
     /* ensure headings and subs occupy full width and sit above following text */
@@ -550,6 +551,14 @@
       width: 100%;
       margin: 0;
       text-align: center;
+    }
+
+    .viz-title {
+      font-size: 26px;
+    }
+    
+    .viz-sub {
+      font-size: 18px;
     }
     
     /* tighten subtitle styling to match other viz-sub rules */
@@ -2099,7 +2108,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      applyLegendNudge('fujita-legend', 2);
+      applyLegendNudge('fujita-legend', -6);
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
