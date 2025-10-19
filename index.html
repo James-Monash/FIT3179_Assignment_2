@@ -543,6 +543,15 @@
       box-sizing: border-box;
       text-align: center;
     }
+
+    .el-reno-left .el-reno-narrow {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
     
     /* ensure headings and subs occupy full width and sit above following text */
     .el-reno-left .viz-title,
@@ -700,10 +709,10 @@
       </p>
 
       <p class="intro-paragraph">
-        Hover over points in each visualization<br/>
+        Hover over points in each visualisation<br/>
         to reveal <span class="highlight">detailed values</span> and contextual information.<br/>
         Use the map below to find <span class="highlight">tornado hotspots</span><br/>
-        across Australia, note regions with the< <span class="highlight">highest counts</span><br/>
+        across Australia, note regions with the <span class="highlight">highest counts</span><br/>
         and compare their <span class="highlight">relative frequency</span>.
       </p>
   
@@ -711,7 +720,7 @@
       <section class="viz-card">
         <div class="viz-header">
           <div class="viz-title-block">
-            <h3 class="viz-title">Tornado Density Across Australia between 1900 and 2025</h3>
+            <h3 class="viz-title">Tornado density across Australia between 1900 and 2025</h3>
             <p class="viz-sub">Aggregated by 3 degree bins and scaled by frequency</p>
           </div>
         </div>
@@ -748,7 +757,7 @@
 
       <!-- 2) severe_weather_proportions_per_state -->
       <section class="viz-card">
-        <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by Australian States</h3>
+        <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by Australian states</h3>
         <p class="viz-sub">ACT was excluded due to its small data size</p>
       
         <div class="viz-legend-wrapper">
@@ -785,7 +794,7 @@
       <section class="viz-card">
         <div class="viz-header">
           <div class="viz-title-block">
-            <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S. bewteen 2010 and 2014</h3>
+            <h3 class="viz-title">Tornadoes by Fujita rating bewteen 2010 and 2014</h3>
             <p class="viz-sub">Toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes</p>
           </div>
         </div>
@@ -825,7 +834,7 @@
 
       <!-- 5) tornadoes_by_fujita_rating_and_year -->
       <section class="viz-card">
-        <h3 class="viz-title">The Number of Recorded Tornadoes in the U.S. since 1950</h3>
+        <h3 class="viz-title">The number of recorded tornadoes in the U.S. since 1950</h3>
         <p class="viz-sub">The values are broken down by fujita rating</p>
       
         <div class="viz-legend-wrapper">
@@ -870,10 +879,10 @@
         <span class="highlight">conditional instability</span> to form.<br/>
         For that reason, <span class="highlight">spring</span> is most common,<br/>
         though tornadoes can occur any time of year.<br/>
-        Below you can see monthly distributions for<br/>
-        <span class="highlight">Australia</span> (Southern Hemisphere) and<br/>
-        the <span class="highlight">United States</span> (Northern Hemisphere).<br/>
-        Values show the <span class="highlight">proportion</span> of each country’s tornadoes per month.
+        Below are monthly distributions for<br/>
+        <span class="highlight">Australia</span> (Southern Hemisphere)<br/>
+        and the <span class="highlight">United States</span> (Northern Hemisphere).<br/>
+        Values show the <span class="highlight">proportion</span> of tornadoes per month.
       </p>
 
       <!-- 7) tornadoes_by_month_aus_vs_us -->
@@ -2188,7 +2197,7 @@
             boxXY: { x: 70, y: 250, coords: "px" },   // left inset, vertically centered
             nudgeX: 0,
             nudgeY: 0,
-            label: "Australia's tornado season\nis a lot less pronounced\nthan the United States'",
+            label: "Australia's tornado season\nis a lot less pronounced\nthan the United States",
             maxWidth: 260,
             lineColor: "#000000",
             lineWidth: 1.0,
