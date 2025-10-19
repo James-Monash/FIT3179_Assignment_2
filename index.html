@@ -254,9 +254,9 @@
     /* container that centers the chart+legend group */
     .viz-legend-wrapper {
       display: flex;
-      gap: 24px;                /* desired fixed distance between chart and legend */
       align-items: flex-start;
-      box-sizing: border-box;
+      gap: 24px;              /* small gap between viz and legend */
+      padding: 12px 0;
     }
 
     /* make the left viz container a positioned block that can be sized by embed */
@@ -275,27 +275,13 @@
       height: auto;
     }
     
-    /* Ensure the chart column and legend column are the flex children whose outer boxes define the gap */
-    .map-stack-left,
-    .legend-right,
-    #fujita-legend,            /* target the existing fujita outer wrapper if you cannot add classes */
-    #country-legend-swatches,
-    #deadliest-country-swatches {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;               /* remove external offsets that change the measured gap */
-      flex: 0 0 auto;          /* prevent grow/shrink so gap is measured between fixed outer boxes */
+    .legend-right { 
+      position: static !important; 
+      top: auto !important; 
+      right: auto !important; 
+      z-index: auto !important; 
     }
-
-    /* Give legend columns the same visual start inside their outer box */
-    #fujita-legend,
-    .legend-right,
-    #country-legend-swatches,
-    #deadliest-country-swatches {
-      padding-left: 16px;      /* inner offset so swatch/controls align visually across legends */
-      min-width: 220px;        /* optional: prevents collapse that shortens the gap */
-    }
-
+    
     /* Legend styling */
     .size-legend {
       padding: 8px 10px;
@@ -396,26 +382,19 @@
     // Fujita rating legend styles
     // ----------------------------
 
-    /* Normalized fujita legend (replace existing rules) */
     .fujita-legend {
       display: flex;
       flex-direction: column;
       gap: 6px;
       margin-top: 8px;
-      box-sizing: border-box;
-      padding: 0;
     }
     
-    .fujita-legend .f-row,
-    .fujita-legend .legend-item {
+    .fujita-legend .f-row {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 13px;
       color: #123047;
-      padding: 2px 0;
-      min-height: 30px;
-      box-sizing: border-box;
     }
     
     .fujita-legend .swatch {
@@ -425,35 +404,19 @@
       border: 1px solid rgba(0,0,0,0.08);
       box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06);
       flex: 0 0 auto;
-      display: inline-block;
-      box-sizing: border-box;
     }
     
-    .fujita-legend .f-label,
-    .fujita-legend .legend-label {
+    .fujita-legend .f-label {
       flex: 0 0 auto;
       font-weight: 700;
-      line-height: 1;
     }
     
-    .fujita-legend .f-desc,
-    .fujita-legend .legend-desc {
+    .fujita-legend .f-desc {
       color: #55607a;
       font-weight: 500;
       margin-left: 6px;
-      font-size: 13px;
     }
-    
-    /* Checkbox sizing and disabled state */
-    .fujita-legend .legend-checkbox {
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      padding: 0;
-      flex: 0 0 auto;
-      box-sizing: border-box;
-    }
-    
+
     .legend-item.disabled { opacity: 0.45; }
     .legend-item .legend-checkbox { margin-right: 8px; }
 
