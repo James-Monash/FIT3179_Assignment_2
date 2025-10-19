@@ -1326,7 +1326,7 @@
       if (!container) throw new Error("Embed target not found: " + target);
       if (getComputedStyle(container).position === "static") container.style.position = "relative";
     
-      // create/replace overlay SVG
+      // create/replace overlay SVG (kept for compatibility but not used for lines/markers)
       let overlay = container.querySelector(".annotation-overlay");
       if (overlay) overlay.remove();
       overlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1367,15 +1367,21 @@
           return { x: p[0], y: p[1] };
         }
     
+        // clear overlay contents and previous boxes
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
         Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
     
-        // First create boxes so we can measure them for line endpoints
+        // create boxes only (no lines or markers)
         const createdBoxes = annotations.map(a => {
-          // compute box pixel position from lon/lat
-          const boxLon = (a.boxLonLat && typeof a.boxLonLat.lon === "number") ? a.boxLonLat.lon : (a.src && a.src.lon);
-          const boxLat = (a.boxLonLat && typeof a.boxLonLat.lat === "number") ? a.boxLonLat.lat : (a.src && a.src.lat);
-          if (typeof boxLon !== "number" || typeof boxLat !== "number") return null;
+          // prefer explicit boxLonLat for where the HTML box should sit
+          const boxLon = (a.boxLonLat && typeof a.boxLonLat.lon === "number") ? a.boxLonLat.lon
+                        : (a.src && typeof a.src.lon === "number" ? a.src.lon : null);
+          const boxLat = (a.boxLonLat && typeof a.boxLonLat.lat === "number") ? a.boxLonLat.lat
+                        : (a.src && typeof a.src.lat === "number" ? a.src.lat : null);
+    
+          // if we still don't have coords, skip this annotation
+          if (boxLon === null || boxLat === null) return null;
+    
           const boxPx = projectPoint(boxLon, boxLat);
     
           const div = document.createElement("div");
@@ -1403,6 +1409,7 @@
           const containerRect = container.getBoundingClientRect();
           const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
           const margin = 8;
+    
           if (left + margin + boxMaxWidth > containerRect.width) left = Math.max(margin, containerRect.width - boxMaxWidth - margin);
           if (left < margin) left = margin;
           if (top < margin) top = margin;
@@ -1413,7 +1420,6 @@
     
           container.appendChild(div);
     
-          // return data needed for line calculation
           return {
             a,
             div,
@@ -1424,6 +1430,9 @@
             anchorPx: boxPx
           };
         }).filter(Boolean);
+    
+        // no leader lines or markers are created
+        return createdBoxes;
       }
     
       // initial draw
@@ -1657,22 +1666,27 @@
         annotations: [
           {
             id: "ca-offshore-note",
-            src: { lon: -90.0, lat: 35.3 },        // moved ~3° north (lat +3) and ~3.1° west (lon -3.1) from -86.9,32.3
-            boxLonLat: { lon: -92.5, lat: 36.5 }, // box placed near the new marker; tune nudges if needed
+            // anchor point can be near the western interior (used only if you supplied src previously)
+            src: { lon: -119.0, lat: 30.0 },
+            // place the HTML box so its left edge is approximately in line with California (lon -120)
+            // and positioned ~5° north of Washington (~lat 52)
+            boxLonLat: { lon: -120.0, lat: 52.0 },
             label: "Tornadoes are less common in the western US but still occur",
-            nudgeX: -60,
-            nudgeY: 12
+            nudgeX: -12,
+            nudgeY: -6,
+            maxWidth: 320
           },
       
-          // Move the southeast-states comment down so it sits directly beneath Alabama
-          // and at a latitude more southern than Florida (placed in the northern Gulf)
           {
             id: "southeast-note",
-            src: { lon: -86.9, lat: 24.0 },       
-            boxLonLat: { lon: -86.9, lat: 24.0 },  // directly under Alabama longitude
+            // keep anchor near Alabama if you want the logical association, but move box position west a bit
+            src: { lon: -86.9, lat: 32.3 },
+            // box moved west so it sits more over the central Gulf / lower Mississippi longitudes
+            boxLonLat: { lon: -88.5, lat: 24.0 },
             label: "Dangerous tornadoes are concentrated in the southeast states",
             nudgeX: -40,
-            nudgeY: 10
+            nudgeY: 10,
+            maxWidth: 300
           }
         ]
       });
