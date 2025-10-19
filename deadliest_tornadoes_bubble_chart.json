@@ -69,7 +69,7 @@
       "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "labelFontSize": 12,
-      "titleFontSize": 13
+      "titleFontSize": 14
     },
     "mark": {
       "clip": true
