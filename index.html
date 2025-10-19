@@ -1832,7 +1832,32 @@
         ]
       });
 
-      await embedSpec("#viz-total-tornadoes", specs.totalTornadoes);
+      // US tornadoes by year and fujita rating
+      await embedWithHtmlAnnotationsForCartesian("#viz-total-tornadoes", specs.totalTornadoes, {
+        annotations: [
+          {
+            id: "peak-2011",
+            // anchor at the data point (Year, Count)
+            src: { x: 2011, y: 2074 },
+      
+            // place the HTML box to the left and slightly above the point in data coordinates
+            boxXY: { x: 2004, y: 2300 },
+      
+            // label text (use \n for a line break if you want one)
+            label: "2011 saw the most tornadoes\nwith 2,074 recorded",
+      
+            // small pixel adjustments if needed after projection
+            nudgeX: -8,
+            nudgeY: -6,
+      
+            // optional presentation tuning
+            maxWidth: 260,
+            lineColor: "#333",
+            lineWidth: 1,
+            lineOpacity: 0.95
+          }
+        ]
+      });
       drawFujitaColorLegend("fujita-static-swatches", { interactive: false }); // this chart shouldn't have the toggle effect
       
       // other later static specs
