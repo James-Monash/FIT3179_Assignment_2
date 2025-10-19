@@ -31,7 +31,7 @@
     "size": {
       "field": "deaths_num",
       "type": "quantitative",
-      "scale": { "range": [80, 2200], "domain": [1, 1300] },
+      "scale": { "range": [40, 800], "domain": [1, 1300] },
       "legend": null
     },
     "color": {
@@ -70,6 +70,10 @@
       "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "labelFontSize": 12,
       "titleFontSize": 13
+    },
+    "mark": {
+      "clip": true
     }
+
   }
 }
