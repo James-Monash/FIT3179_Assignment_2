@@ -1115,6 +1115,182 @@
     // Adding annotations
     // ------------------------
 
+    /* Charts */
+
+    async function embedWithHtmlAnnotationsForCartesian(target, specUrlOrObject, options = {}) {
+      const annotations = Array.isArray(options.annotations) ? options.annotations : [];
+    
+      let spec;
+      if (typeof specUrlOrObject === "string") {
+        const res = await fetch(specUrlOrObject);
+        if (!res.ok) throw new Error("Failed to fetch spec: " + res.statusText);
+        spec = await res.json();
+      } else {
+        spec = JSON.parse(JSON.stringify(specUrlOrObject));
+      }
+    
+      const embedOptions = Object.assign({
+        actions: false,
+        renderer: "canvas",
+        tooltip: { theme: "custom", disableDefaultStyle: true }
+      }, options.embedOptions || {});
+    
+      const result = await vegaEmbed(target, spec, embedOptions);
+      const view = result && result.view;
+      if (view && typeof view.runAsync === "function") await view.runAsync();
+    
+      const container = document.querySelector(target);
+      if (!container) throw new Error("Embed target not found: " + target);
+      if (getComputedStyle(container).position === "static") container.style.position = "relative";
+    
+      // overlay SVG for leader lines
+      let overlay = container.querySelector(".annotation-overlay");
+      if (overlay) overlay.remove();
+      overlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      overlay.setAttribute("class", "annotation-overlay");
+      overlay.style.position = "absolute";
+      overlay.style.left = "0";
+      overlay.style.top = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.pointerEvents = "none";
+      container.appendChild(overlay);
+    
+      // remove previous boxes
+      Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
+    
+      function getScaleFn(scaleName) {
+        try {
+          if (!view || typeof view.scale !== "function") return null;
+          const s = view.scale(scaleName);
+          if (typeof s !== "function") return null;
+          return s;
+        } catch (e) {
+          return null;
+        }
+      }
+    
+      function dataToPixels(xVal, yVal) {
+        // prefer scale names 'x' and 'y' — if your compiled Vega uses different names adjust
+        const xScale = getScaleFn('x') || getScaleFn('xscale') || getScaleFn('xscale0') || null;
+        const yScale = getScaleFn('y') || getScaleFn('yscale') || getScaleFn('yscale0') || null;
+        const px = xScale ? xScale(xVal) : null;
+        const py = yScale ? yScale(yVal) : null;
+        return { x: px, y: py };
+      }
+    
+      function drawAnnotations() {
+        const bbox = container.getBoundingClientRect();
+        const width = Math.max(20, Math.floor(bbox.width));
+        const height = Math.max(20, Math.floor(bbox.height));
+        overlay.setAttribute("width", width);
+        overlay.setAttribute("height", height);
+        overlay.style.width = width + "px";
+        overlay.style.height = height + "px";
+    
+        // clear overlay lines and boxes
+        while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
+        Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
+    
+        // create boxes first (so we can measure)
+        const created = annotations.map(a => {
+          const src = a.src || {};
+          if (typeof src.x !== "number" || typeof src.y !== "number") return null;
+          const pt = dataToPixels(src.x, src.y);
+          if (pt.x == null || pt.y == null) return null;
+    
+          const div = document.createElement("div");
+          div.className = "annotation-box";
+          if (a.id) div.setAttribute("data-annotation-id", a.id);
+          div.style.position = "absolute";
+          div.style.pointerEvents = "auto";
+          const label = document.createElement("div");
+          label.className = "annotation-label";
+          label.innerHTML = (a.label || "").replace(/\n/g, "<br>");
+          div.appendChild(label);
+          if (a.caption) {
+            const cap = document.createElement("div");
+            cap.className = "caption";
+            cap.textContent = a.caption;
+            div.appendChild(cap);
+          }
+    
+          const nudgeX = Number.isFinite(a.nudgeX) ? a.nudgeX : 0;
+          const nudgeY = Number.isFinite(a.nudgeY) ? a.nudgeY : 0;
+    
+          // box placement: either boxXY in data coords or place relative to the source pixel
+          let leftPx = pt.x + nudgeX;
+          let topPx  = pt.y + nudgeY;
+          if (a.boxXY && typeof a.boxXY.x === "number" && typeof a.boxXY.y === "number") {
+            const b = dataToPixels(a.boxXY.x, a.boxXY.y);
+            if (b.x != null && b.y != null) {
+              leftPx = b.x + nudgeX;
+              topPx  = b.y + nudgeY;
+            }
+          }
+    
+          // simple container bounds checks
+          const margin = 8;
+          const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
+          // append off-DOM to measure size
+          div.style.left = "-9999px";
+          div.style.top = "-9999px";
+          container.appendChild(div);
+          const measured = div.getBoundingClientRect();
+          let w = Math.min(boxMaxWidth, measured.width);
+          let h = measured.height;
+    
+          // adjust left/top to fit inside container
+          if (leftPx + margin + w > width) leftPx = Math.max(margin, width - w - margin);
+          if (leftPx < margin) leftPx = margin;
+          if (topPx < margin) topPx = margin;
+          if (topPx > height - 40) topPx = height - 40;
+    
+          div.style.left = Math.round(leftPx) + "px";
+          div.style.top = Math.round(topPx) + "px";
+    
+          return { a, div, anchorPx: pt, left: leftPx, top: topPx, width: w, height: h };
+        }).filter(Boolean);
+    
+        // draw leader lines from anchor to box edge
+        created.forEach(c => {
+          const anchor = c.anchorPx;
+          // compute box attachment point (simple center-left connection)
+          const boxCenterX = c.left + c.width / 2;
+          const boxCenterY = c.top + c.height / 2;
+    
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", Math.round(anchor.x));
+          line.setAttribute("y1", Math.round(anchor.y));
+          line.setAttribute("x2", Math.round(boxCenterX));
+          line.setAttribute("y2", Math.round(boxCenterY));
+          line.setAttribute("stroke", c.a.lineColor || "#333");
+          line.setAttribute("stroke-width", c.a.lineWidth || "1");
+          line.setAttribute("stroke-opacity", c.a.lineOpacity || "0.9");
+          overlay.appendChild(line);
+        });
+      }
+    
+      // initial draw
+      drawAnnotations();
+    
+      // redraw on resize or on view signal changes (useful if the chart animates)
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(drawAnnotations, 120);
+      });
+      const ro = new ResizeObserver(() => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(drawAnnotations, 120);
+      });
+      ro.observe(container);
+    
+      return { result, drawAnnotations, annotations, resizeObserver: ro };
+    }
+
+    /* Map annotations */
+    
     async function embedWithHtmlAnnotations(target, specUrlOrObject, options = {}) {
       const projOpts = Object.assign({
         type: "mercator",
