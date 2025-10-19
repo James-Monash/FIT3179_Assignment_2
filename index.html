@@ -424,55 +424,58 @@
     // El Reno
     // ----------------------------
     
-    /* base viz width used by el-reno to match other visualisations */
-    .el-reno-block { --viz-fixed-width: 840px; }
+    /* Two-column layout for El Reno with shared-height centring */
+    .el-reno-image-row { margin-bottom: 18px; }
     
-    /* Image: match other visualisations exactly, keep aspect ratio */
-    .el-reno-image-row .el-reno-figure img {
-      width: var(--viz-fixed-width);
-      height: auto;
-      display: block;
-      margin: 0;
-    }
-    
-    /* Make the two-col block the same width as other viz cards and remove extra left padding */
+    /* Grid with fixed left column and right column for chart+legend */
     .el-reno-two-col {
-      max-width: var(--viz-fixed-width);
-      width: 100%;
-      padding-left: 0;        /* align with viz-card content */
-      column-gap: 28px;
-      box-sizing: border-box;
       display: grid;
-      grid-template-columns: 320px 1fr; /* left column fixed text, right column chart */
+      grid-template-columns: 320px 1fr;
+      column-gap: 28px;
       align-items: center;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 1080px;
+      padding-left: 24px;
     }
     
-    /* Keep left text column behaviour but ensure text aligns with viz title content */
-    .el-reno-left { 
-      padding-right: 8px;
+    /* LEFT: text column — fill the shared visual height and centre contents */
+    .el-reno-left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 480px;     /* shared visual baseline = hodograph height */
+      box-sizing: border-box;
+    }
+    .el-reno-left .el-reno-narrow { margin: 0; max-width: 40ch; text-align: center; line-height: 1.6; }
+    
+    /* RIGHT: hodograph container — same min-height so both columns share vertical centre */
+    .el-reno-right {
+      position: relative;
+      display: flex;
+      align-items: center;   /* centre chart vertically inside the right column */
+      justify-content: flex-start;
+      min-height: 480px;     /* must match left min-height */
+      box-sizing: border-box;
     }
     
-    /* Ensure hodograph embed retains the fixed chart size */
+    /* Ensure hodograph embed is exact size */
     #viz-el-reno-hodograph.viz-embed,
     #viz-el-reno-hodograph.viz-embed > svg,
     #viz-el-reno-hodograph.viz-embed > div,
     #viz-el-reno-hodograph.viz-embed iframe {
+      display: block !important;
       width: 480px !important;
       height: 480px !important;
-      display: block !important;
       margin: 0 !important;
       box-sizing: border-box !important;
     }
     
-    /* Place legend aligned to the right edge of the right column
-       so it lines up with other viz legends that sit to the chart's right. */
-    .el-reno-right { position: relative; }
-    
-    /* place legend at the right edge of the right column, vertically aligned to chart top */
+    /* Legend: absolutely positioned relative to .el-reno-right so it doesn't affect flow */
     .el-reno-right .el-reno-legend-box {
       position: absolute;
-      right: 0;                      /* attach to right edge of the right column */
-      top: 0;
+      left: calc(480px + 12px); /* place to the right of the chart, adjust gap by changing 12px */
+      top: 0;                   /* aligns top with chart top */
       width: 112px;
       padding: 6px;
       background: rgba(255,255,255,0.98);
@@ -481,6 +484,25 @@
       border: 1px solid rgba(34,40,49,0.08);
       box-sizing: border-box;
       z-index: 50;
+    }
+    .el-reno-right .el-reno-legend-box .legend-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .el-reno-right .el-reno-legend-box #el-reno-order-swatches,
+    .el-reno-right .el-reno-legend-box #el-reno-order-swatches svg {
+      width: 64px !important; height: auto !important; display: block !important;
+    }
+    
+    /* Remove stray margins inside the two-col so centres align */
+    .el-reno-two-col * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* Responsive fallback: stack on narrow screens */
+    @media (max-width: 980px) {
+      .el-reno-two-col { display: block; padding-left: 0; }
+      .el-reno-left, .el-reno-right { min-height: auto; padding-left: 0; }
+      #viz-el-reno-hodograph.viz-embed,
+      #viz-el-reno-hodograph.viz-embed > svg,
+      #viz-el-reno-hodograph.viz-embed > div,
+      #viz-el-reno-hodograph.viz-embed iframe { width: 100% !important; height: auto !important; }
+      .el-reno-right .el-reno-legend-box { position: static; left: auto; top: auto; width: 100%; margin-top: 8px; }
     }
   
   </style>
@@ -1896,8 +1918,8 @@
           },
           {
             id: "peak-1974-f5",
-            lineStart: { x: 290, y: 180, coords: "px" },
-            lineEnd:   { x: 295, y: 230, coords: "px" },
+            lineStart: { x: 340, y: 180, coords: "px" },
+            lineEnd:   { x: 340, y: 230, coords: "px" },
           
             // HTML box placement for the label 
             boxXY: { x: 200, y: 140, coords: "px" },   // left inset, vertically centered
@@ -1951,8 +1973,8 @@
         annotations: [
           {
             id: "deadliest-bangladesh",
-            lineStart: { x: 550, y: 90, coords: "px" }, 
-            lineEnd:   { x: 730, y: 75, coords: "px" },
+            lineStart: { x: 535, y: 90, coords: "px" }, 
+            lineEnd:   { x: 715, y: 75, coords: "px" },
       
             boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
       
