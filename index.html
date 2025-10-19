@@ -1966,7 +1966,7 @@
             lineEnd:   { x: 100, y: 100, coords: "px" },
           
             // HTML box placement for the label 
-            boxXY: { x: 1600, y: 1050 },
+            boxXY: { x: 1780, y: 1550 },
           
             // box nudges (keep box fixed unless you want tiny shifts)
             nudgeX: 0,
@@ -1986,10 +1986,49 @@
       drawFujitaColorLegend("fujita-static-swatches", { interactive: false }); // this chart shouldn't have the toggle effect
       
       // other later static specs
-      await embedSpec("#viz-by-month", specs.byMonth);
+      await embedWithHtmlAnnotationsForCartesian("#viz-by-month", specs.byMonth, {
+        annotations: [
+          {
+            id: "au-season-note",
+            // Pass a data coord so the box is projected into the chart drawing area
+            boxXY: { x: 1985, y: 6 },   // <-- change to suit your byMonth data's x/y domain
+            nudgeX: 0,
+            nudgeY: 0,
+            label: "Australia's tornado season is a lot less pronounced than America's.",
+            maxWidth: 260,
+            lineColor: "#000000",
+            lineWidth: 1.2,
+            lineOpacity: 0.95
+          }
+        ]
+      });
       drawCountryLegend("country-legend-swatches");
 
-      await embedSpec("#viz-deadliest-bubble", specs.deadliestBubble);
+      await embedWithHtmlAnnotationsForCartesian("#viz-deadliest-bubble", specs.deadliestBubble, {
+        annotations: [
+          {
+            id: "deadliest-bangladesh",
+            lineStart: { x: 520, y: 220, coords: "px" }, 
+            lineEnd:   { x: 340, y: 380, coords: "px" },
+      
+            boxXY: { x: 100, y: 100 },
+      
+            // keep box fixed unless you want tiny nudges
+            nudgeX: 0,
+            nudgeY: 0,
+      
+            // content
+            label: "Deadliest recent tornado (Bangladesh): densely populated areas with limited warning systems led to catastrophic loss of life.",
+      
+            // visual tuning
+            maxWidth: 340,
+            lineColor: "#000000",
+            lineWidth: 1.6,
+            lineOpacity: 0.95
+          }
+        ]
+      });
+
       drawDeadliestCountryLegend()
       
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
