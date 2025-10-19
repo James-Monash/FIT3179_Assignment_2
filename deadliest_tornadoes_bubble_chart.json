@@ -8,39 +8,24 @@
   "width": 798,
   "height": 480,
   "transform": [
-    {
-      "calculate": "datum.deaths === '' || datum.deaths === null ? null : +datum.deaths",
-      "as": "deaths_num"
-    },
-    {
-      "calculate": "datum.year === '' || datum.year === null ? null : +datum.year",
-      "as": "year_num"
-    },
-    {
-      "filter": "datum.year_num >= 1800 && datum.year_num <= 2020"
-    }
+    { "calculate": "datum.deaths === '' || datum.deaths === null ? null : +datum.deaths", "as": "deaths_num" },
+    { "calculate": "datum.year === '' || datum.year === null ? null : +datum.year", "as": "year_num" },
+    { "filter": "datum.year_num >= 1800 && datum.year_num <= 2020" }
   ],
-  "mark": {
-    "type": "point",
-    "filled": true,
-    "opacity": 0.85
-  },
+  "mark": { "type": "point", "filled": true, "opacity": 0.85 },
   "encoding": {
     "x": {
       "field": "year_num",
       "type": "quantitative",
       "title": "Year",
-      "axis": {
-        "labelAngle": 0,
-        "tickMinStep": 10,
-        "format": "d"
-      },
+      "axis": { "labelAngle": 0, "tickMinStep": 10, "format": "d", "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "labelFontSize": 12, "labelFontWeight": 600, "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "titleFontSize": 13, "titleFontWeight": 600, "labelPadding": 8 },
       "scale": { "domain": [1800, 2020], "nice": false }
     },
     "y": {
       "field": "deaths_num",
       "type": "quantitative",
       "title": "Fatalities",
+      "axis": { "labelAngle": 0, "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "labelFontSize": 12, "labelFontWeight": 600, "labelAlign": "right", "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "titleFontSize": 13, "titleFontWeight": 600, "labelPadding": 8 },
       "scale": { "domain": [0, 1500], "nice": false }
     },
     "size": {
@@ -62,13 +47,31 @@
       { "field": "event", "type": "nominal", "title": "Event" },
       { "field": "country", "type": "nominal", "title": "Country" },
       { "field": "year_num", "type": "quantitative", "title": "Year" },
-      { "field": "deaths_num", "type": "quantitative", "title": "Fatalities" },
-      { "field": "lat", "type": "quantitative", "title": "Lat" },
-      { "field": "lon", "type": "quantitative", "title": "Lon" }
+      { "field": "deaths_num", "type": "quantitative", "title": "Fatalities" }
     ]
   },
   "config": {
-    "axis": { "labelFontSize": 12, "titleFontSize": 13 },
-    "legend": { "labelFontSize": 12, "titleFontSize": 13 }
+    "font": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "view": { "stroke": "transparent" },
+    "axis": {
+      "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": 600,
+      "titleFontSize": 13,
+      "titleFontWeight": 600,
+      "labelAngle": 0,
+      "labelPadding": 8,
+      "gridColor": "#e6e6e6",
+      "gridWidth": 0.8,
+      "tickSize": 4
+    },
+    "legend": {
+      "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "labelFontSize": 12,
+      "titleFontSize": 13
+    },
+    "padding": 10
   }
 }
