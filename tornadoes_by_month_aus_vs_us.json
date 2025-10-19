@@ -50,7 +50,7 @@
       "type": "nominal",
       "scale": {
         "domain": ["Australia", "America"],
-        "range": ["#0072B2", "#D55E00"]
+        "range": ["#CC79A7", "#56B4E9"]
       },
       "legend": null
     },
