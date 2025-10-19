@@ -687,7 +687,7 @@
         The scale let researchers infer winds where direct measures were impossible.<br/>
         Tornado research most often centres on the United States.<br/>
         That region’s storms produced the data to shape the scale.<br/>
-        The original scale runs from <span class="highlight">F0 to F5</span>.<br/>
+        The original scale runs from <span class="highlight">F0 to F5</span>.<br/><br/>
         In 2007 the <span class="highlight">Enhanced Fujita</span> refined those categories.<br/>
         It ties specific damage types to narrower wind ranges.<br/>
         For example, destruction of mobile homes implies winds above 180 km/h.<br/>
@@ -881,6 +881,9 @@
         <!-- TWO-COLUMN ROW: left = text, right = hodograph + legend -->
         <div class="el-reno-two-col" role="region" aria-label="El Reno text and hodograph">
           <div class="el-reno-left">
+            <h3 class="viz-title">Wind direction and speed mapped over altitude</h3>
+            <p class="viz-sub">The speed was calculated at Oklahoma City,<br/>approximately when the storm was passing through</p>
+            
             <p class="el-reno-narrow">
               Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
               helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
@@ -2020,7 +2023,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      applyLegendNudge('fujita-legend', 8);
+      applyLegendNudge('fujita-legend', 0);
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
