@@ -1670,7 +1670,7 @@
             src: { lon: -119.0, lat: 30.0 },
             // place the HTML box so its left edge is approximately in line with California (lon -120)
             // and positioned ~5° north of Washington (~lat 52)
-            boxLonLat: { lon: -120.0, lat: 52.0 },
+            boxLonLat: { lon: -117.0, lat: 52.0 },
             label: "Tornadoes are less common in the western US but still occur",
             nudgeX: -12,
             nudgeY: -6,
@@ -1682,7 +1682,7 @@
             // keep anchor near Alabama if you want the logical association, but move box position west a bit
             src: { lon: -86.9, lat: 32.3 },
             // box moved west so it sits more over the central Gulf / lower Mississippi longitudes
-            boxLonLat: { lon: -88.5, lat: 24.0 },
+            boxLonLat: { lon: -90.5, lat: 30.0 },
             label: "Dangerous tornadoes are concentrated in the southeast states",
             nudgeX: -40,
             nudgeY: 10,
@@ -1806,7 +1806,7 @@
           {
             id: "sa-tornado-proportion",
             src: { lon: 133.5, lat: -34.5 },         // stays near central SA
-            boxLonLat: { lon: 120.5, lat: -36.5 },
+            boxLonLat: { lon: 116.5, lat: -36.5 },
             label: "South Australia has the highest proportion\nof tornado-related severe weather — around 24%",
             leader: true,
             nudgeX: -40,                             // slightly reduced nudge
@@ -1826,7 +1826,7 @@
           {
             id: "wa-fastest",
             src: { lon: 119.0, lat: -25.5 },        // marker location in WA
-            boxLonLat: { lon: 116.5, lat: -23.5 }, // where the annotation box should sit
+            boxLonLat: { lon: 125.5, lat: -43.5 }, // where the annotation box should sit
             label: "The fastest tornadoes in WA occurred in the 21st century",
             nudgeX: -180,                           // tune horizontal pixel offset for box
             nudgeY: -10                             // tune vertical pixel offset for box
@@ -1836,8 +1836,8 @@
           {
             id: "nsw-qld-note",
             src: { lon: 153.0, lat: -20.5 },        // marker (off QLD coast)
-            boxLonLat: { lon: 152.0, lat: -23.0 }, // box near coast between QLD and NSW
-            label: "NSW and QLD witness the most tornadoes",
+            boxLonLat: { lon: 162.0, lat: -20.0 }, // box near coast between QLD and NSW
+            label: "NSW and QLD witness\nthe most tornadoes",
             nudgeX: -40,
             nudgeY: 8
           }
@@ -1851,17 +1851,17 @@
             id: "peak-2011",
             // anchor at the data point (Year, Count)
             src: { x: 2011, y: 2074 },
-          
-            // move the HTML box further left (smaller x) and slightly above in data coords
-            boxXY: { x: 1998, y: 2200 },
-          
+      
+            // move the HTML box further left and slightly higher than before
+            boxXY: { x: 1978, y: 2350 },
+      
             // label text with a line break
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
-          
+      
             // small pixel nudges after projection (tweak if needed)
-            nudgeX: -12,
-            nudgeY: -8,
-          
+            nudgeX: -6,
+            nudgeY: -6,
+      
             // visual tuning
             maxWidth: 320,
             lineColor: "#e07b39",
