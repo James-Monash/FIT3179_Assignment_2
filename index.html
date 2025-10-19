@@ -1983,25 +1983,15 @@
         ]
       });
       drawFujitaColorLegend("fujita-static-swatches", { interactive: false }); // this chart shouldn't have the toggle effect
-      
-      // ensure container can host absolutely positioned children
-      const _c = document.querySelector("#viz-by-month");
-      if (_c && getComputedStyle(_c).position === "static') _c.style.position = 'relative';
-      
-      // compute center Y based on actual container height
-      const _rect = document.querySelector("#viz-by-month").getBoundingClientRect();
-      const _leftPx = 12;
-      const _topPx = Math.round(_rect.height / 2);
-      
+            
       await embedWithHtmlAnnotationsForCartesian("#viz-by-month", specs.byMonth, {
         annotations: [
           {
             id: "au-season-note-unique-2025",
-            // container pixels so no projection needed
-            boxXY: { x: _leftPx, y: _topPx, coords: "px" },
+            // container pixels: x in [0..855], y in [0..500] for your container size
+            boxXY: { x: 12, y: 250, coords: "px" },   // left inset, vertically centered
             nudgeX: 0,
             nudgeY: 0,
-            // no leader line
             label: "Australia's tornado season is a lot less pronounced than America's.",
             maxWidth: 260,
             lineColor: "#000000",
