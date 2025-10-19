@@ -1920,7 +1920,7 @@
           // Western Australia note (on land in WA)
           {
             id: "wa-fastest",
-            boxLonLat: { lon: 125.5, lat: -33.5 }, // where the annotation box should sit
+            boxLonLat: { lon: 125.5, lat: -38.5 }, // where the annotation box should sit
             label: "The fastest tornadoes in WA occurred in the 21st century",
             nudgeX: -180,                           // tune horizontal pixel offset for box
             nudgeY: -10                             // tune vertical pixel offset for box
@@ -1942,29 +1942,23 @@
         annotations: [
           {
             id: "peak-2011",
-            // anchor at the data point (line start is projected from this)
-            src: { x: 2011, y: 2074 },
-      
-            // HTML box location (unchanged)
+            // Use explicit pixel endpoints so start and end are exact
+            lineStart: { x: 950, y: 220, coords: "px" },  // set this to the pixel where the line should begin
+            lineEnd:   { x: 600, y: 340, coords: "px" },  // set this to the pixel where the line should end
+          
+            // HTML box position is independent; keep it where you want
             boxXY: { x: 1986, y: 2300 },
             nudgeX: 0,
             nudgeY: 0,
-      
-            // small pixel nudge applied to the anchor if you need micro-adjustment (keep 0 if not needed)
-            anchorNudgeX: 0,
-            anchorNudgeY: 0,
-      
-            // explicit pixel end point (coords: "px") — tweak these if you want to move the end visually
-            // This example moves current end by about -47px in x and +6px in y (1.5cm left, couple mm down)
-            // Change the numbers if you want a different absolute position.
-            lineEnd: { x: 1011 - 47, y: 273 + 6, coords: "px" },
-      
-            // You can also omit lineStart here and the code will use src as the start.
+          
+            // visual tuning
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
             maxWidth: 320,
             lineColor: "#000000",
             lineWidth: 1.6,
-            lineOpacity: 0.95
+            lineOpacity: 0.95,
+            // optional: edgeInset prevents lines being snapped exactly into box corners when fallback anchor->box logic is used
+            edgeInset: 6
           }
         ]
       });
