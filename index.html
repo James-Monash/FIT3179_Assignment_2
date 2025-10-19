@@ -171,7 +171,7 @@
     }
     
     .viz-title {
-      font-size: 20px;
+      font-size: 26px;
       font-weight: 700;
       color: #2c3e50; /* stormy navy */
       margin: 0 0 6px 0;
@@ -179,7 +179,7 @@
     }
     
     .viz-sub {
-      font-size: 14px;
+      font-size: 18px;
       color: #5c6e8c; /* steel blue-gray */
       margin: 0 0 16px 0;
       text-align: left;
@@ -538,6 +538,7 @@
     .el-reno-left {
       display: flex;
       flex-direction: column;
+      align-items: center;     
       gap: 8px;              /* space between title, subtitle and paragraph */
       align-items: stretch;  /* ensure children fill the column width */
       box-sizing: border-box;
@@ -548,6 +549,7 @@
     .el-reno-left .viz-sub {
       width: 100%;
       margin: 0;
+      text-align: center;
     }
     
     /* tighten subtitle styling to match other viz-sub rules */
@@ -728,14 +730,12 @@
       </p>
 
       <p class="intro-paragraph">
-        The <span class="highlight">Bureau of Meteorology (BOM)</span><br/>
-        maintains a severe weather repository.<br/>
-        These events typically come from <span class="highlight">structured storms</span>,<br/>
-        which cause damage to <span class="highlight">houses</span>,<span class="highlight">trees</span>, and infrastructure.<br/>
-        This visualisation focuses on <span class="highlight">rain</span>, <span class="highlight">hail</span>,<br/>
-        and <span class="highlight">tornado</span> events.<br/>
-        See the <span class="highlight">relative prevalence</span><br/>
-        of these events by <span class="highlight">state</span> in the chart below.
+        The <span class="highlight">Bureau of Meteorology (BOM)</span> maintains a severe weather repository.<br/>
+        These events typically come from <span class="highlight">structured storms</span>, which cause<br/>
+        damage to <span class="highlight">houses, trees and infrastructure.</span> This visualisation focuses<br/>
+        on <span class="highlight">rain, hail and tornado</span> events.<br/>
+        See the <span class="highlight">relative prevalence</span> of these events<br/>
+        by <span class="highlight">state</span> in the chart below.
       </p>
 
       <!-- 2) severe_weather_proportions_per_state -->
@@ -2099,7 +2099,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      applyLegendNudge('fujita-legend', 10);
+      applyLegendNudge('fujita-legend', 2);
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
