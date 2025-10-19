@@ -466,19 +466,28 @@
       margin: 0;
     }
     
-    /* LEFT: text column — vertically centered */
+    /* make the left column stack its contents vertically */
     .el-reno-left {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 480px;
+      flex-direction: column;
+      gap: 8px;              /* space between title, subtitle and paragraph */
+      align-items: stretch;  /* ensure children fill the column width */
       box-sizing: border-box;
     }
-    .el-reno-left .el-reno-narrow {
+    
+    /* ensure headings and subs occupy full width and sit above following text */
+    .el-reno-left .viz-title,
+    .el-reno-left .viz-sub {
+      width: 100%;
       margin: 0;
-      max-width: 40ch;
-      text-align: center;
-      line-height: 1.6;
+    }
+    
+    /* tighten subtitle styling to match other viz-sub rules */
+    .el-reno-left .viz-sub {
+      margin-bottom: 6px;
+      color: #55607a;
+      font-size: 13px;
+      line-height: 1.35;
     }
     
     /* RIGHT: hodograph container — vertically centered */
