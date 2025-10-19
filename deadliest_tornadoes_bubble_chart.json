@@ -5,7 +5,7 @@
     "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/deadliest_tornadoes.csv",
     "format": { "type": "csv" }
   },
-  "width": 798,
+  "width": 788,
   "height": 480,
   "transform": [
     { "calculate": "datum.deaths === '' || datum.deaths === null ? null : +datum.deaths", "as": "deaths_num" },
