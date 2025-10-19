@@ -1863,28 +1863,28 @@
       });
     }
 
-    function nudgeInteractiveFujitaLegend({ containerId = 'fujita-legend', extraPx = 12 } = {}) { // for consistent sight lines
+    function nudgeFujitaLegendContainer({ containerId = 'fujita-legend', extraPx = 16 } = {}) {
       const el = document.getElementById(containerId);
       if (!el) return;
     
-      // Detect whether legend rows include checkboxes -> proxy for interactive: true
+      // Only nudge when interactive (checkbox present)
       const hasCheckbox = !!el.querySelector('.legend-checkbox');
       if (!hasCheckbox) {
-        // ensure baseline padding-left for non-interactive case
-        el.style.paddingLeft = '';
+        // reset any previous nudge
+        el.style.marginLeft = '';
+        el.style.transform = '';
         return;
       }
     
-      // Ensure base style is applied
+      // Ensure the element is a flex child (so gap measurement remains consistent)
       el.style.boxSizing = 'border-box';
-      el.style.paddingTop = '';
-      el.style.paddingBottom = '';
+      el.style.flex = el.style.flex || '0 0 auto';
     
-      // Apply extra left padding to move it further right
-      // Use computed style as starting point so we don't overwrite global values unexpectedly
-      const computed = getComputedStyle(el);
-      const base = parseFloat(computed.paddingLeft) || 0;
-      el.style.paddingLeft = (base + extraPx) + 'px';
+      // Apply margin-left to push the whole outer box to the right
+      el.style.marginLeft = (parseFloat(getComputedStyle(el).marginLeft) || 0) + extraPx + 'px';
+    
+      // Alternative (uncomment to use transform instead of margin)
+      // el.style.transform = `translateX(${extraPx}px)`;
     }
 
     // ------------------------
