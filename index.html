@@ -235,9 +235,7 @@
       font-weight: 500;
     }
     
-    /* marker and line unchanged */
-    .annotation-marker { fill: #e07b39; stroke: #fff; stroke-width: 1.5px; }
-    .annotation-line { stroke: #e07b39; stroke-width: 1.6px; stroke-linecap: round; opacity: 0.95; }
+    .annotation-line { stroke: #000000; stroke-width: 1.6px; stroke-linecap: round; opacity: 0.95; }
 
     /* Row for side-by-side maps (dynamic) */
     .row { display:flex; gap:16px; align-items:flex-start; justify-content:center; }
@@ -1258,16 +1256,22 @@
           return { a, div, anchorPx, left: leftPx, top: topPx, width: w, height: h };
         }).filter(Boolean);
     
-        // draw leader lines from anchor to nearest box edge; no marker drawn
+        // draw leader lines from (possibly nudged) anchor to nearest box edge; box position unchanged
         created.forEach(c => {
-          const anchor = c.anchorPx;
-          if (!anchor) return;
+          const rawAnchor = c.anchorPx;
+          if (!rawAnchor) return;
+        
+          // apply optional per-annotation anchor nudges (pixels)
+          const aNudgeX = Number.isFinite(c.a.anchorNudgeX) ? c.a.anchorNudgeX : 0;
+          const aNudgeY = Number.isFinite(c.a.anchorNudgeY) ? c.a.anchorNudgeY : 0;
+          const anchor = { x: rawAnchor.x + aNudgeX, y: rawAnchor.y + aNudgeY };
         
           const boxLeft = c.left;
           const boxRight = c.left + c.width;
           const boxTop = c.top;
           const boxBottom = c.top + c.height;
         
+          // pick attachment point on box edge (prefer left edge if box is left of anchor)
           let attachX, attachY;
           if (anchor.x > boxRight) {
             attachX = boxRight;
@@ -1289,13 +1293,10 @@
           line.setAttribute("x2", Math.round(attachX));
           line.setAttribute("y2", Math.round(attachY));
           line.setAttribute("class", "annotation-line");
-          // force black stroke; allow override only if annotation explicitly sets lineColor equal to null/undefined
-          const strokeColor = (c.a && typeof c.a.lineColor === "string") ? c.a.lineColor : "#000000";
-          line.setAttribute("stroke", strokeColor);
+          line.setAttribute("stroke", (c.a && typeof c.a.lineColor === "string") ? c.a.lineColor : "#000000");
           line.setAttribute("stroke-width", (c.a && c.a.lineWidth) ? String(c.a.lineWidth) : "1.2");
           line.setAttribute("stroke-opacity", (c.a && c.a.lineOpacity) ? String(c.a.lineOpacity) : "0.95");
           overlay.appendChild(line);
-        
         });
     
         return created;
@@ -1877,12 +1878,14 @@
             src: { x: 2011, y: 2074 },
             boxXY: { x: 1978, y: 2350 },
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
-            nudgeX: -60,
-            nudgeY: -19,
-            maxWidth: 320,
+            nudgeX: 0,            // keep box where it is
+            nudgeY: 0,
+            anchorNudgeX: -54,   // move the line start 54 px left
+            anchorNudgeY: -13,   // move the line start 13 px up
             lineColor: "#000000",
             lineWidth: 1.6,
-            lineOpacity: 0.95
+            lineOpacity: 0.95,
+            maxWidth: 320
           }
         ]
       });
