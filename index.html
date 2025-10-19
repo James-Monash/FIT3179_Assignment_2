@@ -420,6 +420,10 @@
     .legend-item.disabled { opacity: 0.45; }
     .legend-item .legend-checkbox { margin-right: 8px; }
 
+    .legend-nudge {
+      margin-left: 16px; /* adjust value to taste */
+    }
+
     // ----------------------------
     // El Reno
     // ----------------------------
@@ -1863,28 +1867,34 @@
       });
     }
 
-    function nudgeFujitaLegendContainer({ containerId = 'fujita-legend', extraPx = 16 } = {}) {
-      const el = document.getElementById(containerId);
-      if (!el) return;
+    // apply to the outer-most legend column (the flex child that contains the title, controls, and the #fujita-legend)
+    function applyLegendNudge(containerId = 'fujita-legend', extraPx = 16) {
+      const inner = document.getElementById(containerId);
+      if (!inner) return;
     
-      // Only nudge when interactive (checkbox present)
-      const hasCheckbox = !!el.querySelector('.legend-checkbox');
-      if (!hasCheckbox) {
-        // reset any previous nudge
-        el.style.marginLeft = '';
-        el.style.transform = '';
-        return;
+      // detect interactive
+      const isInteractive = !!inner.querySelector('.legend-checkbox');
+      // find the outer column containing the legend title and note
+      // prefer a known wrapper class, otherwise climb until direct child of .viz-legend-wrapper
+      let outer = inner.closest('.legend-right, .legend-column, .legend-left');
+      if (!outer) {
+        outer = inner;
+        while (outer && outer.parentElement && !outer.parentElement.classList.contains('viz-legend-wrapper')) {
+          outer = outer.parentElement;
+        }
+        // outer is now the child that sits directly under viz-legend-wrapper or the inner if not found
       }
     
-      // Ensure the element is a flex child (so gap measurement remains consistent)
-      el.style.boxSizing = 'border-box';
-      el.style.flex = el.style.flex || '0 0 auto';
+      if (!outer) return;
     
-      // Apply margin-left to push the whole outer box to the right
-      el.style.marginLeft = (parseFloat(getComputedStyle(el).marginLeft) || 0) + extraPx + 'px';
-    
-      // Alternative (uncomment to use transform instead of margin)
-      // el.style.transform = `translateX(${extraPx}px)`;
+      if (isInteractive) {
+        outer.classList.add('legend-nudge');
+        // fallback if you want exact px rather than a class:
+        // outer.style.marginLeft = (parseFloat(getComputedStyle(outer).marginLeft) || 0) + extraPx + 'px';
+      } else {
+        outer.classList.remove('legend-nudge');
+        outer.style.marginLeft = '';
+      }
     }
 
     // ------------------------
@@ -2010,7 +2020,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      nudgeFujitaLegendContainer({ containerId: 'fujita-legend', extraPx: 14 });
+      applyLegendNudge('fujita-legend', 16);
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
