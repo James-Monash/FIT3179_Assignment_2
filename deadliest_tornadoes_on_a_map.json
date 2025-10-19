@@ -10,7 +10,8 @@
   },
   "projection": {
     "type": "equalEarth",
-    "scale": 170
+    "scale": 230,
+    "translate": [420, 300]
   },
   "layer": [
     {
