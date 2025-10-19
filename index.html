@@ -740,7 +740,9 @@
       
       <p class="intro-paragraph">
         See the general locations of the deadliest<br/>
-        tornadoes visualised on a map.
+        tornadoes visualised on a map.<br/>
+        It is clear that the <span class="highlight">hotspot is America</span>.<br/>
+        Although, the most deadly event was in Bangladesh. 
       </p>
    
       <!-- 9) deadliest_tornadoes_on_a_map -->
@@ -795,20 +797,17 @@
       </section>
       
       <p class="intro-paragraph">
-        In conclusion, <span class="highlight">Australia has experienced its share of tornadoes</span><br/>
-        and severe weather, with notable events scattered across<br/>
-        the continent. However, the <span class="highlight">United States remains the global epicenter</span><br/>
-        of tornado activity — both in frequency and intensity.<br/>
-        This visualisation explored the <span class="highlight">seasonal nature of tornadoes</span>,<br/>
-        the role of <span class="highlight">wind shear and hodographs</span> in supercell formation,<br/>
-        and highlighted some of the <span class="highlight">deadliest</span> and <span class="highlight">fastest tornadoes</span> on record.<br/>
-        We examined <span class="highlight">dot maps</span> showing where tornadoes occur most often<br/>
-        in both the U.S. and Australia, and reviewed the<br/>
-        <span class="highlight">distribution of severe weather across Australia</span>.<br/>
-        Together, these insights help us better understand the<br/>
-        <span class="highlight">patterns, risks, and dynamics</span> of tornado formation<br/>
-        across hemispheres.
+        In conclusion, <span class="highlight">tornadoes affect both Australia and the U.S.</span><br/>
+        Yet the <span class="highlight">United States remains the global center</span><br/>
+        for <span class="highlight">tornado frequency</span> and <span class="highlight">storm intensity</span>.<br/>
+        Tornadoes show a <span class="highlight">strong seasonal pattern</span> in both nations.<br/>
+        <span class="highlight">Wind shear</span> and <span class="highlight">supercell storms</span> drive the most violent events.<br/>
+        Australia faces <span class="highlight">fewer but dangerous tornadoes</span> across wide regions.<br/>
+        The U.S. experiences <span class="highlight">more frequent and powerful outbreaks</span>.<br/>
+        These patterns reveal <span class="highlight">key risks and dynamics</span> worldwide.<br/>
+        Understanding them supports <span class="highlight">better safety</span> and <span class="highlight">preparedness</span>.<br/>
       </p>
+
     </div>
   </div>
 
@@ -1990,15 +1989,15 @@
         annotations: [
           {
             id: "au-season-note",
-            // place the HTML box using container-relative pixels so no post-placement function is needed
-            boxXY: { x: 12, y: 250, coords: "px" }, // x = 12px from left edge; y = 250px from top (adjust as needed)
+            lineStart: { x: 520, y: 220, coords: "px" }, 
+            lineEnd:   { x: 340, y: 380, coords: "px" },
+            boxXY: { x: 1500, y: 1500 },
             nudgeX: 0,
             nudgeY: 0,
-            // no lineStart / lineEnd provided -> no leader line will be drawn
             label: "Australia's tornado season is a lot less pronounced than America's.",
-            maxWidth: 260,
+            maxWidth: 340,
             lineColor: "#000000",
-            lineWidth: 1.2,
+            lineWidth: 1.6,
             lineOpacity: 0.95
           }
         ]
@@ -2012,7 +2011,7 @@
             lineStart: { x: 520, y: 220, coords: "px" }, 
             lineEnd:   { x: 340, y: 380, coords: "px" },
       
-            boxXY: { x: 1820, y: 1800 },
+            boxXY: { x: 2020, y: 1600 },
       
             // keep box fixed unless you want tiny nudges
             nudgeX: 0,
