@@ -80,7 +80,6 @@
     "legend": {
       "labelFont": "Segoe UI, Arial, sans-serif",
       "titleFont": "Segoe UI, Arial, sans-serif"
-    },
-    "padding": 10
+    }
   }
 }
