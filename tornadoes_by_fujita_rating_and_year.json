@@ -3,28 +3,31 @@
   "description": "Stacked area chart of tornado counts by F-rating per year with x-axis ending at 2024 and legend hidden.",
   "data": {
     "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_counts_by_year_long.csv",
-    "format": {"type": "csv", "parse": {"YEAR": "number", "COUNT": "number"}}
+    "format": { "type": "csv", "parse": { "YEAR": "number", "COUNT": "number" } }
   },
   "width": 798,
   "height": 450,
   "transform": [
-    {"filter": "datum.YEAR <= 2024"},
-    {"aggregate": [{"op": "sum", "field": "COUNT", "as": "COUNT"}], "groupby": ["YEAR", "RATING"]}
+    { "filter": "datum.YEAR <= 2024" },
+    { "aggregate": [ { "op": "sum", "field": "COUNT", "as": "COUNT" } ], "groupby": [ "YEAR", "RATING" ] }
   ],
-  "mark": {"type": "area", "interpolate": "monotone", "opacity": 0.9},
+  "mark": { "type": "area", "interpolate": "monotone", "opacity": 0.9 },
   "encoding": {
     "x": {
       "field": "YEAR",
       "type": "quantitative",
-      "scale": {"domainMax": 2024},
+      "scale": { "domainMax": 2024 },
       "axis": {
         "title": "Year",
         "format": "d",
         "labelAngle": 0,
-        "titleFont": "Inter",
-        "labelFont": "Inter",
+        "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "labelFontSize": 12,
         "titleFontSize": 14,
-        "labelFontSize": 12
+        "labelFontWeight": 600,
+        "titleFontWeight": 600,
+        "tickSize": 4
       }
     },
     "y": {
@@ -33,10 +36,13 @@
       "stack": "zero",
       "axis": {
         "title": "Number of tornadoes",
-        "titleFont": "Inter",
-        "labelFont": "Inter",
+        "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "labelFontSize": 12,
         "titleFontSize": 14,
-        "labelFontSize": 12
+        "labelFontWeight": 600,
+        "titleFontWeight": 600,
+        "tickSize": 4
       }
     },
     "color": {
@@ -48,12 +54,33 @@
       },
       "legend": null
     },
-    "order": {"field": "RATING", "type": "ordinal"},
+    "order": { "field": "RATING", "type": "ordinal" },
     "tooltip": [
-      {"field": "YEAR", "type": "quantitative", "title": "Year"},
-      {"field": "RATING", "type": "nominal", "title": "Rating"},
-      {"field": "COUNT", "type": "quantitative", "title": "Count"}
+      { "field": "YEAR", "type": "quantitative", "title": "Year" },
+      { "field": "RATING", "type": "nominal", "title": "Rating" },
+      { "field": "COUNT", "type": "quantitative", "title": "Count" }
     ]
   },
-  "config": {"axis": {"labelFont": "Inter", "titleFont": "Inter"}}
+  "config": {
+    "font": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "view": { "stroke": "transparent" },
+    "axis": {
+      "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "labelFontWeight": 600,
+      "titleFontWeight": 600,
+      "gridColor": "#e6e6e6",
+      "gridWidth": 0.8,
+      "tickSize": 4
+    },
+    "legend": {
+      "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "labelFontSize": 12,
+      "titleFontSize": 13
+    }
+  }
 }
+
