@@ -1305,6 +1305,9 @@
           line.setAttribute("stroke-opacity", (c.a && c.a.lineOpacity) ? String(c.a.lineOpacity) : "0.95");
           overlay.appendChild(line);
         });
+
+        return created; 
+      }
     
       // initial draw
       drawAnnotations();
