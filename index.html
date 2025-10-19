@@ -731,11 +731,11 @@
       </section>
 
       <p class="intro-paragraph">
-        The dense cluster of dots across the U.S. map above shows how common tornadoes are there.<br/>
-        Use the time series below to see how the annual number of tornadoes has changed.<br/>
-        The stacked areas break tornadoes down by <span class="highlight">Fujita rating</span>,<br/>
-        letting you see how the proportion of each strength class has shifted over time.<br/>
-        The combined height of the stacked areas represents the <span class="highlight">total number</span> of tornadoes each year.
+        Dense clusters show tornadoes are common in the U.S.<br/>
+        Use the time series below to see annual tornado counts.<br/>
+        Stacked areas break tornadoes down by <span class="highlight">Fujita rating</span>.<br/>
+        See how each strength class has shifted over time.<br/>
+        Combined height shows the <span class="highlight">total count</span> each year.
       </p>
 
       <!-- 5) tornadoes_by_fujita_rating_and_year -->
@@ -2023,7 +2023,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
-      applyLegendNudge('fujita-legend', 0);
+      applyLegendNudge('fujita-legend', -16);
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
