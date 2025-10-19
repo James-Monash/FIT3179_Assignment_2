@@ -1863,6 +1863,30 @@
       });
     }
 
+    function nudgeInteractiveFujitaLegend({ containerId = 'fujita-legend', extraPx = 12 } = {}) { // for consistent sight lines
+      const el = document.getElementById(containerId);
+      if (!el) return;
+    
+      // Detect whether legend rows include checkboxes -> proxy for interactive: true
+      const hasCheckbox = !!el.querySelector('.legend-checkbox');
+      if (!hasCheckbox) {
+        // ensure baseline padding-left for non-interactive case
+        el.style.paddingLeft = '';
+        return;
+      }
+    
+      // Ensure base style is applied
+      el.style.boxSizing = 'border-box';
+      el.style.paddingTop = '';
+      el.style.paddingBottom = '';
+    
+      // Apply extra left padding to move it further right
+      // Use computed style as starting point so we don't overwrite global values unexpectedly
+      const computed = getComputedStyle(el);
+      const base = parseFloat(computed.paddingLeft) || 0;
+      el.style.paddingLeft = (base + extraPx) + 'px';
+    }
+
     // ------------------------
     // El Reno hodograph
     // ------------------------
@@ -1986,6 +2010,7 @@
       drawSevereLegendVertical(); 
 
       drawFujitaColorLegend('fujita-legend');
+      nudgeInteractiveFujitaLegend({ containerId: 'fujita-legend', extraPx: 14 });
       renderMaps();
 
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
