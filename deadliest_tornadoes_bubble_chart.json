@@ -70,7 +70,6 @@
       "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
       "labelFontSize": 12,
       "titleFontSize": 13
-    },
-    "padding": 10
+    }
   }
 }
