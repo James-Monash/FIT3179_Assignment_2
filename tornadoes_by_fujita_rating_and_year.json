@@ -5,7 +5,7 @@
     "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_counts_by_year_long.csv",
     "format": { "type": "csv", "parse": { "YEAR": "number", "COUNT": "number" } }
   },
-  "width": 790,
+  "width": 808,
   "height": 450,
   "transform": [
     { "filter": "datum.YEAR <= 2024" },
