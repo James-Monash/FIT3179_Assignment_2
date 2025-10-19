@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "description": "Global dot map using Equal Earth projection; dimensions and colours matched to idiom (background, land, graticules, strokes).",
   "width": 840,
-  "height": 600,
+  "height": 520,
   "background": "#c6dbef",
   "data": {
     "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/110m_worldmap.json",
@@ -10,8 +10,8 @@
   },
   "projection": {
     "type": "equalEarth",
-    "scale": 230,
-    "translate": [420, 300]
+    "scale": 190,
+    "translate": [420, 260]
   },
   "layer": [
     {
@@ -65,3 +65,4 @@
   ],
   "config": { "view": { "stroke": "transparent" } }
 }
+
