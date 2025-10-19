@@ -248,7 +248,7 @@
 
     /* header block that matches viz-left width and centering */
     .viz-header { display:flex; justify-content:flex-start; margin-bottom:8px; }
-    .viz-title-block { width:100%; max-width:840px; box-sizing:border-box; }
+    .viz-title-block { width:100%; max-width:850px; box-sizing:border-box; }
     .viz-title, .viz-sub { margin:0; padding:0; }
 
     /* container that centers the chart+legend group */
@@ -302,7 +302,7 @@
     .map-stack-left {
       flex: 0 1 auto;
       min-width: 320px;
-      max-width: 840px;      /* tune to match other viz group width */
+      max-width: 850px;      /* tune to match other viz group width */
       display: block;
     }
     
@@ -315,7 +315,7 @@
     
     /* make embedded canvases use the exact left-column width */
     .map-stack-left .viz-embed {
-      width: 840px;          /* keep same left-edge alignment as other visualisations */
+      width: 850px;          /* keep same left-edge alignment as other visualisations */
       max-width: 100%;
     }
 
@@ -510,12 +510,12 @@
     
     /* Image: fixed width and aligned with other visualisations */
     .el-reno-image-row .el-reno-figure {
-      width: 840px;
+      width: 850px;
       margin: 0;
       box-sizing: border-box;
     }
     .el-reno-image-row .el-reno-figure img {
-      width: 840px;
+      width: 850px;
       height: auto;
       display: block;
     }
@@ -527,7 +527,7 @@
       column-gap: 85px;
       align-items: center;
       box-sizing: border-box;
-      width: 840px;             /* match image width */
+      width: 850px;             /* match image width */
       max-width: 100%;
       padding-left: 0;          /* remove extra left inset */
       margin: 0;
@@ -672,7 +672,7 @@
       line-height: 1.5;
       margin-top: 48px; /* visual gap above */
       margin-bottom: 24px;
-      max-width: 840px;
+      max-width: 850px;
     }
     
   </style>
@@ -1120,7 +1120,7 @@
 
     function drawTornadoSizeLegend(containerId = "tornado-size-legend-svg") {
       const domain = [1, 160];
-      const rangeArea = [50, 840]; // same as Vega-Lite size scale (area in px^2)
+      const rangeArea = [50, 850]; // same as Vega-Lite size scale (area in px^2)
       const counts = [150, 100, 30, 1]; // draw largest first (top) — change order if you prefer
       const svg = document.getElementById(containerId);
       if (!svg) return;
@@ -1876,7 +1876,7 @@
       // Construct final specs
       const ausSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
-        width: 840,
+        width: 850,
         height: 600,
         background: "#c6dbef",
         projection: { type: "mercator", center: [134, -28], scale: 850 },
@@ -1886,7 +1886,7 @@
 
       const usSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
-        width: 840,
+        width: 850,
         height: 600,
         background: "#c6dbef",
         projection: { type: "mercator", center: [-98, 38], scale: 750 },
@@ -1897,9 +1897,9 @@
       document.getElementById("aus-chart").innerHTML = "";
       document.getElementById("us-chart").innerHTML = "";
       
-      // set spec widths consistent with CSS viz-left width (840)
-      ausSpec.width = 840;
-      usSpec.width = 840;
+      // set spec widths consistent with CSS viz-left width (850)
+      ausSpec.width = 850;
+      usSpec.width = 850;
       
       await embedWithHtmlAnnotations("#aus-chart", ausSpec, {
         projection: { center: [134, -28], scale: 850 },
