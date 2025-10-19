@@ -1655,8 +1655,6 @@
       await embedWithHtmlAnnotations("#us-chart", usSpec, {
         projection: { center: [-95, 37], scale: 900 },
         annotations: [
-          // Moved the "western US less common" comment to the previous SE-marker location,
-          // then shifted it ~3° north and slightly west
           {
             id: "ca-offshore-note",
             src: { lon: -90.0, lat: 35.3 },        // moved ~3° north (lat +3) and ~3.1° west (lon -3.1) from -86.9,32.3
@@ -1670,8 +1668,8 @@
           // and at a latitude more southern than Florida (placed in the northern Gulf)
           {
             id: "southeast-note",
-            src: { lon: -86.9, lat: 24.0 },        // directly under Alabama longitude, moved south into the northern Gulf (~24°N)
-            boxLonLat: { lon: -86.9, lat: 22.5 }, // box sits further south of the marker; adjust if you prefer it closer
+            src: { lon: -86.9, lat: 24.0 },       
+            boxLonLat: { lon: -86.9, lat: 24.0 },  // directly under Alabama longitude
             label: "Dangerous tornadoes are concentrated in the southeast states",
             nudgeX: -40,
             nudgeY: 10
@@ -1839,22 +1837,25 @@
             id: "peak-2011",
             // anchor at the data point (Year, Count)
             src: { x: 2011, y: 2074 },
-      
-            // place the HTML box to the left and slightly above the point in data coordinates
-            boxXY: { x: 2004, y: 2300 },
-      
-            // label text (use \n for a line break if you want one)
+          
+            // move the HTML box further left (smaller x) and slightly above in data coords
+            boxXY: { x: 1998, y: 2200 },
+          
+            // label text with a line break
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
-      
-            // small pixel adjustments if needed after projection
-            nudgeX: -8,
-            nudgeY: -6,
-      
-            // optional presentation tuning
-            maxWidth: 260,
-            lineColor: "#333",
-            lineWidth: 1,
-            lineOpacity: 0.95
+          
+            // small pixel nudges after projection (tweak if needed)
+            nudgeX: -12,
+            nudgeY: -8,
+          
+            // visual tuning
+            maxWidth: 320,
+            lineColor: "#e07b39",
+            lineWidth: 1.6,
+            lineOpacity: 0.95,
+            markerRadius: 4,
+            markerFill: "#e07b39",
+            markerStroke: "#ffffff"
           }
         ]
       });
