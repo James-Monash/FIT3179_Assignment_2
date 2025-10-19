@@ -1256,7 +1256,7 @@
           return { a, div, anchorPx, left: leftPx, top: topPx, width: w, height: h };
         }).filter(Boolean);
     
-        // draw leader lines from (possibly nudged) anchor to nearest box edge; box position unchanged
+        // draw leader lines from (possibly nudged) anchor to inset box edge; no marker drawn
         created.forEach(c => {
           const rawAnchor = c.anchorPx;
           if (!rawAnchor) return;
@@ -1271,20 +1271,27 @@
           const boxTop = c.top;
           const boxBottom = c.top + c.height;
         
-          // pick attachment point on box edge (prefer left edge if box is left of anchor)
+          // inset from the box edge to avoid touching the corner
+          const edgeInset = 6;
+        
+          // pick best edge and compute attach point (then inset away from corners)
           let attachX, attachY;
+        
+          // If anchor is horizontally outside the box, use nearest vertical edge
           if (anchor.x > boxRight) {
-            attachX = boxRight;
-            attachY = Math.min(Math.max(anchor.y, boxTop), boxBottom);
+            attachX = boxRight - edgeInset;
+            attachY = Math.min(Math.max(anchor.y, boxTop + edgeInset), boxBottom - edgeInset);
           } else if (anchor.x < boxLeft) {
-            attachX = boxLeft;
-            attachY = Math.min(Math.max(anchor.y, boxTop), boxBottom);
+            attachX = boxLeft + edgeInset;
+            attachY = Math.min(Math.max(anchor.y, boxTop + edgeInset), boxBottom - edgeInset);
           } else if (anchor.y < boxTop) {
-            attachY = boxTop;
-            attachX = Math.min(Math.max(anchor.x, boxLeft), boxRight);
+            // anchor is above box -> attach to top edge, inset horizontally
+            attachY = boxTop + edgeInset;
+            attachX = Math.min(Math.max(anchor.x, boxLeft + edgeInset), boxRight - edgeInset);
           } else {
-            attachY = boxBottom;
-            attachX = Math.min(Math.max(anchor.x, boxLeft), boxRight);
+            // anchor below box -> attach to bottom edge, inset horizontally
+            attachY = boxBottom - edgeInset;
+            attachX = Math.min(Math.max(anchor.x, boxLeft + edgeInset), boxRight - edgeInset);
           }
         
           const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -1298,9 +1305,6 @@
           line.setAttribute("stroke-opacity", (c.a && c.a.lineOpacity) ? String(c.a.lineOpacity) : "0.95");
           overlay.appendChild(line);
         });
-    
-        return created;
-      }
     
       // initial draw
       drawAnnotations();
@@ -1712,8 +1716,8 @@
             // keep anchor near Alabama if you want the logical association, but move box position west a bit
             src: { lon: -86.9, lat: 32.3 },
             // box moved west so it sits more over the central Gulf / lower Mississippi longitudes
-            boxLonLat: { lon: -90.5, lat: 30.0 },
-            label: "Dangerous tornadoes are concentrated in the southeast states",
+            boxLonLat: { lon: -90.5, lat: 25.0 },
+            label: "Dangerous tornadoes are concentrated\nin the southeast states",
             nudgeX: -40,
             nudgeY: 10,
             maxWidth: 300
@@ -1875,17 +1879,25 @@
         annotations: [
           {
             id: "peak-2011",
+            // exact data point anchor (line start)
             src: { x: 2011, y: 2074 },
-            boxXY: { x: 1978, y: 2350 },
-            label: "2011 saw the most tornadoes\nwith 2,074 recorded",
-            nudgeX: 0,            // keep box where it is
+          
+            // move the HTML box noticeably right and slightly lower so line avoids overlapping box
+            boxXY: { x: 1986, y: 2300 },
+          
+            // box stays where placed; no box-level nudges by default
+            nudgeX: 0,
             nudgeY: 0,
-            anchorNudgeX: -54,   // move the line start 54 px left
-            anchorNudgeY: -13,   // move the line start 13 px up
+          
+            // keep anchor nudges zero so the line starts at the true data point
+            anchorNudgeX: 0,
+            anchorNudgeY: 0,
+          
+            label: "2011 saw the most tornadoes\nwith 2,074 recorded",
+            maxWidth: 320,
             lineColor: "#000000",
             lineWidth: 1.6,
-            lineOpacity: 0.95,
-            maxWidth: 320
+            lineOpacity: 0.95
           }
         ]
       });
