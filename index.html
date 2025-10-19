@@ -452,7 +452,7 @@
     .el-reno-two-col {
       display: grid;
       grid-template-columns: 320px 1fr;
-      column-gap: 90px;
+      column-gap: 85px;
       align-items: center;
       box-sizing: border-box;
       width: 840px;             /* match image width */
@@ -593,11 +593,8 @@
         <img src="tornado.jpg" alt="Tornado" class="opening-img" />
       </div>
       
-      <h1 class="page-title">Tornadoes from the United States to Australia</h1>
-      <h2 class="page-subtitle">
-        When you think about tornadoes, you likely think about America.<br/>
-        But Australia experiences <span class="highlight">around 100 tornadoes</span> a year.
-      </h2>
+      <h1 class="page-title">Tornadoes Down Under and Across the Plains</h1>
+      <h2 class="page-subtitle">Most people picture the U.S. when they hear “tornado.” Australia, however, records roughly 100 tornadoes annually.</h2>
       
       <p class="intro-paragraph">
         Tornadoes are one of the most <span class="highlight">violent</span> weather phenomena.<br/>
@@ -605,12 +602,18 @@
         Australia’s geography and climate make it <span class="highlight">ripe for severe storms</span>.<br/>
         Despite lower frequency than the U.S., tornadoes here can<br/>
         be <span class="highlight">just as destructive</span>.<br/>
-        This page explores their patterns, strength, and impact.
+        This visualisation explores their patterns, strength, and impact.
       </p>
 
       <p class="intro-paragraph">
-        Using the map below, inspect the locations where<br/>
-        tornadoes are most common across Australia. 
+        Hover over points in each visualization<br/>
+        to reveal <span class="highlight">detailed values</span><br/>
+        and contextual information.<br/>
+        Use the map below<br/>
+        to find <span class="highlight">tornado hotspots</span><br/>
+        across Australia, note regions with the<br/>
+        <span class="highlight">highest counts</span><br/>
+        and compare their <span class="highlight">relative frequency</span>.
       </p>
   
       <!-- 1) tornado_density_across_australia -->
@@ -618,7 +621,7 @@
         <div class="viz-header">
           <div class="viz-title-block">
             <h3 class="viz-title">Tornado Density Across Australia between 1900 and 2025</h3>
-            <p class="viz-sub">Aggregated by 3 degree bins and scaled by frequency.</p>
+            <p class="viz-sub">Aggregated by 3 degree bins and scaled by frequency</p>
           </div>
         </div>
       
@@ -638,16 +641,26 @@
 
       <p class="intro-paragraph">
         From the above map we can see that much of<br/>
-        Australia experiences <span class="highlight">tornadoes</span>. The Bureau of Metereology (BOM)<br/>
-        has a repository dedicated to <span class="highlight">severe weather</span>. Using this<br/>
-        we can see how prevelant tornadoes are in<br/>
-        comparison to other weather events.
+        Australia experiences <span class="highlight">tornadoes</span>.<br/>
+        It is likely that Australia experiences many tornadoes<br/>
+        that <span class="highlight">go unnoticed</span> due to large unpopulated regions.
       </p>
-  
+
+      <p class="description-text">
+        The <span class="highlight">Bureau of Meteorology (BOM)</span><br/>
+        maintains a severe weather repository.<br/>
+        These events typically come from <span class="highlight">structured storms</span>,<br/>
+        which cause damage to <span class="highlight">houses</span>,<span class="highlight">trees</span>, and infrastructure.<br/>
+        This visualisation focuses on <span class="highlight">rain</span>, <span class="highlight">hail</span>,<br/>
+        and <span class="highlight">tornado</span> events.<br/>
+        See the <span class="highlight">relative prevalence</span><br/>
+        of these events by <span class="highlight">state</span> in the chart below.
+      </p>
+
       <!-- 2) severe_weather_proportions_per_state -->
       <section class="viz-card">
-        <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by State</h3>
-        <p class="viz-sub">ACT was excluded due to its small data size.</p>
+        <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by Australian States</h3>
+        <p class="viz-sub">ACT was excluded due to its small data size</p>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
@@ -664,26 +677,27 @@
       </section>
       
       <p class="intro-paragraph">
-        The <span class="highlight">Fujita rating</span> measures tornado strength.<br/>
-        It was proposed in 1971 by Dr. Tetsuya Fujita.<br/>
-        Dr. Fujita worked at the University of Chicago.<br/>
-        Much research into severe storms focuses in the United States.<br/>
-        The United States experiences a large number of <span class="highlight">tornadoes</span>.<br/>
-        Tornadoes are unpredictable and difficult to study.<br/>
-        Dr. Fujita proposed using a destruction scale to infer winds.<br/><br/>
-        For example, destroying mobile homes requires winds above 180 km/h.<br/>
-        If mobile homes are destroyed, winds must have reached that magnitude.<br/>
-        Tornadoes are broadly categorised on the F0 to F5 scale.<br/>
-        In 2007 the <span class="highlight">Enhanced Fujita</span> scale was introduced.<br/>
-        The Enhanced Fujita refined the damage rating categories.
+        The <span class="highlight">Fujita rating</span> links damage to wind speed.<br/>
+        Dr. Tetsuya Fujita introduced the idea in 1971.<br/>
+        Working at the University of Chicago, he reimagined tornado study.<br/>
+        The scale let researchers infer winds where direct measures were impossible.<br/>
+        Tornado research most often centres on the United States.<br/>
+        That region’s storms produced the data to shape the scale.<br/>
+        The original scale runs from <span class="highlight">F0 to F5</span>.<br/>
+        In 2007 the <span class="highlight">Enhanced Fujita</span> refined those categories.<br/>
+        It ties specific damage types to narrower wind ranges.<br/>
+        For example, destruction of mobile homes implies winds above 180 km/h.<br/>
+        That observable damage becomes a forensic clue to peak winds.<br/>
+        The Fujita approach turns wreckage into repeatable science.<br/>
+        It remains central to how we understand tornado strength today.
       </p>
   
       <!-- 3+4) dynamic maps row: Australian and US maps (vertically placed) -->
       <section class="viz-card">
         <div class="viz-header">
           <div class="viz-title-block">
-            <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S. bewteen 2010 and 2014.</h3>
-            <p class="viz-sub">Dynamic maps generated from per-rating CSVs; toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes.</p>
+            <h3 class="viz-title">Tornadoes by Fujita rating — Australia and U.S. bewteen 2010 and 2014</h3>
+            <p class="viz-sub">Toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes</p>
           </div>
         </div>
       
@@ -713,17 +727,17 @@
       </section>
 
       <p class="intro-paragraph">
-        The above map really puts into perspective the number<br/>
-        of tornadoes the U.S. gets each year.<br/><br/>
-        Look at the below graph to get an idea of<br/>
-        how the number of recorded tornadoes has changed<br/>
-        and how many are <span class="highlight">damaging tornadoes</span>.
+        The dense cluster of dots across the U.S. map above shows how common tornadoes are there.<br/>
+        Use the time series below to see how the annual number of tornadoes has changed.<br/>
+        The stacked areas break tornadoes down by <span class="highlight">Fujita rating</span>,<br/>
+        letting you see how the proportion of each strength class has shifted over time.<br/>
+        The combined height of the stacked areas represents the <span class="highlight">total number</span> of tornadoes each year.
       </p>
 
       <!-- 5) tornadoes_by_fujita_rating_and_year -->
       <section class="viz-card">
         <h3 class="viz-title">The Number of Recorded Tornadoes in the U.S. since 1950</h3>
-        <p class="viz-sub">The values are broken down by fujita rating.</p>
+        <p class="viz-sub">The values are broken down by fujita rating</p>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
@@ -752,8 +766,7 @@
   
       <!-- 6) fastest_australian_tornadoes -->
       <section class="viz-card">
-        <h3 class="viz-title">Top Five Fastest Tornadoes by Wind Speed Since 1900</h3>
-      
+        <h3 class="viz-title">Top Five Fastest Tornadoes by Wind Speed Since 1900 in Australia</h3>
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-fastest-aus" class="viz-embed"></div>
@@ -762,14 +775,16 @@
       </section>
 
       <p class="intro-paragraph">
-        Tornadoes are <span class="highlight">very seasonal events</span>. They require certain conditions to<br/>
-        occur, such as a <span class="highlight">lifting mechanism</span>, a <span class="highlight">moist atmosphere</span><br/>
-        and also <span class="highlight">conditional instability</span>. Because of this,<br/>
-        <span class="highlight">Spring</span> is the most common season to experience tornadoes,<br/>
-        although they can happen at <span class="highlight">any time of the year</span>.<br/>
-        View below the distribution of tornadoes across months in<br/>
-        <span class="highlight">Australia</span> — a Southern Hemisphere country — and the<br/>
-        <span class="highlight">United States</span> — a Northern Hemisphere country.
+        Tornadoes are <span class="highlight">very seasonal events</span>.<br/>
+        They need a <span class="highlight">lifting mechanism</span>,<br/>
+        a <span class="highlight">moist atmosphere</span>, and<br/>
+        <span class="highlight">conditional instability</span> to form.<br/>
+        For that reason, <span class="highlight">spring</span> is most common,<br/>
+        though tornadoes can occur any time of year.<br/>
+        Below you can see monthly distributions for<br/>
+        <span class="highlight">Australia</span> (Southern Hemisphere) and<br/>
+        the <span class="highlight">United States</span> (Northern Hemisphere).<br/>
+        Values show the <span class="highlight">proportion</span> of each country’s tornadoes per month.
       </p>
 
       <!-- 7) tornadoes_by_month_aus_vs_us -->
@@ -800,7 +815,7 @@
   
       <!-- 8) deadliest_tornadoes_bubble_chart -->
       <section class="viz-card">
-        <h3 class="viz-title">Deadliest tornadoes — bubble chart</h3>
+        <h3 class="viz-title">Worldwide deadliest tornado events by date, fatality count and country</h3>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
@@ -817,15 +832,14 @@
       </section>
       
       <p class="intro-paragraph">
-        See the general locations of the deadliest<br/>
-        tornadoes visualised on a map.<br/>
-        It is clear that the <span class="highlight">hotspot is America</span>.<br/>
-        Although, the most deadly event was in Bangladesh. 
+        See the general locations of these deadliest<br/>
+        tornado events visualised on a worldmap.<br/>
+        However, <span class="highlight">Bangladesh</span> has experienced the <span class="highlight">most deadly storms</span>.
       </p>
    
       <!-- 9) deadliest_tornadoes_on_a_map -->
       <section class="viz-card">
-        <h3 class="viz-title">Deadliest tornadoes on a map</h3>
+        <h3 class="viz-title">Location of world's deadliest tornado events</h3>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
@@ -840,6 +854,13 @@
           </div>
         </div>
       </section>
+
+      <p class="intro-paragraph">
+        After reviewing the deadliest storms, we zoom in on a single event.<br/>
+        The focus is the <span class="highlight">2013 El Reno tornado</span> in Oklahoma.<br/>
+        We examine how near‑storm wind conditions and shear shape tornado behaviour.<br/>
+        This case shows how atmospheric profiles translate into storm intensity and damage.
+      </p>
 
       <!-- 10) El-reno example -->
       <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
@@ -886,7 +907,9 @@
       These patterns reveal <span class="highlight">key risks and dynamics</span> worldwide.<br/>
       Understanding them supports <span class="highlight">better safety</span> and <span class="highlight">preparedness</span>.<br/>
     </p>
-
+        
+    <hr class="section-separator" aria-hidden="true">
+        
     <p class="footer-metadata">
       Created by James Talbot<br>
       Licensed under Creative Commons Attribution 4.0<br><br>
