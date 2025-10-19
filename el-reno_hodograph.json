@@ -51,13 +51,9 @@
           "legend": null
         },
         "tooltip": [
-          { "field": "time_label", "type": "nominal", "title": "Sounding" },
-          { "field": "altitude", "type": "quantitative", "title": "Altitude (orig)" },
-          { "field": "level_index", "type": "quantitative", "title": "Level index" },
+          { "field": "altitude", "type": "quantitative", "title": "Altitude (m)" },
           { "field": "speed_m_s", "type": "quantitative", "title": "Speed (m/s)" },
-          { "field": "dir_deg", "type": "quantitative", "title": "Dir (deg)" },
-          { "field": "u", "type": "quantitative", "title": "U (m/s)" },
-          { "field": "v", "type": "quantitative", "title": "V (m/s)" }
+          { "field": "dir_deg", "type": "quantitative", "title": "Direction (deg)" },
         ],
         "size": { "value": 48 },
         "opacity": { "value": 0.95 }
@@ -65,19 +61,27 @@
     }
   ],
   "config": {
-    "view": { "stroke": "transparent", "continuousWidth": 480, "continuousHeight": 480 },
+    "font": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "view": { "stroke": "transparent" },
     "axis": {
-      "labelFontSize": 11,
-      "titleFontSize": 12,
+      "labelFont": "Segoe UI, Arial, sans-serif",
+      "labelFontSize": 12,
+      "labelFontWeight": 600,
+      "labelColor": "#111",
+      "titleFont": "Segoe UI, Arial, sans-serif",
+      "titleFontSize": 13,
+      "titleFontWeight": 600,
+      "labelAngle": 0,
+      "labelAlign": "right",
+      "labelPadding": 8,
       "gridColor": "#e6e6e6",
       "gridWidth": 0.8,
-      "gridDash": [2, 2],
-      "domain": true,
-      "ticks": true,
-      "tickSize": 4,
-      "labelPadding": 6
+      "tickSize": 4
     },
-    "legend": { "labelFontSize": 11, "titleFontSize": 12 },
-    "padding": 0
+    "legend": {
+      "labelFont": "Segoe UI, Arial, sans-serif",
+      "titleFont": "Segoe UI, Arial, sans-serif"
+    },
+    "padding": 10
   }
 }
