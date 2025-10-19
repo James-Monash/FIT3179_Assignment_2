@@ -1213,56 +1213,55 @@
     
         // compute chart element offset once per draw
         const chartOffset = getChartOffset();
-    
-        // clear overlay lines and boxes
+          
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
         Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
-    
+        
         // create boxes first (so we can measure)
+        // NOTE: we no longer use 'src' as an input anchor. callers should pass explicit lineStart/lineEnd or boxXY.
         const created = annotations.map(a => {
-          const src = a.src || {};
-          // compute anchor pixel from src (used for marker + start of line)
-          let anchorPx = null;
-          if (typeof src.x === "number" && typeof src.y === "number") {
-            const pt = dataToPixels(src.x, src.y);
-            if (pt.x != null && pt.y != null) anchorPx = { x: pt.x + (chartOffset.left || 0), y: pt.y + (chartOffset.top || 0) };
-          }
-    
-          // compute box position from boxXY (preferred) or fallback to src
-          const boxCoord = (a.boxXY && typeof a.boxXY.x === "number" && typeof a.boxXY.y === "number")
-            ? a.boxXY
-            : (typeof src.x === "number" && typeof src.y === "number" ? { x: src.x, y: src.y } : null);
-    
+          // compute boxCoord (preferred)
+          const boxCoord = (a.boxXY && typeof a.boxXY.x === "number" && typeof a.boxXY.y === "number") ? a.boxXY : null;
           if (!boxCoord) return null;
-          const boxPxRaw = dataToPixels(boxCoord.x, boxCoord.y);
+        
+          // If boxCoord is in pixels, use it directly (container-relative).
+          // If it's data coords, project via dataToPixels and then offset by chartOffset.
+          let boxPxRaw;
+          if (boxCoord.coords === "px") {
+            boxPxRaw = { x: boxCoord.x, y: boxCoord.y };
+          } else {
+            const p = dataToPixels(boxCoord.x, boxCoord.y);
+            if (!p || p.x == null || p.y == null) return null;
+            boxPxRaw = { x: p.x + (chartOffset.left || 0), y: p.y + (chartOffset.top || 0) };
+          }
           if (boxPxRaw.x == null || boxPxRaw.y == null) return null;
-          const boxPx = { x: boxPxRaw.x + (chartOffset.left || 0), y: boxPxRaw.y + (chartOffset.top || 0) };
-    
+          const boxPx = { x: boxPxRaw.x, y: boxPxRaw.y };
+        
           const div = document.createElement("div");
           div.className = "annotation-box";
           if (a.id) div.setAttribute("data-annotation-id", a.id);
           div.style.position = "absolute";
           div.style.pointerEvents = "auto";
-    
+        
           const label = document.createElement("div");
           label.className = "annotation-label";
           label.innerHTML = (a.label || "").replace(/\n/g, "<br>");
           div.appendChild(label);
-    
+        
           if (a.caption) {
             const cap = document.createElement("div");
             cap.className = "caption";
             cap.textContent = a.caption;
             div.appendChild(cap);
           }
-    
+        
           const nudgeX = Number.isFinite(a.nudgeX) ? a.nudgeX : 0;
           const nudgeY = Number.isFinite(a.nudgeY) ? a.nudgeY : 0;
-    
-          // default placement: box at projected boxPx + nudges (box is not affected by anchor nudges)
+        
+          // default placement: box at boxPx + nudges
           let leftPx = boxPx.x + nudgeX;
           let topPx  = boxPx.y + nudgeY;
-    
+        
           // append off-DOM to measure size
           div.style.left = "-9999px";
           div.style.top = "-9999px";
@@ -1271,37 +1270,40 @@
           const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
           const w = Math.min(boxMaxWidth, measured.width);
           const h = measured.height;
-    
+        
           // adjust left/top to fit inside container bounds
           const margin = 8;
           if (leftPx + margin + w > width) leftPx = Math.max(margin, width - w - margin);
           if (leftPx < margin) leftPx = margin;
           if (topPx < margin) topPx = margin;
           if (topPx > height - 40) topPx = height - 40;
-    
+        
           div.style.left = Math.round(leftPx) + "px";
           div.style.top  = Math.round(topPx) + "px";
-    
-          return { a, div, anchorPx, left: leftPx, top: topPx, width: w, height: h, boxPx };
+        
+          return { a, div, left: leftPx, top: topPx, width: w, height: h, boxPx };
         }).filter(Boolean);
-    
-        // draw lines according to explicit lineStart/lineEnd if present, otherwise use anchor->box logic
+        
+        // Helper to resolve a point (data or px) to pixel coords, container top-left = origin for px
+        const resolvePoint = (pt) => {
+          if (!pt) return null;
+          if (pt.coords === "px") {
+            // treat as container pixels (no chartOffset added)
+            return { x: pt.x, y: pt.y };
+          }
+          if (typeof pt.x === "number" && typeof pt.y === "number") {
+            const p = dataToPixels(pt.x, pt.y);
+            if (p.x == null || p.y == null) return null;
+            // project data coords and then offset by chartOffset so they align with DOM coords
+            return { x: p.x + (chartOffset.left || 0), y: p.y + (chartOffset.top || 0) };
+          }
+          return null;
+        };
+        
+        // draw lines according to explicit lineStart/lineEnd if present, otherwise skip anchor->box fallback
         created.forEach(c => {
           const ann = c.a;
-          // helper to resolve a point (data or px) to pixel coords
-          const resolvePoint = (pt) => {
-            if (!pt) return null;
-            // if coords === 'px' treat as pixel and include chartOffset if provided
-            if (pt.coords === "px") return { x: pt.x + (chartOffset.left || 0), y: pt.y + (chartOffset.top || 0) };
-            // otherwise treat as data coords
-            if (typeof pt.x === "number" && typeof pt.y === "number") {
-              const p = dataToPixels(pt.x, pt.y);
-              if (p.x == null || p.y == null) return null;
-              return { x: p.x + (chartOffset.left || 0), y: p.y + (chartOffset.top || 0) };
-            }
-            return null;
-          };
-    
+        
           // If explicit lineStart/lineEnd provided, draw between those two points (user-controlled)
           const explicitStart = resolvePoint(ann.lineStart);
           const explicitEnd   = resolvePoint(ann.lineEnd);
@@ -1316,54 +1318,9 @@
             line.setAttribute("stroke-width", (ann && ann.lineWidth) ? String(ann.lineWidth) : "1.6");
             line.setAttribute("stroke-opacity", (ann && ann.lineOpacity) ? String(ann.lineOpacity) : "0.95");
             overlay.appendChild(line);
-            return; // done for this annotation
+            return;
           }
-    
-          // fallback: anchor->inset box edge approach
-          const rawAnchor = c.anchorPx;
-          if (!rawAnchor) return;
-    
-          // apply optional per-annotation anchor nudges (pixels)
-          const aNudgeX = Number.isFinite(ann.anchorNudgeX) ? ann.anchorNudgeX : 0;
-          const aNudgeY = Number.isFinite(ann.anchorNudgeY) ? ann.anchorNudgeY : 0;
-          const anchor = { x: rawAnchor.x + aNudgeX, y: rawAnchor.y + aNudgeY };
-    
-          const boxLeft = c.left;
-          const boxRight = c.left + c.width;
-          const boxTop = c.top;
-          const boxBottom = c.top + c.height;
-    
-          // inset from the box edge to avoid touching the corner
-          const edgeInset = Number.isFinite(ann.edgeInset) ? ann.edgeInset : 6;
-    
-          // pick best edge and compute attach point (then inset away from corners)
-          let attachX, attachY;
-          if (anchor.x > boxRight) {
-            attachX = boxRight - edgeInset;
-            attachY = Math.min(Math.max(anchor.y, boxTop + edgeInset), boxBottom - edgeInset);
-          } else if (anchor.x < boxLeft) {
-            attachX = boxLeft + edgeInset;
-            attachY = Math.min(Math.max(anchor.y, boxTop + edgeInset), boxBottom - edgeInset);
-          } else if (anchor.y < boxTop) {
-            attachY = boxTop + edgeInset;
-            attachX = Math.min(Math.max(anchor.x, boxLeft + edgeInset), boxRight - edgeInset);
-          } else {
-            attachY = boxBottom - edgeInset;
-            attachX = Math.min(Math.max(anchor.x, boxLeft + edgeInset), boxRight - edgeInset);
-          }
-    
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", Math.round(anchor.x));
-          line.setAttribute("y1", Math.round(anchor.y));
-          line.setAttribute("x2", Math.round(attachX));
-          line.setAttribute("y2", Math.round(attachY));
-          line.setAttribute("class", "annotation-line");
-          line.setAttribute("stroke", (ann && typeof ann.lineColor === "string") ? ann.lineColor : "#000000");
-          line.setAttribute("stroke-width", (ann && ann.lineWidth) ? String(ann.lineWidth) : "1.6");
-          line.setAttribute("stroke-opacity", (ann && ann.lineOpacity) ? String(ann.lineOpacity) : "0.95");
-          overlay.appendChild(line);
         });
-    
         return created;
       }
     
