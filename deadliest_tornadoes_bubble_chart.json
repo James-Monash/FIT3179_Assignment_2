@@ -18,14 +18,14 @@
       "field": "year_num",
       "type": "quantitative",
       "title": "Year",
-      "axis": { "labelAngle": 0, "tickMinStep": 10, "format": "d", "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "labelFontSize": 12, "labelFontWeight": 600, "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "titleFontSize": 13, "titleFontWeight": 600, "labelPadding": 8 },
+      "axis": { "labelAngle": 0, "tickMinStep": 10, "format": "d", "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "labelFontSize": 12, "labelFontWeight": 600, "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "titleFontSize": 13, "titleFontWeight": 600 },
       "scale": { "domain": [1800, 2020], "nice": false }
     },
     "y": {
       "field": "deaths_num",
       "type": "quantitative",
       "title": "Fatalities",
-      "axis": { "labelAngle": 0, "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "labelFontSize": 12, "labelFontWeight": 600, "labelAlign": "right", "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "titleFontSize": 13, "titleFontWeight": 600, "labelPadding": 8 },
+      "axis": { "labelAngle": 0, "labelFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "labelFontSize": 12, "labelFontWeight": 600, "labelAlign": "right", "titleFont": "Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif", "titleFontSize": 13, "titleFontWeight": 600 },
       "scale": { "domain": [0, 1500], "nice": false }
     },
     "size": {
@@ -61,7 +61,6 @@
       "titleFontSize": 13,
       "titleFontWeight": 600,
       "labelAngle": 0,
-      "labelPadding": 8,
       "gridColor": "#e6e6e6",
       "gridWidth": 0.8,
       "tickSize": 4
