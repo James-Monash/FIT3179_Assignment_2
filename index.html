@@ -1183,153 +1183,92 @@
         const bbox = container.getBoundingClientRect();
         const width = Math.max(20, Math.floor(bbox.width));
         const height = Math.max(20, Math.floor(bbox.height));
-      
         overlay.setAttribute("width", width);
         overlay.setAttribute("height", height);
         overlay.style.width = width + "px";
         overlay.style.height = height + "px";
-      
-        const proj = makeProjection(width, height);
-        function projectPoint(lon, lat) {
-          const p = proj([lon, lat]);
-          return { x: p[0], y: p[1] };
-        }
-      
-        // clear overlay contents and previous boxes
+    
+        // clear overlay lines and boxes
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
         Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
-      
-        // create boxes and compute anchor pixels (anchor comes from a.src; box position from a.boxLonLat or fallback to a.src)
+    
+        // create boxes first (so we can measure)
         const created = annotations.map(a => {
-          // Determine anchor lon/lat (used for marker + start of leader line)
-          const anchorLon = (a.src && typeof a.src.lon === "number") ? a.src.lon : null;
-          const anchorLat = (a.src && typeof a.src.lat === "number") ? a.src.lat : null;
-      
-          // Determine box lon/lat (preferred). If not supplied, fallback to anchor lon/lat.
-          const boxLon = (a.boxLonLat && typeof a.boxLonLat.lon === "number") ? a.boxLonLat.lon
-                        : (anchorLon !== null ? anchorLon : null);
-          const boxLat = (a.boxLonLat && typeof a.boxLonLat.lat === "number") ? a.boxLonLat.lat
-                        : (anchorLat !== null ? anchorLat : null);
-      
-          // require a box position to render a box
-          if (boxLon === null || boxLat === null) return null;
-      
-          // project pixels
-          const boxPx = projectPoint(boxLon, boxLat);
-          const anchorPx = (anchorLon !== null && anchorLat !== null) ? projectPoint(anchorLon, anchorLat) : null;
-      
-          // create box DOM
+          const src = a.src || {};
+          if (typeof src.x !== "number" || typeof src.y !== "number") return null;
+          const pt = dataToPixels(src.x, src.y);
+          if (pt.x == null || pt.y == null) return null;
+    
           const div = document.createElement("div");
           div.className = "annotation-box";
           if (a.id) div.setAttribute("data-annotation-id", a.id);
           div.style.position = "absolute";
           div.style.pointerEvents = "auto";
-      
           const label = document.createElement("div");
           label.className = "annotation-label";
           label.innerHTML = (a.label || "").replace(/\n/g, "<br>");
           div.appendChild(label);
-      
           if (a.caption) {
             const cap = document.createElement("div");
             cap.className = "caption";
             cap.textContent = a.caption;
             div.appendChild(cap);
           }
-      
+    
           const nudgeX = Number.isFinite(a.nudgeX) ? a.nudgeX : 0;
           const nudgeY = Number.isFinite(a.nudgeY) ? a.nudgeY : 0;
-      
-          // initial left/top from projected box px plus nudges
-          let left = Math.round(boxPx.x + container.scrollLeft + nudgeX);
-          let top  = Math.round(boxPx.y + container.scrollTop + nudgeY);
-      
-          // measure and constrain to container bounds
-          const containerRect = container.getBoundingClientRect();
-          const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
+    
+          // box placement: either boxXY in data coords or place relative to the source pixel
+          let leftPx = pt.x + nudgeX;
+          let topPx  = pt.y + nudgeY;
+          if (a.boxXY && typeof a.boxXY.x === "number" && typeof a.boxXY.y === "number") {
+            const b = dataToPixels(a.boxXY.x, a.boxXY.y);
+            if (b.x != null && b.y != null) {
+              leftPx = b.x + nudgeX;
+              topPx  = b.y + nudgeY;
+            }
+          }
+    
+          // simple container bounds checks
           const margin = 8;
-      
-          // append off-screen to measure
+          const boxMaxWidth = (a.maxWidth && Number.isFinite(a.maxWidth)) ? a.maxWidth : 320;
+          // append off-DOM to measure size
           div.style.left = "-9999px";
           div.style.top = "-9999px";
           container.appendChild(div);
           const measured = div.getBoundingClientRect();
-          const measuredWidth = Math.min(boxMaxWidth, measured.width);
-          const measuredHeight = measured.height;
-      
-          if (left + margin + measuredWidth > containerRect.width) left = Math.max(margin, containerRect.width - measuredWidth - margin);
-          if (left < margin) left = margin;
-          if (top < margin) top = margin;
-          if (top > containerRect.height - 40) top = containerRect.height - 40;
-      
-          // apply final position
-          div.style.left = Math.round(left) + "px";
-          div.style.top  = Math.round(top) + "px";
-      
-          return {
-            a,
-            div,
-            left,
-            top,
-            width: measuredWidth,
-            height: measuredHeight,
-            // anchorPx may be null if no src provided; callers can detect this
-            anchorPx: anchorPx,
-            boxPx: { x: boxPx.x, y: boxPx.y }
-          };
+          let w = Math.min(boxMaxWidth, measured.width);
+          let h = measured.height;
+    
+          // adjust left/top to fit inside container
+          if (leftPx + margin + w > width) leftPx = Math.max(margin, width - w - margin);
+          if (leftPx < margin) leftPx = margin;
+          if (topPx < margin) topPx = margin;
+          if (topPx > height - 40) topPx = height - 40;
+    
+          div.style.left = Math.round(leftPx) + "px";
+          div.style.top = Math.round(topPx) + "px";
+    
+          return { a, div, anchorPx: pt, left: leftPx, top: topPx, width: w, height: h };
         }).filter(Boolean);
-      
-        // draw leader lines and marker if anchor is available
+    
+        // draw leader lines from anchor to box edge
         created.forEach(c => {
           const anchor = c.anchorPx;
-          // if no anchor, skip lines/markers for this annotation
-          if (!anchor) return;
-      
-          const boxLeft = c.left;
-          const boxRight = c.left + c.width;
-          const boxTop = c.top;
-          const boxBottom = c.top + c.height;
-      
-          // choose the best attachment point on the box edge (prefer left edge if box is left of anchor)
-          let attachX, attachY;
-          if (anchor.x > boxRight) {
-            attachX = boxRight;
-            attachY = Math.min(Math.max(anchor.y, boxTop), boxBottom);
-          } else if (anchor.x < boxLeft) {
-            attachX = boxLeft;
-            attachY = Math.min(Math.max(anchor.y, boxTop), boxBottom);
-          } else if (anchor.y < boxTop) {
-            attachY = boxTop;
-            attachX = Math.min(Math.max(anchor.x, boxLeft), boxRight);
-          } else {
-            attachY = boxBottom;
-            attachX = Math.min(Math.max(anchor.x, boxLeft), boxRight);
-          }
-      
-          // create line element (explicit stroke default to black)
+          // compute box attachment point (simple center-left connection)
+          const boxCenterX = c.left + c.width / 2;
+          const boxCenterY = c.top + c.height / 2;
+    
           const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           line.setAttribute("x1", Math.round(anchor.x));
           line.setAttribute("y1", Math.round(anchor.y));
-          line.setAttribute("x2", Math.round(attachX));
-          line.setAttribute("y2", Math.round(attachY));
-          line.setAttribute("class", "annotation-line");
-          line.setAttribute("stroke", (c.a && c.a.lineColor) ? c.a.lineColor : "#000000");
-          line.setAttribute("stroke-width", (c.a && c.a.lineWidth) ? String(c.a.lineWidth) : "1.2");
-          line.setAttribute("stroke-opacity", (c.a && c.a.lineOpacity) ? String(c.a.lineOpacity) : "0.95");
+          line.setAttribute("x2", Math.round(boxCenterX));
+          line.setAttribute("y2", Math.round(boxCenterY));
+          line.setAttribute("stroke", c.a.lineColor || "#333");
+          line.setAttribute("stroke-width", c.a.lineWidth || "1");
+          line.setAttribute("stroke-opacity", c.a.lineOpacity || "0.9");
           overlay.appendChild(line);
-      
-          // create marker at the precise anchor
-          const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          marker.setAttribute("cx", Math.round(anchor.x));
-          marker.setAttribute("cy", Math.round(anchor.y));
-          marker.setAttribute("r", (c.a && c.a.markerRadius) ? String(c.a.markerRadius) : "4");
-          marker.setAttribute("class", "annotation-marker");
-          marker.setAttribute("fill", (c.a && c.a.markerFill) ? c.a.markerFill : "#000000");
-          marker.setAttribute("stroke", (c.a && c.a.markerStroke) ? c.a.markerStroke : "#ffffff");
-          overlay.appendChild(marker);
         });
-      
-        return created;
       }
     
       // initial draw
