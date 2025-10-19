@@ -254,9 +254,9 @@
     /* container that centers the chart+legend group */
     .viz-legend-wrapper {
       display: flex;
+      gap: 24px;                /* desired fixed distance between chart and legend */
       align-items: flex-start;
-      gap: 24px;              /* small gap between viz and legend */
-      padding: 12px 0;
+      box-sizing: border-box;
     }
 
     /* make the left viz container a positioned block that can be sized by embed */
@@ -275,13 +275,27 @@
       height: auto;
     }
     
-    .legend-right { 
-      position: static !important; 
-      top: auto !important; 
-      right: auto !important; 
-      z-index: auto !important; 
+    /* Ensure the chart column and legend column are the flex children whose outer boxes define the gap */
+    .map-stack-left,
+    .legend-right,
+    #fujita-legend,            /* target the existing fujita outer wrapper if you cannot add classes */
+    #country-legend-swatches,
+    #deadliest-country-swatches {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;               /* remove external offsets that change the measured gap */
+      flex: 0 0 auto;          /* prevent grow/shrink so gap is measured between fixed outer boxes */
     }
-    
+
+    /* Give legend columns the same visual start inside their outer box */
+    #fujita-legend,
+    .legend-right,
+    #country-legend-swatches,
+    #deadliest-country-swatches {
+      padding-left: 16px;      /* inner offset so swatch/controls align visually across legends */
+      min-width: 220px;        /* optional: prevents collapse that shortens the gap */
+    }
+
     /* Legend styling */
     .size-legend {
       padding: 8px 10px;
