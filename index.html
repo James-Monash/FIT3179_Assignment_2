@@ -1966,7 +1966,7 @@
             lineEnd:   { x: 100, y: 100, coords: "px" },
           
             // HTML box placement for the label 
-            boxXY: { x: 1780, y: 1550 },
+            boxXY: { x: 1820, y: 1800 },
           
             // box nudges (keep box fixed unless you want tiny shifts)
             nudgeX: 0,
@@ -1990,10 +1990,11 @@
         annotations: [
           {
             id: "au-season-note",
-            // Pass a data coord so the box is projected into the chart drawing area
-            boxXY: { x: 1985, y: 6 },   // <-- change to suit your byMonth data's x/y domain
+            // place the HTML box using container-relative pixels so no post-placement function is needed
+            boxXY: { x: 12, y: 250, coords: "px" }, // x = 12px from left edge; y = 250px from top (adjust as needed)
             nudgeX: 0,
             nudgeY: 0,
+            // no lineStart / lineEnd provided -> no leader line will be drawn
             label: "Australia's tornado season is a lot less pronounced than America's.",
             maxWidth: 260,
             lineColor: "#000000",
@@ -2011,7 +2012,7 @@
             lineStart: { x: 520, y: 220, coords: "px" }, 
             lineEnd:   { x: 340, y: 380, coords: "px" },
       
-            boxXY: { x: 100, y: 100 },
+            boxXY: { x: 1820, y: 1800 },
       
             // keep box fixed unless you want tiny nudges
             nudgeX: 0,
