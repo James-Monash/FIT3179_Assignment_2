@@ -1258,17 +1258,16 @@
           return { a, div, anchorPx, left: leftPx, top: topPx, width: w, height: h };
         }).filter(Boolean);
     
-        // draw leader lines from anchor to nearest box edge and markers where anchor exists
+        // draw leader lines from anchor to nearest box edge; no marker drawn
         created.forEach(c => {
           const anchor = c.anchorPx;
-          if (!anchor) return; // no anchor => no line/marker
-    
+          if (!anchor) return;
+        
           const boxLeft = c.left;
           const boxRight = c.left + c.width;
           const boxTop = c.top;
           const boxBottom = c.top + c.height;
-    
-          // pick attachment point on box edge (prefer left edge if box is left of anchor)
+        
           let attachX, attachY;
           if (anchor.x > boxRight) {
             attachX = boxRight;
@@ -1283,28 +1282,20 @@
             attachY = boxBottom;
             attachX = Math.min(Math.max(anchor.x, boxLeft), boxRight);
           }
-    
-          // draw line (explicit stroke defaulting to black)
+        
           const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           line.setAttribute("x1", Math.round(anchor.x));
           line.setAttribute("y1", Math.round(anchor.y));
           line.setAttribute("x2", Math.round(attachX));
           line.setAttribute("y2", Math.round(attachY));
           line.setAttribute("class", "annotation-line");
-          line.setAttribute("stroke", (c.a && c.a.lineColor) ? c.a.lineColor : "#000000");
+          // force black stroke; allow override only if annotation explicitly sets lineColor equal to null/undefined
+          const strokeColor = (c.a && typeof c.a.lineColor === "string") ? c.a.lineColor : "#000000";
+          line.setAttribute("stroke", strokeColor);
           line.setAttribute("stroke-width", (c.a && c.a.lineWidth) ? String(c.a.lineWidth) : "1.2");
           line.setAttribute("stroke-opacity", (c.a && c.a.lineOpacity) ? String(c.a.lineOpacity) : "0.95");
           overlay.appendChild(line);
-    
-          // draw marker at anchor (explicit fill/stroke defaults)
-          const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          marker.setAttribute("cx", Math.round(anchor.x));
-          marker.setAttribute("cy", Math.round(anchor.y));
-          marker.setAttribute("r", (c.a && c.a.markerRadius) ? String(c.a.markerRadius) : "4");
-          marker.setAttribute("class", "annotation-marker");
-          marker.setAttribute("fill", (c.a && c.a.markerFill) ? c.a.markerFill : "#000000");
-          marker.setAttribute("stroke", (c.a && c.a.markerStroke) ? c.a.markerStroke : "#ffffff");
-          overlay.appendChild(marker);
+        
         });
     
         return created;
@@ -1883,27 +1874,15 @@
         annotations: [
           {
             id: "peak-2011",
-            // anchor at the data point (Year, Count)
             src: { x: 2011, y: 2074 },
-      
-            // move the HTML box further left and slightly higher than before
             boxXY: { x: 1978, y: 2350 },
-      
-            // label text with a line break
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
-      
-            // small pixel nudges after projection (tweak if needed)
-            nudgeX: -6,
-            nudgeY: -6,
-      
-            // visual tuning
+            nudgeX: -60,
+            nudgeY: -19,
             maxWidth: 320,
-            lineColor: "#e07b39",
+            lineColor: "#000000",
             lineWidth: 1.6,
-            lineOpacity: 0.95,
-            markerRadius: 4,
-            markerFill: "#e07b39",
-            markerStroke: "#ffffff"
+            lineOpacity: 0.95
           }
         ]
       });
