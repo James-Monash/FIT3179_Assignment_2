@@ -1479,21 +1479,23 @@
       await embedWithHtmlAnnotations("#us-chart", usSpec, {
         projection: { center: [-95, 37], scale: 900 },
         annotations: [
-          // Offshore south of California — moved further south
+          // Moved the "western US less common" comment to the previous SE-marker location,
+          // then shifted it ~3° north and slightly west
           {
             id: "ca-offshore-note",
-            src: { lon: -120.0, lat: 30.0 },     // moved ~3° further south
-            boxLonLat: { lon: -118.0, lat: 29.0 },
+            src: { lon: -90.0, lat: 35.3 },        // moved ~3° north (lat +3) and ~3.1° west (lon -3.1) from -86.9,32.3
+            boxLonLat: { lon: -92.5, lat: 36.5 }, // box placed near the new marker; tune nudges if needed
             label: "Tornadoes are less common in the western US but still occur",
             nudgeX: -60,
             nudgeY: 12
           },
       
-          // Southeast states note — keep marker near AL but place the annotation box above Montana (white space)
+          // Move the southeast-states comment down so it sits directly beneath Alabama
+          // and at a latitude more southern than Florida (placed in the northern Gulf)
           {
             id: "southeast-note",
-            src: { lon: -86.9, lat: 32.3 },      // marker anchored near Alabama
-            boxLonLat: { lon: -110.0, lat: 48.0 }, // annotation box placed above Montana / in the available white space
+            src: { lon: -86.9, lat: 24.0 },        // directly under Alabama longitude, moved south into the northern Gulf (~24°N)
+            boxLonLat: { lon: -86.9, lat: 22.5 }, // box sits further south of the marker; adjust if you prefer it closer
             label: "Dangerous tornadoes are concentrated in the southeast states",
             nudgeX: -40,
             nudgeY: 10
