@@ -3,7 +3,7 @@
   "width": 840,
   "height": 600,
   "projection": {"type": "mercator", "center": [134, -28], "scale": 850},
-  "background": "#c6dbef",
+  "background": "#c6dbef", 
   "title": {
     "anchor": "start",
     "fontSize": 18,
