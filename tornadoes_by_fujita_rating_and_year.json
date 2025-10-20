@@ -8,7 +8,7 @@
   "width": 786,
   "height": 450,
   "transform": [
-    { "filter": "datum.YEAR <= 2024" },
+    { "filter": "datum.YEAR <= 2024" }, 
     { "aggregate": [ { "op": "sum", "field": "COUNT", "as": "COUNT" } ], "groupby": [ "YEAR", "RATING" ] }
   ],
   "mark": { "type": "area", "interpolate": "monotone", "opacity": 0.9 },
