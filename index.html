@@ -620,11 +620,6 @@
       box-sizing: border-box;
       z-index: 50;
     }
-    .el-reno-right .el-reno-legend-box .legend-title {
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
     .el-reno-right .el-reno-legend-box #el-reno-order-swatches,
     .el-reno-right .el-reno-legend-box #el-reno-order-swatches svg {
       width: 64px !important;
@@ -710,16 +705,6 @@
     #viz-el-reno-hodograph.viz-embed > * {
       align-self: start !important;
       min-height: 0 !important;
-    }
-
-    /* Override El Reno legend title to match other legends */
-    .el-reno-legend-box .legend-title {
-      font-size: 13px !important;
-      font-weight: 700 !important;
-      font-family: Inter, sans-serif !important;
-      line-height: 1.2 !important;
-      color: #123047 !important;
-      margin-bottom: 6px !important;
     }
 
     .spacer-32 { height: 32px; width: 100%; display: block; }
@@ -821,7 +806,7 @@
       
           <div class="legend-right">
             <div id="tornado-size-legend" class="size-legend" aria-hidden="false">
-              <div class="legend-title">Tornado count</div>
+              <div>Tornado count</div>
               <svg id="tornado-size-legend-svg" role="img" aria-label="Tornado count legend"></svg>
             </div>
           </div>
@@ -857,7 +842,7 @@
       
           <div class="legend-right">
             <div id="severe-legend" class="size-legend" aria-hidden="false">
-              <div class="legend-title">Severe weather</div>
+              <div>Severe weather</div>
               <svg id="severe-legend-svg" width="200" height="140" role="img" aria-label="Severe weather legend"></svg>
             </div>
           </div>
@@ -897,7 +882,7 @@
       
           <div class="legend-right" aria-hidden="false" role="region" aria-label="Map legend and controls">
             <div id="combined-rating-legend" class="size-legend" role="group" aria-label="Fujita rating legend">
-              <div class="legend-title">Fujita rating</div>
+              <div>Fujita rating</div>
               <div id="legend-checkboxes" aria-label="Fujita rating toggles" role="list"></div>
               <div id="fujita-legend" class="fujita-legend" role="list" aria-label="Fujita scale colours"></div>
               <div class="legend-note" style="margin-top:8px; color:#55607a; font-size:12px;">
@@ -1048,7 +1033,7 @@
       
           <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
             <div id="deadliest-country-legend-map" class="size-legend" role="group" aria-label="Country colours">
-              <div class="legend-title">Country</div>
+              <div>Country</div>
               <div id="deadliest-country-swatches-map" class="fujita-legend" role="list" aria-label="Country colour swatches"></div>
             </div>
           </div>
@@ -1095,7 +1080,7 @@
             <div id="viz-el-reno-hodograph" class="viz-embed" aria-label="El Reno hodograph"></div>
       
             <div class="el-reno-legend-box" aria-hidden="false">
-              <div class="legend-title">Altitude (m)</div>
+              <div>Altitude (m)</div>
               <div id="el-reno-order-swatches" class="fujita-legend" role="list" aria-label="Altitude colours"></div>
             </div>
           </div>
