@@ -1976,18 +1976,6 @@
           });
         }
       
-        usLayers.push({
-          data: { values: usValues },
-          mark: { type: "point", filled: true, size: 36 },
-          encoding: {
-            longitude: { field: usLonField, type: "quantitative" },
-            latitude: { field: usLatField, type: "quantitative" },
-            color: { value: ratingColors[r] },
-            tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
-          }
-        });
-      }
-
       // Construct final specs
       const ausSpec = {
         $schema: "https://vega.github.io/schema/vega-lite/v6.json",
