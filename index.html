@@ -1928,7 +1928,12 @@
       function isValidLatLon(lat, lon) {
         return Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
       }
-
+      
+      function parseNum(v) {
+        if (v === null || v === undefined) return NaN;
+        return Number(String(v).trim().replace(/,/g, ''));
+      }
+      
       for (const r of ratings) {
         if (!selectedRatings.has(r)) continue;
       
@@ -1939,19 +1944,27 @@
       
         const ausValues = ausRows.map(row => {
           const out = Object.assign({}, row);
-          if (out[ausLatField] !== undefined) out[ausLatField] = parseFloat(out[ausLatField]);
-          if (out[ausLonField] !== undefined) out[ausLonField] = parseFloat(out[ausLonField]);
+          out[ausLatField] = parseNum(out[ausLatField]);
+          out[ausLonField] = parseNum(out[ausLonField]);
           out.TOR_F_SCALE = out.TOR_F_SCALE || r;
           return out;
-        }).filter(d => isValidLatLon(d[ausLatField], d[ausLonField]));
+        }).filter(d => isValidLatLon(d[ausLatField], d[ausLonField])); // keep the general validator for AUS
       
-        const usValues = usRows.map(row => {
+        // Parse thoroughly, log any removed rows, then apply US-specific latitude floor (lat >= 20)
+        const mappedUs = usRows.map(row => {
           const out = Object.assign({}, row);
-          if (out[usLatField] !== undefined) out[usLatField] = parseFloat(out[usLatField]);
-          if (out[usLonField] !== undefined) out[usLonField] = parseFloat(out[usLonField]);
+          out[usLatField] = parseNum(out[usLatField]);
+          out[usLonField] = parseNum(out[usLonField]);
           out.TOR_F_SCALE = out.TOR_F_SCALE || r;
           return out;
-        }).filter(d => isValidLatLon(d[usLatField], d[usLonField]) && d[usLatField] >= -70);
+        });
+      
+        const removedUs = mappedUs.filter(d => !isValidLatLon(d[usLatField], d[usLonField]) || d[usLatField] < 20);
+        if (removedUs.length) {
+          console.warn(`Rating ${r}: removed ${removedUs.length} US rows (invalid or lat < 20). Sample:`, removedUs.slice(0, 10));
+        }
+      
+        const usValues = mappedUs.filter(d => isValidLatLon(d[usLatField], d[usLonField]) && d[usLatField] >= 20);
       
         ausLayers.push({
           data: { values: ausValues },
@@ -1963,21 +1976,21 @@
             tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
           }
         });
-    
+      
         usLayers.push({
-            data: { values: usValues },
-            mark: { type: "point", filled: true, size: 36 },
-            encoding: {
-              longitude: { field: usLonField, type: "quantitative" },
-              latitude: { field: usLatField, type: "quantitative" },
-              color: { value: ratingColors[r] },
-              tooltip: [
-                { title: "Fujita rating", field: "TOR_F_SCALE", type: "nominal" },
-                { title: "Latitude", field: usLatField, type: "quantitative", format: ".4f" },
-                { title: "Longitude", field: usLonField, type: "quantitative", format: ".4f" }
-              ]
-            }
-          });
+          data: { values: usValues },
+          mark: { type: "point", filled: true, size: 36 },
+          encoding: {
+            longitude: { field: usLonField, type: "quantitative" },
+            latitude: { field: usLatField, type: "quantitative" },
+            color: { value: ratingColors[r] },
+            tooltip: [
+              { title: "Fujita rating", field: "TOR_F_SCALE", type: "nominal" },
+              { title: "Latitude", field: usLatField, type: "quantitative", format: ".4f" },
+              { title: "Longitude", field: usLonField, type: "quantitative", format: ".4f" }
+            ]
+          }
+        });
       }
       
       // Construct final specs
