@@ -1951,7 +1951,7 @@
           if (out[usLonField] !== undefined) out[usLonField] = parseFloat(out[usLonField]);
           out.TOR_F_SCALE = out.TOR_F_SCALE || r;
           return out;
-        }).filter(d => isValidLatLon(d[usLatField], d[usLonField]) && d[usLatField] >= -62);
+        }).filter(d => isValidLatLon(d[usLatField], d[usLonField]) && d[usLatField] >= -70);
       
         ausLayers.push({
           data: { values: ausValues },
