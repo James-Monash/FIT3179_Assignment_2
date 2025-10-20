@@ -436,15 +436,14 @@
     }
 
     .legend-checkbox[type="checkbox"]:checked::after {
-      content: "";
-      display: block;
-      width: 8px;
-      height: 8px;
-      margin: 3px auto;
-      background-color: #123047;
-      border-radius: 1px;
+      content: "✓";
+      position: absolute;
+      top: 0;
+      left: 2px;
+      font-size: 14px;
+      color: #123047;
     }
-
+    
     .legend-nudge {
       margin-left: 16px; /* adjust value to taste */
     }
@@ -2171,7 +2170,7 @@
             id: "peak-2011",
             // Use explicit pixel endpoints so start and end are exact
             lineStart: { x: 600, y: 34, coords: "px" },  // set this to the pixel where the line should begin
-            lineEnd:   { x: 796, y: 37, coords: "px" },  // set this to the pixel where the line should end
+            lineEnd:   { x: 700, y: 37, coords: "px" },  // set this to the pixel where the line should end
           
             // HTML box position is independent; keep it where you want
             boxXY: { x: 1986, y: 2300 },
