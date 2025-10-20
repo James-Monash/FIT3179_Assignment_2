@@ -56,9 +56,9 @@
     },
     "tooltip": [
       { "field": "country", "type": "nominal" },
-      { "field": "month_name", "type": "ordinal", "title": "Month" },
-      { "field": "count", "type": "quantitative", "title": "Count" },
-      { "field": "percent", "type": "quantitative", "title": "Percent", "format": ".3f" }
+      { "field": "month_name", "type": "ordinal", "title": "Month:" },
+      { "field": "count", "type": "quantitative", "title": "Count:" },
+      { "field": "percent", "type": "quantitative", "title": "Percent:", "format": ".2f" }
     ]
   },
   "config": {
