@@ -420,6 +420,21 @@
     .legend-item.disabled { opacity: 0.45; }
     .legend-item .legend-checkbox { margin-right: 8px; }
 
+    .legend-checkbox[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      padding: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background-color: white;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 3px;
+      box-sizing: border-box;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
     .legend-nudge {
       margin-left: 16px; /* adjust value to taste */
     }
@@ -873,16 +888,13 @@
       </section>
 
       <p class="intro-paragraph">
-        Tornadoes are <span class="highlight">very seasonal events</span>.<br/>
-        They need a <span class="highlight">lifting mechanism</span>,<br/>
-        a <span class="highlight">moist atmosphere</span>, and<br/>
-        <span class="highlight">conditional instability</span> to form.<br/>
-        For that reason, <span class="highlight">spring</span> is most common,<br/>
-        though tornadoes can occur any time of year.<br/>
-        Below are monthly distributions for<br/>
-        <span class="highlight">Australia</span> (Southern Hemisphere)<br/>
-        and the <span class="highlight">United States</span> (Northern Hemisphere).<br/>
-        Values show the <span class="highlight">proportion</span> of tornadoes per month.
+        Tornadoes are <span class="highlight">very seasonal events</span> that require a <span class="highlight">lifting mechanism</span>,<br/>
+        a <span class="highlight">moist atmosphere</span>, and <span class="highlight">conditional instability</span> to develop.<br/>
+        For this reason, <span class="highlight">spring</span> is the most<br/> common season,<br/>
+        though tornadoes can occur year-round. Below are monthly<br/>
+        distributions for <span class="highlight">Australia</span> (Southern Hemisphere) and the<br/>
+        <span class="highlight">United States</span> (Northern Hemisphere). Values show the<br/>
+        <span class="highlight">proportion</span> of tornadoes<br/> occurring each month in both countries.
       </p>
 
       <!-- 7) tornadoes_by_month_aus_vs_us -->
@@ -2148,8 +2160,8 @@
           {
             id: "peak-2011",
             // Use explicit pixel endpoints so start and end are exact
-            lineStart: { x: 610, y: 34, coords: "px" },  // set this to the pixel where the line should begin
-            lineEnd:   { x: 712, y: 37, coords: "px" },  // set this to the pixel where the line should end
+            lineStart: { x: 600, y: 34, coords: "px" },  // set this to the pixel where the line should begin
+            lineEnd:   { x: 796, y: 37, coords: "px" },  // set this to the pixel where the line should end
           
             // HTML box position is independent; keep it where you want
             boxXY: { x: 1986, y: 2300 },
