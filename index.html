@@ -622,6 +622,10 @@
       margin: 0 !important;
       box-sizing: border-box !important;
     }
+
+    #viz-el-reno-hodograph.viz-embed {
+      position: relative;
+    }
     
     /* Legend: keep existing placement and size */
     .el-reno-right .el-reno-legend-box {
@@ -2272,12 +2276,12 @@
       await embedWithHtmlAnnotationsForCartesian("#viz-el-reno-hodograph", specs.elRenoHodograph, {
         annotations: [
           {
-            id: "deadliest-bangladesh",
+            id: "curved-hodograph",
             boxXY: { x: 200, y: 50, coords: "px" },
             nudgeX: 0,
             nudgeY: 0,
-            label: "Deadliest recent tornado (Daulatpur-Saturia): densely populated areas with limited warning systems led to catastrophic loss of life",
-            maxWidth: 340,
+            label: "It is clear that the wind speed increases and the wind direction changes with altitude",
+            maxWidth: 240,
             fontSize: 14,
             padding: 10,
             lineOpacity: 0
