@@ -703,41 +703,38 @@
       }
     }
 
-    /* place this at the very end of your stylesheet */
     #viz-el-reno-hodograph.viz-embed {
-      position: relative;
-      padding: 0;
-      margin: 0;
-      overflow: visible;
-      box-sizing: border-box;
+      position: relative !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+      box-sizing: border-box !important;
     }
     
-    /* force annotation(s) inside this specific viz to hug content */
     #viz-el-reno-hodograph.viz-embed > .annotation-box,
     #viz-el-reno-hodograph.viz-embed .annotation-box {
-      position: absolute;
-      display: inline-block;
-      width: auto;
-      min-width: 0;
-      max-width: 320px;
-      height: auto;
-      padding: 8px 10px;
-      box-sizing: border-box;
-      white-space: normal;
-      overflow: visible;
-      transform: translate(0,0);
-      background: rgba(255,255,255,0.96);
-      border: 1px solid rgba(34,40,49,0.08);
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      font-size: 14px;
-      line-height: 1.25;
+      position: absolute !important;
+      display: inline-block !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: 320px !important;
+      height: auto !important;
+      padding: 8px 10px !important;
+      box-sizing: border-box !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      transform: translate(0,0) !important;
+      background: rgba(255,255,255,0.96) !important;
+      border: 1px solid rgba(34,40,49,0.08) !important;
+      border-radius: 8px !important;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06) !important;
+      font-size: 14px !important;
+      line-height: 1.25 !important;
     }
     
-    /* prevent flex/grid parent from forcing stretch on viz children */
     #viz-el-reno-hodograph.viz-embed > * {
-      align-self: start;
-      min-height: 0;
+      align-self: start !important;
+      min-height: 0 !important;
     }
     
     /* Footer metadata styling */
