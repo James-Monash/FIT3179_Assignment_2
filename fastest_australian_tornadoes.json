@@ -97,8 +97,8 @@
           "value": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado.svg"
         },
         "tooltip": [
-          {"title": "Date", "field": "FormattedDate", "type": "nominal"},
-          {"title": "Max wind speed", "field": "MaxSpeedFmt", "type": "nominal"}
+          {"title": "Date:", "field": "FormattedDate", "type": "nominal"},
+          {"title": "Max wind speed:", "field": "MaxSpeedFmt", "type": "nominal"}
         ]
       }
     }
