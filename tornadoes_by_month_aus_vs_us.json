@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Butterfly chart of tornado percent by month for Australia vs America (2000-2024).",
   "data": {
-    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_month_percent_2000-2024_AUS_US.csv",
+    "url": "https://raw.githubusercontent.com/James-Monash/FIT3179_Assignment_2/main/tornado_month_percent_2000-2024_AUS_US.csv", 
     "format": { "type": "csv" }
   },
   "transform": [
