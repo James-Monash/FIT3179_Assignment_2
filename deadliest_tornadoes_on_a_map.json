@@ -55,10 +55,10 @@
           "legend": null
         },
         "tooltip": [
-          { "field": "event", "type": "nominal", "title": "Event" },
-          { "field": "country", "type": "nominal", "title": "Country" },
-          { "field": "year", "type": "quantitative", "title": "Year" },
-          { "field": "deaths_num", "type": "quantitative", "title": "Fatalities" }
+          { "field": "event", "type": "nominal", "title": "Event:" },
+          { "field": "country", "type": "nominal", "title": "Country:" },
+          { "field": "year", "type": "quantitative", "title": "Year:" },
+          { "field": "deaths_num", "type": "quantitative", "title": "Fatalities:" }
         ]
       }
     }
