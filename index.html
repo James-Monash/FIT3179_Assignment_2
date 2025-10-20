@@ -2265,29 +2265,6 @@
       });
 
       drawDeadliestCountryLegend()
-      
-      await embedWithHtmlAnnotationsForCartesian("#viz-deadliest-map", specs.deadliestMap, {
-        annotations: [
-          {
-            id: "curved-hodograph",
-      
-            boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
-      
-            // keep box fixed unless you want tiny nudges
-            nudgeX: 0,
-            nudgeY: 0,
-      
-            // content
-            label: "Look at how the wind speed increases and wind direction changes with altitude",
-      
-            // visual tuning
-            maxWidth: 340,
-            lineColor: "#000000",
-            lineWidth: 1.0,
-            lineOpacity: 0.95
-          }
-        ]
-      });
 
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
       drawDeadliestCountryLegend("deadliest-country-swatches-map");
@@ -2304,7 +2281,7 @@
             label: "Wind speed increases and direction shifts with altitude.",
       
             // visual tuning
-            maxWidth: 240,           // smaller box width
+            maxWidth: 340,           // smaller box width
             padding: 8,              // optional: reduce internal whitespace
             fontSize: 14,            // optional: match chart font
             backgroundColor: "#fff", // optional: ensure clean background
