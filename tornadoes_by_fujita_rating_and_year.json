@@ -56,9 +56,9 @@
     },
     "order": { "field": "RATING", "type": "ordinal" },
     "tooltip": [
-      { "field": "YEAR", "type": "quantitative", "title": "Year" },
-      { "field": "RATING", "type": "nominal", "title": "Rating" },
-      { "field": "COUNT", "type": "quantitative", "title": "Count" }
+      { "field": "YEAR", "type": "quantitative", "title": "Year:" },
+      { "field": "RATING", "type": "nominal", "title": "Rating:" },
+      { "field": "COUNT", "type": "quantitative", "title": "Count:" }
     ]
   },
   "config": {
