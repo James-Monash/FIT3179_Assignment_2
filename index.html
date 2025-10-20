@@ -13,7 +13,6 @@
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script> <!-- we use this to calculate projections and ensure annotations remain in the correct position -->
 
   <style>
-    /* Basic tooltip element and visibility behavior (matches plugin expectations) */
     #vg-tooltip-element {
       visibility: hidden;
       position: fixed;
@@ -32,16 +31,12 @@
       opacity: 0;
     }
     
-    /* plugin uses .visible to show it */
     #vg-tooltip-element.visible {
       visibility: visible;
       opacity: 1;
       transform: translate3d(0,0,0) scale(1);
     }
     
-    /* Provide a theme-specific wrapper class pattern the plugin may apply.
-       The plugin may add "custom-theme" or "custom-theme-theme" depending on version.
-       Include both to be safe. */
     #vg-tooltip-element.custom-theme,
     #vg-tooltip-element.custom-theme-theme,
     .custom-theme,
@@ -50,8 +45,7 @@
       color: #111;
       border-color: rgba(34,40,49,0.08);
     }
-    
-    /* Table layout used by plugin for key/value pairs */
+  
     #vg-tooltip-element table {
       border-spacing: 0;
       width: 100%;
@@ -59,10 +53,9 @@
     #vg-tooltip-element table tr { border: none; }
     #vg-tooltip-element table tr td { padding: 4px 6px; vertical-align: middle; }
     
-    /* Key / value classes the plugin emits */
     #vg-tooltip-element table tr td.key,
     #vg-tooltip-element .key {
-      text-align: left;               /* change to left so highlighted chip aligns well */
+      text-align: left;            
       font-weight: 700;
       color: #234a7a;                 /* deep stormy blue for keys */
       max-width: 160px;
@@ -71,10 +64,9 @@
       text-overflow: ellipsis;
     }
         
-    /* Value styling */
     #vg-tooltip-element table tr td.value,
     #vg-tooltip-element .value {
-      color: #0b6aa6;                 /* clear blue for numeric/text values */
+      color: #0b6aa6;                 /* clear blue for values */
       font-weight: 600;
       text-align: right;
     }
@@ -92,7 +84,6 @@
       color: #111;
     }
     
-    /* Outer poster container */
     .poster {
       max-width: 1100px;
       margin: 0 auto;
@@ -146,7 +137,6 @@
       text-align: center;
     }
     
-    /* Intro paragraph with narrow width and line breaks */
     .intro-paragraph {
       max-width: 700px;
       margin: 0 auto 32px auto;
@@ -156,13 +146,11 @@
       text-align: center;
     }
     
-    /* Highlighted words */
     .highlight {
       color: #e07b39; /* weathered orange */
       font-weight: 600;
     }
 
-    /* Each viz card */
     .viz-card {
       max-width: 1080px;
       margin-left: 1.5cm;
@@ -185,7 +173,6 @@
       text-align: left;
     }
 
-    /* Container */
     .viz-embed { position: relative; }
     
     /* Overlay SVG for leader lines (on top of canvas/svg) */
@@ -199,21 +186,20 @@
       z-index: 9998;
     }
     
-    /* HTML annotation boxes: hug content, allow wrapping, standout font */
     .annotation-box {
       position: absolute;
-      display: inline-block;           /* hug content width */
+      display: inline-block;          
       transform: translate(0, 0);
       background: rgba(255,255,255,0.96);
       border: 1px solid rgba(34,40,49,0.08);
       padding: 8px 10px;
       border-radius: 8px;
       box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-      font-family: "Merriweather", Georgia, "Times New Roman", serif; /* standout serif */
+      font-family: "Merriweather", Georgia, "Times New Roman", serif;
       font-size: 14px;
       color: #1f2a44;
-      max-width: 320px;               /* max width before wrapping */
-      white-space: normal;            /* allow wrapping */
+      max-width: 320px;         
+      white-space: normal;          
       line-height: 1.25;
       pointer-events: auto;
       z-index: 9999;
@@ -221,14 +207,12 @@
       width: auto; 
     }
     
-    /* label element inside the box — keep bolder weight if desired */
     .annotation-box .annotation-label {
       font-weight: 700;
       letter-spacing: -0.2px;
       color: #123047;
     }
     
-    /* if you ever want a smaller secondary line, leave this in place (not used now) */
     .annotation-box .caption {
       display: block;
       margin-top: 6px;
@@ -239,11 +223,9 @@
     
     .annotation-line { stroke: #000000; stroke-width: 1.6px; stroke-linecap: round; opacity: 0.95; }
 
-    /* Row for side-by-side maps (dynamic) */
     .row { display:flex; gap:16px; align-items:flex-start; justify-content:center; }
     .col { flex:1; min-width:280px; max-width:620px; }
 
-    /* Small responsive tweaks */
     @media (max-width: 900px) {
       .row { flex-direction: column; }
     }
@@ -262,7 +244,6 @@
       
     }
 
-    /* make the left viz container a positioned block that can be sized by embed */
     .viz-left {
       max-width: 100%;
       position: relative;
@@ -284,7 +265,6 @@
       z-index: auto !important; 
     }
     
-    /* Legend styling */
     .size-legend {
       padding: 8px 10px;
       background: rgba(255,255,255,0.96);
@@ -294,30 +274,26 @@
       max-width: 300px;
     }
     
-    /* responsive: stack on narrow screens */
     @media (max-width: 880px) {
       .viz-legend-wrapper { flex-direction: column; align-items: center; }
       .legend-right { margin-left: 0; margin-top: 12px; }
     }
 
-    /* Scoped rules for the stacked maps group only */
     .map-stack-left {
       flex: 0 1 auto;
       min-width: 320px;
-      max-width: 840px;      /* tune to match other viz group width */
+      max-width: 840px;     
       display: block;
     }
     
-    /* stack the two maps vertically and keep full width of the left column */
     .map-stack-left .map-stack-item {
       margin-bottom: 18px;
       width: 100%;
       box-sizing: border-box;
     }
     
-    /* make embedded canvases use the exact left-column width */
     .map-stack-left .viz-embed {
-      width: 840px;          /* keep same left-edge alignment as other visualisations */
+      width: 840px;      
       max-width: 100%;
     }
 
@@ -329,26 +305,24 @@
     #deadliest-country-swatches {
       display: flex !important;
       flex-direction: column !important;
-      gap: 6px !important;          /* same as fujita */
+      gap: 6px !important;        
       margin-top: 8px !important;
       padding: 0 !important;
       box-sizing: border-box !important;
     }
     
-    /* Each row: mirror fujita row sizing and alignment */
     #country-legend-swatches .f-row,
     #deadliest-country-swatches .f-row {
       display: flex !important;
       align-items: center !important;
       gap: 8px !important;
-      font-size: 13px !important;   /* same as fujita */
+      font-size: 13px !important; 
       color: #123047 !important;
       padding: 0 !important;
       min-height: 20px !important;
       box-sizing: border-box !important;
     }
     
-    /* Swatch styling to match fujita look (rect-like) */
     #country-legend-swatches .swatch,
     #deadliest-country-swatches .swatch {
       width: 24px !important;
@@ -361,7 +335,6 @@
       display: inline-block !important;
     }
     
-    /* Label weight and description style */
     #country-legend-swatches .f-label,
     #deadliest-country-swatches .f-label {
       flex: 0 0 auto !important;
@@ -371,7 +344,6 @@
       color: inherit !important;
     }
     
-    /* Optional small description class if you use it */
     #country-legend-swatches .f-desc,
     #deadliest-country-swatches .f-desc {
       color: #55607a !important;
@@ -420,13 +392,11 @@
     }
 
     .legend-item.disabled { opacity: 0.45; }
-    /* container spacing */
     .legend-item .legend-checkbox {
       margin-right: 8px;
       box-sizing: border-box;
     }
     
-    /* visual checkbox box */
     .legend-checkbox[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
@@ -442,37 +412,34 @@
       box-sizing: border-box;
       display: inline-block;
       vertical-align: middle;
-      position: relative;           /* REQUIRED: positions ::after relative to this element */
-      line-height: 16px;            /* normalise inline metrics */
-      font-size: 14px;              /* controls size of the ✓ if using character */
-      text-align: center;           /* helps center the tick character */
+      position: relative;          
+      line-height: 16px;         
+      font-size: 14px;            
+      text-align: center;       
       cursor: pointer;
     }
     
-    /* checked tick - simple character centered and visible */
     .legend-checkbox[type="checkbox"]:checked::after {
       content: "✓";
       color: #123047;
       position: absolute;
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -50%); /* perfect centering regardless of metrics */
-      font-size: 12px;                   /* fixed tick size that does not inherit weird fonts */
+      transform: translate(-50%, -50%); 
+      font-size: 12px;                  
       line-height: 1;
       pointer-events: none;
     }
     
-    /* Optional: focus / hover cues */
     .legend-checkbox[type="checkbox"]:focus {
       outline: 2px solid rgba(18,48,71,0.12);
       outline-offset: 2px;
     }
     
     .legend-nudge {
-      margin-left: 16px; /* adjust value to taste */
+      margin-left: 16px;
     }
 
-    /* Make Fujita styling as deterministic and specific as country legends */
     #fujita-static-swatches,
     #fujita-legend {
       display: flex;
@@ -483,7 +450,6 @@
       box-sizing: border-box;
     }
     
-    /* Mirror the country row rules exactly (explicit sizing and reset) */
     #fujita-static-swatches .f-row,
     #fujita-legend .f-row {
       display: flex;
@@ -492,13 +458,12 @@
       font-size: 13px;
       color: #123047;
       padding: 0;
-      min-height: 20px;        /* matches country legend rows */
+      min-height: 20px;   
       box-sizing: border-box;
-      margin: 0;               /* ensure no extra margin on the row itself */
-      line-height: 1;         /* avoid line-height driven differences */
+      margin: 0;             
+      line-height: 1;      
     }
     
-    /* Swatch sizing to match country legend */
     #fujita-static-swatches .swatch,
     #fujita-legend .swatch {
       width: 24px;
@@ -511,7 +476,6 @@
       display: inline-block;
     }
     
-    /* Label and description parity */
     #fujita-static-swatches .f-label,
     #fujita-legend .f-label {
       flex: 0 0 auto;
@@ -526,7 +490,6 @@
       font-size: 13px;
     }
     
-    /* Normalize checkbox so it does not add UA spacing */
     #fujita-legend .legend-checkbox,
     #fujita-static-swatches .legend-checkbox {
       margin: 0;
@@ -546,18 +509,16 @@
     
     .el-reno-block {
       max-width: 1080px;
-      margin-left: 1.5cm;       /* same as .viz-card */
+      margin-left: 1.5cm;     
       margin-right: auto;
       box-sizing: border-box;
       padding-bottom: 64px; 
     }
     
-    /* Image row spacing */
     .el-reno-image-row {
       margin-bottom: 18px;
     }
     
-    /* Image: fixed width and aligned with other visualisations */
     .el-reno-image-row .el-reno-figure {
       width: 850px;
       margin: 0;
@@ -569,7 +530,6 @@
       display: block;
     }
     
-    /* Two-column layout: match image width and remove left padding */
     .el-reno-two-col {
       display: grid;
       grid-template-columns: 320px 1fr;
@@ -582,13 +542,12 @@
       margin: 0;
     }
     
-    /* make the left column stack its contents vertically */
     .el-reno-left {
       display: flex;
       flex-direction: column;
       align-items: center;     
-      gap: 8px;              /* space between title, subtitle and paragraph */
-      align-items: stretch;  /* ensure children fill the column width */
+      gap: 8px;      
+      align-items: stretch; 
       box-sizing: border-box;
       text-align: center;
     }
@@ -602,7 +561,6 @@
       margin: 0 auto;
     }
     
-    /* ensure headings and subs occupy full width and sit above following text */
     .el-reno-left .viz-title,
     .el-reno-left .viz-sub {
       width: 100%;
@@ -618,7 +576,6 @@
       font-size: 18px;
     }
     
-    /* tighten subtitle styling to match other viz-sub rules */
     .el-reno-left .viz-sub {
       margin-bottom: 6px;
       color: #55607a;
@@ -626,7 +583,6 @@
       line-height: 1.35;
     }
     
-    /* RIGHT: hodograph container — vertically centered */
     .el-reno-right {
       position: relative;
       display: flex;
@@ -636,7 +592,6 @@
       box-sizing: border-box;
     }
     
-    /* Hodograph embed: fixed size */
     #viz-el-reno-hodograph.viz-embed,
     #viz-el-reno-hodograph.viz-embed > svg,
     #viz-el-reno-hodograph.viz-embed > div,
@@ -652,7 +607,6 @@
       position: relative;
     }
     
-    /* Legend: keep existing placement and size */
     .el-reno-right .el-reno-legend-box {
       position: absolute;
       left: calc(480px + 12px);
@@ -688,7 +642,6 @@
       box-sizing: border-box;
     }
 
-    /* Responsive fallback: stack layout */
     @media (max-width: 980px) {
       .el-reno-block,
       .el-reno-image-row .el-reno-figure,
@@ -761,7 +714,6 @@
 
     .spacer-32 { height: 32px; width: 100%; display: block; }
     
-    /* Footer metadata styling */
     .footer-metadata {
       font-size: 13px;
       color: #5c6e8c; /* soft steel grey */
@@ -1129,7 +1081,7 @@
     // Configuration
     // ------------------------
 
-    // JSON spec filenames placed beside index.html in the same repo/folder
+    // JSON spec filenames
     const specs = {
       tornadoDensity: "tornado_density_across_australia.json",
       severeProportions: "severe_weather_proportions_per_state.json",
@@ -1141,11 +1093,8 @@
       elRenoHodograph: "el-reno_hodograph.json",
     };
 
-    // CSV / topo repo used for dynamic maps (the repo you used previously)
-    // If you want to change the repo, update this base path.
     const csvRepoBase = "https://raw.githubusercontent.com/James-Monash/3179-Week-10-Assignment/main/";
 
-    // Patterns and topo files (update repo path if needed)
     const ausCsvPattern = csvRepoBase + "Tornado_F{R}_2010_2024_Australia.csv";
     const usCsvPattern  = csvRepoBase + "Tornado_F{R}_2010_2024_America.csv";
 
@@ -1224,7 +1173,7 @@
     function drawTornadoSizeLegend(containerId = "tornado-size-legend-svg") {
       const domain = [1, 160];
       const rangeArea = [50, 840]; // same as Vega-Lite size scale (area in px^2)
-      const counts = [150, 100, 30, 1]; // draw largest first (top) — change order if you prefer
+      const counts = [150, 100, 30, 1]; // draw largest first (this equates to being on the highest layer)
       const svg = document.getElementById(containerId);
       if (!svg) return;
     
@@ -1241,25 +1190,23 @@
       // layout params
       const paddingLeft = 12;
       const paddingTop = 12;
-      const itemGap = 12;         // vertical gap between items
-      const labelGap = 8;         // horizontal gap between circle and label
+      const itemGap = 12;         
+      const labelGap = 8;     
       const labelFontSize = 12;
     
-      // compute radii and max width needed
       const radii = counts.map(c => radiusForArea(areaForCount(c)));
       const maxR = Math.max(...radii);
-      const circleColWidth = Math.ceil(2 * maxR); // column reserved for circle diameter
-      const labelColWidth = 70;                    // reserve for labels (adjust if needed)
+      const circleColWidth = Math.ceil(2 * maxR);
+      const labelColWidth = 70;               
     
       // initial positions
       let y = paddingTop;
     
       counts.forEach((c, i) => {
         const r = radii[i];
-        const cx = paddingLeft + maxR;           // center circles in left column
+        const cx = paddingLeft + maxR; // center circles in left column
         const cy = y + r;
     
-        // circle
         const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circ.setAttribute("cx", cx);
         circ.setAttribute("cy", cy);
@@ -1270,7 +1217,7 @@
         circ.setAttribute("stroke-width", "1");
         svg.appendChild(circ);
     
-        // label to the right of circle
+        // label to the right of the circle
         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
         label.setAttribute("x", paddingLeft + circleColWidth + labelGap);
         label.setAttribute("y", cy + (labelFontSize / 3)); // vertically align text near center
@@ -1283,7 +1230,6 @@
         y += Math.ceil(2 * r + itemGap);
       });
     
-      // finalize svg size
       const totalWidth = paddingLeft + circleColWidth + labelGap + labelColWidth + 12;
       const totalHeight = y + 8;
       svg.setAttribute("width", totalWidth);
@@ -1291,7 +1237,7 @@
     }
 
     function drawSevereLegendVertical(containerId = "severe-legend-svg") {
-      // color mapping (matches your glyph colors)
+      // colour mapping (matches the predefined glyph colours)
       const items = [
         { key: "rain_mentions", label: "Rain", color: "#0072B2" },
         { key: "hail_mentions", label: "Hail", color: "#009E73" },
@@ -1301,12 +1247,11 @@
       const svg = document.getElementById(containerId);
       if (!svg) return;
     
-      // layout params chosen to match visual footprint of the tornado vertical legend
       const paddingLeft = 12;
       const paddingTop = 12;
-      const swatchSize = 18;    // square swatch size
-      const itemGap = 14;       // vertical gap between items
-      const labelGap = 10;      // horizontal gap between swatch and label
+      const swatchSize = 18;   
+      const itemGap = 14;      
+      const labelGap = 10;    
       const labelFontSize = 12;
     
       // clear existing content
@@ -1315,7 +1260,6 @@
       let y = paddingTop;
     
       items.forEach((it, i) => {
-        // swatch (rounded rect)
         const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("x", paddingLeft);
         rect.setAttribute("y", y);
@@ -1328,7 +1272,6 @@
         rect.setAttribute("stroke-width", "1");
         svg.appendChild(rect);
     
-        // label text
         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
         label.setAttribute("x", paddingLeft + swatchSize + labelGap);
         label.setAttribute("y", y + swatchSize - 4);
@@ -1453,7 +1396,6 @@
       if (!container) throw new Error("Embed target not found: " + target);
       if (getComputedStyle(container).position === "static") container.style.position = "relative";
     
-      // create/replace overlay SVG for leader lines and markers
       let overlay = container.querySelector(".annotation-overlay");
       if (overlay) overlay.remove();
       overlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1531,7 +1473,6 @@
         Array.from(container.querySelectorAll(".annotation-box")).forEach(n => n.remove());
         
         // create boxes first (so we can measure)
-        // NOTE: we no longer use 'src' as an input anchor. callers should pass explicit lineStart/lineEnd or boxXY.
         const created = annotations.map(a => {
           // compute boxCoord (preferred)
           const boxCoord = (a.boxXY && typeof a.boxXY.x === "number" && typeof a.boxXY.y === "number") ? a.boxXY : null;
@@ -1694,7 +1635,7 @@
       if (!container) throw new Error("Embed target not found: " + target);
       if (getComputedStyle(container).position === "static") container.style.position = "relative";
     
-      // create/replace overlay SVG (kept for compatibility but not used for lines/markers)
+      // create/replace overlay SVG
       let overlay = container.querySelector(".annotation-overlay");
       if (overlay) overlay.remove();
       overlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -2007,7 +1948,6 @@
       await embedWithHtmlAnnotations("#aus-chart", ausSpec, {
         projection: { center: [134, -28], scale: 850 },
         annotations: [
-          // Alice Springs area — moved further left and line break after "central"
           {
             id: "alice-springs-note",
             boxLonLat: { lon: 128.5, lat: -22.5 },
@@ -2015,8 +1955,6 @@
             nudgeX: -60,
             nudgeY: -10
           },
-      
-          // Offshore south of WA — moved ~5° south and a bit east
           {
             id: "wa-coast-note",
             boxLonLat: { lon: 116.0, lat: -36.5 },
@@ -2032,10 +1970,7 @@
         annotations: [
           {
             id: "ca-offshore-note",
-            // anchor point can be near the western interior (used only if you supplied src previously)
             src: { lon: -119.0, lat: 30.0 },
-            // place the HTML box so its left edge is approximately in line with California (lon -120)
-            // and positioned ~5° north of Washington (~lat 52)
             boxLonLat: { lon: -117.0, lat: 52.0 },
             label: "Tornadoes are less common in the western US but still occur",
             nudgeX: -12,
@@ -2045,9 +1980,7 @@
       
           {
             id: "southeast-note",
-            // keep anchor near Alabama if you want the logical association, but move box position west a bit
             src: { lon: -86.9, lat: 32.3 },
-            // box moved west so it sits more over the central Gulf / lower Mississippi longitudes
             boxLonLat: { lon: -90.5, lat: 25.0 },
             label: "Dangerous tornadoes are concentrated\nin the southeast states",
             nudgeX: -40,
@@ -2066,7 +1999,6 @@
       // detect interactive
       const isInteractive = !!inner.querySelector('.legend-checkbox');
       // find the outer column containing the legend title and note
-      // prefer a known wrapper class, otherwise climb until direct child of .viz-legend-wrapper
       let outer = inner.closest('.legend-right, .legend-column, .legend-left');
       if (!outer) {
         outer = inner;
@@ -2202,7 +2134,7 @@
             boxLonLat: { lon: 116.5, lat: -36.5 },
             label: "South Australia has the highest proportion\nof tornado-related severe weather — around 24%",
             leader: true,
-            nudgeX: -40,                             // slightly reduced nudge
+            nudgeX: -40, 
             nudgeY: 10
           }
         ]
@@ -2216,19 +2148,16 @@
       await embedWithHtmlAnnotations("#viz-fastest-aus", specs.fastestAus, {
         projection: { center: [134, -28], scale: 850 },
         annotations: [
-          // Western Australia note (on land in WA)
           {
             id: "wa-fastest",
-            boxLonLat: { lon: 125.5, lat: -38.5 }, // where the annotation box should sit
+            boxLonLat: { lon: 125.5, lat: -38.5 }, 
             label: "The fastest tornadoes in WA occurred in the 21st century",
-            nudgeX: -180,                           // tune horizontal pixel offset for box
-            nudgeY: -10                             // tune vertical pixel offset for box
+            nudgeX: -180,                         
+            nudgeY: -10                            
           },
-      
-          // Queensland / NSW coastal note (placed offshore/coast)
           {
             id: "nsw-qld-note",
-            boxLonLat: { lon: 162.0, lat: -20.0 }, // box near coast between QLD and NSW
+            boxLonLat: { lon: 162.0, lat: -20.0 }, 
             label: "NSW and QLD witness\nthe most tornadoes",
             nudgeX: -40,
             nudgeY: 8
@@ -2241,22 +2170,18 @@
         annotations: [
           {
             id: "peak-2011",
-            // Use explicit pixel endpoints so start and end are exact
-            lineStart: { x: 600, y: 34, coords: "px" },  // set this to the pixel where the line should begin
-            lineEnd:   { x: 705, y: 37, coords: "px" },  // set this to the pixel where the line should end
+            lineStart: { x: 600, y: 34, coords: "px" }, 
+            lineEnd:   { x: 705, y: 37, coords: "px" },  
           
-            // HTML box position is independent; keep it where you want
             boxXY: { x: 1986, y: 2300 },
             nudgeX: 0,
             nudgeY: 0,
           
-            // visual tuning
             label: "2011 saw the most tornadoes\nwith 2,074 recorded",
             maxWidth: 320,
             lineColor: "#000000",
             lineWidth: 1.0,
             lineOpacity: 0.95,
-            // optional: edgeInset prevents lines being snapped exactly into box corners when fallback anchor->box logic is used
             edgeInset: 6
           },
           {
@@ -2264,17 +2189,13 @@
             lineStart: { x: 320, y: 190, coords: "px" },
             lineEnd:   { x: 320, y: 230, coords: "px" },
           
-            // HTML box placement for the label 
-            boxXY: { x: 200, y: 140, coords: "px" },   // left inset, vertically centered
+            boxXY: { x: 200, y: 140, coords: "px" },  
           
-            // box nudges (keep box fixed unless you want tiny shifts)
             nudgeX: 0,
             nudgeY: 0,
           
-            // text shown in the box
             label: "1974 had the most F5 tornadoes\nwith 25 recorded",
           
-            // visual tuning
             maxWidth: 260,
             lineColor: "#000000",
             lineWidth: 1.0,
@@ -2288,7 +2209,7 @@
         annotations: [
           {
             id: "au-season-note-unique-2025",
-            boxXY: { x: 70, y: 250, coords: "px" },   // left inset, vertically centered
+            boxXY: { x: 70, y: 250, coords: "px" }, 
             nudgeX: 0,
             nudgeY: 0,
             label: "Australia's tornado season\nis a lot less pronounced\nthan the United States",
@@ -2299,7 +2220,7 @@
           },
           {
             id: "au-season-note-unique-2025",
-            boxXY: { x: 550, y: 320, coords: "px" },   // left inset, vertically centered
+            boxXY: { x: 550, y: 320, coords: "px" },  
             nudgeX: 0,
             nudgeY: 0,
             label: "The U.S. has over 20%\nof its recorded tornadoes in May",
@@ -2319,16 +2240,13 @@
             lineStart: { x: 535, y: 90, coords: "px" }, 
             lineEnd:   { x: 715, y: 75, coords: "px" },
       
-            boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
+            boxXY: { x: 200, y: 50, coords: "px" },  
       
-            // keep box fixed unless you want tiny nudges
             nudgeX: 0,
             nudgeY: 0,
       
-            // content
             label: "Deadliest recent tornado (Daulatpur-Saturia): densely populated areas with limited warning systems led to catastrophic loss of life",
       
-            // visual tuning
             maxWidth: 340,
             lineColor: "#000000",
             lineWidth: 1.0,
