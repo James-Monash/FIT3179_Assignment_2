@@ -1925,33 +1925,34 @@
         }
       ];
 
-      // gather per-rating point layers (only for selected ratings)
+      function isValidLatLon(lat, lon) {
+        return Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+      }
+      
       for (const r of ratings) {
         if (!selectedRatings.has(r)) continue;
-
+      
         const ausUrl = ausCsvPattern.replace("{R}", r.slice(1));
         const usUrl  = usCsvPattern.replace("{R}", r.slice(1));
-
-        // fetch CSVs (graceful if missing)
+      
         const [ausRows, usRows] = await Promise.all([fetchCsv(ausUrl), fetchCsv(usUrl)]);
-
+      
         const ausValues = ausRows.map(row => {
           const out = Object.assign({}, row);
           if (out[ausLatField] !== undefined) out[ausLatField] = parseFloat(out[ausLatField]);
           if (out[ausLonField] !== undefined) out[ausLonField] = parseFloat(out[ausLonField]);
           out.TOR_F_SCALE = out.TOR_F_SCALE || r;
           return out;
-        });
-
+        }).filter(d => isValidLatLon(d[ausLatField], d[ausLonField]));
+      
         const usValues = usRows.map(row => {
           const out = Object.assign({}, row);
           if (out[usLatField] !== undefined) out[usLatField] = parseFloat(out[usLatField]);
           if (out[usLonField] !== undefined) out[usLonField] = parseFloat(out[usLonField]);
           out.TOR_F_SCALE = out.TOR_F_SCALE || r;
           return out;
-        });
-
-        // push a point layer for this rating
+        }).filter(d => isValidLatLon(d[usLatField], d[usLonField]));
+      
         ausLayers.push({
           data: { values: ausValues },
           mark: { type: "point", filled: true, size: 36 },
@@ -1962,7 +1963,7 @@
             tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
           }
         });
-
+      
         usLayers.push({
           data: { values: usValues },
           mark: { type: "point", filled: true, size: 36 },
@@ -1973,7 +1974,7 @@
             tooltip: [{ title: "Fujita rating", field: "TOR_F_SCALE", type: "nominal" }]
           }
         });
-      } // end per-rating loop
+      }
 
       // Construct final specs
       const ausSpec = {
