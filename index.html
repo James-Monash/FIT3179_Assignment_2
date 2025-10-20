@@ -2296,21 +2296,23 @@
         annotations: [
           {
             id: "curved-hodograph",
-      
-            boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
-      
-            // keep box fixed unless you want tiny nudges
+            boxXY: { x: 220, y: 60, coords: "px" }, // adjust position manually
             nudgeX: 0,
             nudgeY: 0,
       
             // content
-            label: "Look at how the wind speed increases and wind direction changes with altitude",
+            label: "Wind speed increases and direction shifts with altitude.",
       
             // visual tuning
-            maxWidth: 340,
-            lineColor: "#000000",
-            lineWidth: 1.0,
-            lineOpacity: 0.95
+            maxWidth: 240,           // smaller box width
+            padding: 8,              // optional: reduce internal whitespace
+            fontSize: 14,            // optional: match chart font
+            backgroundColor: "#fff", // optional: ensure clean background
+            borderColor: "#ccc",     // optional: subtle border
+            borderRadius: 6,         // optional: rounded corners
+      
+            // remove connector line
+            lineOpacity: 0           // fully transparent line
           }
         ]
       });
