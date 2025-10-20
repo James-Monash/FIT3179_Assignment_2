@@ -73,7 +73,7 @@
           "value": "#0072B2"
         },
         "tooltip": [
-          { "field": "tornado_count", "type": "quantitative", "title": "Tornadoes" }
+          { "field": "tornado_count", "type": "quantitative", "title": "Tornadoes:" }
         ]
       }
     }
