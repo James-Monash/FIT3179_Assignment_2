@@ -1984,11 +1984,7 @@
             longitude: { field: usLonField, type: "quantitative" },
             latitude: { field: usLatField, type: "quantitative" },
             color: { value: ratingColors[r] },
-            tooltip: [
-              { title: "Fujita rating", field: "TOR_F_SCALE", type: "nominal" },
-              { title: "Latitude", field: usLatField, type: "quantitative", format: ".4f" },
-              { title: "Longitude", field: usLonField, type: "quantitative", format: ".4f" }
-            ]
+            tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
           }
         });
       }
