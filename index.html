@@ -435,6 +435,16 @@
       vertical-align: middle;
     }
 
+    .legend-checkbox[type="checkbox"]:checked::after {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      margin: 3px auto;
+      background-color: #123047;
+      border-radius: 1px;
+    }
+
     .legend-nudge {
       margin-left: 16px; /* adjust value to taste */
     }
