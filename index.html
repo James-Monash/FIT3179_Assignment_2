@@ -527,6 +527,7 @@
       margin-left: 1.5cm;       /* same as .viz-card */
       margin-right: auto;
       box-sizing: border-box;
+      margin-bottom: 64px; 
     }
     
     /* Image row spacing */
@@ -655,13 +656,16 @@
       display: block !important;
     }
     
-    /* Remove stray margins inside the two-col */
-    .el-reno-two-col * {
+    .el-reno-two-col > * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
     
+    .el-reno-two-col :not(.annotation-box) {
+      box-sizing: border-box;
+    }
+
     /* Responsive fallback: stack layout */
     @media (max-width: 980px) {
       .el-reno-block,
@@ -699,11 +703,7 @@
       }
     }
 
-    /* Add spacing below El Reno section */
-    .el-reno-block {
-      margin-bottom: 64px; /* creates clear separation before footer text */
-    }
-
+    /* place this at the very end of your stylesheet */
     #viz-el-reno-hodograph.viz-embed {
       position: relative;
       padding: 0;
@@ -712,6 +712,8 @@
       box-sizing: border-box;
     }
     
+    /* force annotation(s) inside this specific viz to hug content */
+    #viz-el-reno-hodograph.viz-embed > .annotation-box,
     #viz-el-reno-hodograph.viz-embed .annotation-box {
       position: absolute;
       display: inline-block;
@@ -722,7 +724,20 @@
       padding: 8px 10px;
       box-sizing: border-box;
       white-space: normal;
+      overflow: visible;
       transform: translate(0,0);
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(34,40,49,0.08);
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+    
+    /* prevent flex/grid parent from forcing stretch on viz children */
+    #viz-el-reno-hodograph.viz-embed > * {
+      align-self: start;
+      min-height: 0;
     }
     
     /* Footer metadata styling */
