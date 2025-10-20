@@ -1928,7 +1928,7 @@
       function isValidLatLon(lat, lon) {
         return Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
       }
-      
+
       for (const r of ratings) {
         if (!selectedRatings.has(r)) continue;
       
@@ -1951,7 +1951,7 @@
           if (out[usLonField] !== undefined) out[usLonField] = parseFloat(out[usLonField]);
           out.TOR_F_SCALE = out.TOR_F_SCALE || r;
           return out;
-        }).filter(d => isValidLatLon(d[usLatField], d[usLonField]));
+        }).filter(d => isValidLatLon(d[usLatField], d[usLonField]) && d[usLatField] >= -62);
       
         ausLayers.push({
           data: { values: ausValues },
@@ -1963,6 +1963,18 @@
             tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
           }
         });
+    
+        usLayers.push({
+            data: { values: usValues },
+            mark: { type: "point", filled: true, size: 36 },
+            encoding: {
+              longitude: { field: usLonField, type: "quantitative" },
+              latitude: { field: usLatField, type: "quantitative" },
+              color: { value: ratingColors[r] },
+              tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
+            }
+          });
+        }
       
         usLayers.push({
           data: { values: usValues },
@@ -1971,10 +1983,7 @@
             longitude: { field: usLonField, type: "quantitative" },
             latitude: { field: usLatField, type: "quantitative" },
             color: { value: ratingColors[r] },
-            tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" },
-                      { title: "Latitude", field: usLatField, type: "quantitative", format: ".4f" },
-                      { title: "Longitude", field: usLonField, type: "quantitative", format: ".4f" }
-                     ]
+            tooltip: [{ title: "Fujita rating:", field: "TOR_F_SCALE", type: "nominal" }]
           }
         });
       }
