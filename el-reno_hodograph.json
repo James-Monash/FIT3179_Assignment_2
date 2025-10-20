@@ -51,9 +51,9 @@
           "legend": null
         },
         "tooltip": [
-          { "field": "altitude", "type": "quantitative", "title": "Altitude (m)" },
-          { "field": "speed_m_s", "type": "quantitative", "title": "Speed (m/s)" },
-          { "field": "dir_deg", "type": "quantitative", "title": "Direction (deg)" }
+          { "field": "altitude", "type": "quantitative", "title": "Altitude (m):" },
+          { "field": "speed_m_s", "type": "quantitative", "title": "Speed (m/s):" },
+          { "field": "dir_deg", "type": "quantitative", "title": "Direction (deg):" }
         ],
         "size": { "value": 48 },
         "opacity": { "value": 0.95 }
