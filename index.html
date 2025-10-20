@@ -721,6 +721,48 @@
       margin-top: 48px; /* visual gap above */
       margin-bottom: 24px;
       max-width: 840px;
+
+      /* Consistency Styles */
+
+      .viz-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .viz-title-block { display: block; }
+      
+      .viz-title,
+      .viz-sub {
+        display: block;    
+        margin: 0;          
+        padding: 0;
+        line-height: 1.15; 
+        text-align: left;
+      }
+      
+      .viz-title { margin-bottom: 6px; font-size: 26px; font-weight: 700; color: #2c3e50; }
+      .viz-sub   { margin-bottom: 12px; font-size: 18px; color: #5c6e8c; }
+      
+      .viz-embed,
+      .viz-embed > svg,
+      .size-legend svg,
+      .viz-legend-wrapper svg {
+        display: block;
+        vertical-align: top; 
+      }
+      
+      .viz-legend-wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 12px 0;
+      }
+      
+      .viz-card > h3.viz-title + p.viz-sub,
+      .viz-card .viz-title-block > h3.viz-title + p.viz-sub {
+        margin-top: 6px;
+      }
     }
     
   </style>
@@ -794,8 +836,12 @@
 
       <!-- 2) severe_weather_proportions_per_state -->
       <section class="viz-card">
-        <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by Australian states</h3>
-        <p class="viz-sub">ACT was excluded due to its small data size</p>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">Severe weather distribution between 1900 and 2025 by Australian states</h3>
+            <p class="viz-sub">ACT was excluded due to its small data size</p>
+          </div>
+        </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
@@ -810,7 +856,7 @@
           </div>
         </div>
       </section>
-      
+            
       <p class="intro-paragraph">
         The <span class="highlight">Fujita rating</span> links damage to wind speed.<br/>
         Dr. Tetsuya Fujita introduced the idea in 1971.<br/>
@@ -831,14 +877,13 @@
       <section class="viz-card">
         <div class="viz-header">
           <div class="viz-title-block">
-            <h3 class="viz-title">Tornadoes by Fujita rating bewteen 2010 and 2014</h3>
+            <h3 class="viz-title">Tornadoes by Fujita rating between 2010 and 2014</h3>
             <p class="viz-sub">Toggle ratings using the checkboxes below. Inspect the locations that experienced the most tornadoes and the most severe tornadoes</p>
           </div>
         </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left map-stack-left">
-            <!-- stacked maps (vertical) -->
             <div id="aus-chart" class="viz-embed map-stack-item" aria-label="Australia tornado map"></div>
             <div id="us-chart" class="viz-embed map-stack-item" aria-label="United States tornado map"></div>
           </div>
@@ -846,13 +891,8 @@
           <div class="legend-right" aria-hidden="false" role="region" aria-label="Map legend and controls">
             <div id="combined-rating-legend" class="size-legend" role="group" aria-label="Fujita rating legend">
               <div class="legend-title">Fujita rating</div>
-      
               <div id="legend-checkboxes" aria-label="Fujita rating toggles" role="list"></div>
-      
-              <!-- color swatches + descriptions rendered by drawFujitaColorLegend -->
               <div id="fujita-legend" class="fujita-legend" role="list" aria-label="Fujita scale colours"></div>
-      
-              <!-- optional small help text -->
               <div class="legend-note" style="margin-top:8px; color:#55607a; font-size:12px;">
                 Toggle ratings to show or hide that class on the maps.
               </div>
@@ -871,14 +911,18 @@
 
       <!-- 5) tornadoes_by_fujita_rating_and_year -->
       <section class="viz-card">
-        <h3 class="viz-title">The number of recorded tornadoes in the U.S. since 1950</h3>
-        <p class="viz-sub">The values are broken down by fujita rating</p>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">The number of recorded tornadoes in the U.S. since 1950</h3>
+            <p class="viz-sub">The values are broken down by fujita rating</p>
+          </div>
+        </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-total-tornadoes" class="viz-embed"></div>
           </div>
-
+      
           <div class="legend-right" aria-hidden="false" role="region" aria-label="Fujita scale legend">
             <div id="fujita-static-legend" class="size-legend" role="group" aria-label="Fujita scale colours">
               <div class="legend-title">Fujita Rating</div>
@@ -901,7 +945,12 @@
   
       <!-- 6) fastest_australian_tornadoes -->
       <section class="viz-card">
-        <h3 class="viz-title">Top Five Fastest Tornadoes by Wind Speed Since 1900 in Australia</h3>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">Top Five Fastest Tornadoes by Wind Speed Since 1900 in Australia</h3>
+          </div>
+        </div>
+      
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-fastest-aus" class="viz-embed"></div>
@@ -921,19 +970,23 @@
 
       <!-- 7) tornadoes_by_month_aus_vs_us -->
       <section class="viz-card">
-        <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">Tornadoes by month — Australia vs U.S.</h3>
+          </div>
+        </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-by-month" class="viz-embed"></div>
           </div>
-
-        <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
-          <div id="country-legend" class="size-legend" role="group" aria-label="Country colours">
-            <div class="legend-title">Country</div>
-            <div id="country-legend-swatches" class="fujita-legend" role="list" aria-label="Country colour swatches"></div>
+      
+          <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
+            <div id="country-legend" class="size-legend" role="group" aria-label="Country colours">
+              <div class="legend-title">Country</div>
+              <div id="country-legend-swatches" class="fujita-legend" role="list" aria-label="Country colour swatches"></div>
+            </div>
           </div>
-        </div>
         </div>
       </section>
         
@@ -947,13 +1000,17 @@
   
       <!-- 8) deadliest_tornadoes_bubble_chart -->
       <section class="viz-card">
-        <h3 class="viz-title">Worldwide deadliest tornado events by date, fatality count and country</h3>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">Worldwide deadliest tornado events by date, fatality count and country</h3>
+          </div>
+        </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-deadliest-bubble" class="viz-embed"></div>
           </div>
-
+      
           <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
             <div id="deadliest-country-legend" class="size-legend" role="group" aria-label="Country colours">
               <div class="legend-title">Country</div>
@@ -971,13 +1028,17 @@
    
       <!-- 9) deadliest_tornadoes_on_a_map -->
       <section class="viz-card">
-        <h3 class="viz-title">Location of world's deadliest tornado events</h3>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 class="viz-title">Location of world's deadliest tornado events</h3>
+          </div>
+        </div>
       
         <div class="viz-legend-wrapper">
           <div class="viz-left">
             <div id="viz-deadliest-map" class="viz-embed"></div>
           </div>
-
+      
           <div class="legend-right" aria-hidden="false" role="region" aria-label="Country legend">
             <div id="deadliest-country-legend-map" class="size-legend" role="group" aria-label="Country colours">
               <div class="legend-title">Country</div>
@@ -996,9 +1057,12 @@
 
       <!-- 10) El-reno example -->
       <section class="viz-card el-reno-block" aria-labelledby="el-reno-title">
-        <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
+        <div class="viz-header">
+          <div class="viz-title-block">
+            <h3 id="el-reno-title" class="viz-title">El Reno Tornado — profile and hodograph</h3>
+          </div>
+        </div>
       
-        <!-- IMAGE ROW: back in place -->
         <div class="el-reno-image-row">
           <figure class="el-reno-figure">
             <img src="el-reno.jpg" alt="El Reno tornado, May 2013" loading="lazy">
@@ -1006,12 +1070,11 @@
           </figure>
         </div>
       
-        <!-- TWO-COLUMN ROW: left = text, right = hodograph + legend -->
         <div class="el-reno-two-col" role="region" aria-label="El Reno text and hodograph">
           <div class="el-reno-left">
-            <h3 class="viz-title">Wind direction and speed mapped over altitude</h3>
+            <h4 class="viz-section-title">Wind direction and speed mapped over altitude</h4>
             <p class="viz-sub">The speed was calculated at Oklahoma City,<br/>approximately when the storm was passing through</p>
-            
+      
             <p class="el-reno-narrow">
               Wind shear that <span class="highlight">turns</span> and <span class="highlight">increases</span> with height
               helps create the rotation seen in the hodograph. The final sounding after the tornado shows strong
@@ -1061,9 +1124,9 @@
       – U.S. tornado data: https://www.ncei.noaa.gov/stormevents/ftp.jsp<br>
       – Deadliest tornado data: https://www.discoverwalks.com/blog/world/25-deadliest-tornadoes-in-recorded-history/<br>
       – Hodograph data: https://weather.uwyo.edu/upperair/sounding.shtml<br>
-      – Map data: https://www.naturalearthdata.com/downloads/
+      – Map data: https://www.naturalearthdata.com/downloads/<br>
 
-      <strong>AI Acknowledgement</strong><br/>
+      <strong>AI Acknowledgement</strong><br>
       Copilot has been used when constructing the vega-lite json file as well as the index.html file.<br>
       The LLM was utilised to expedite the process of forming the index.html file.<br>
       Specific CSS styles were employed to add the specific character of the chart.<br>
