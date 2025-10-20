@@ -2273,23 +2273,12 @@
         annotations: [
           {
             id: "curved-hodograph",
-            lineStart: { x: 535, y: 90, coords: "px" }, 
-            lineEnd:   { x: 715, y: 75, coords: "px" },
-      
-            boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
-      
-            // keep box fixed unless you want tiny nudges
+            boxXY: { x: 200, y: 50, coords: "px" }, // manually positioned box
             nudgeX: 0,
             nudgeY: 0,
-      
-            // content
             label: "Wind speed increases and direction shifts with altitude.",
-      
-            // visual tuning
             maxWidth: 340,
-            lineColor: "#000000",
-            lineWidth: 1.0,
-            lineOpacity: 0.95
+            lineOpacity: 0 // disables connector line
           }
         ]
       });
