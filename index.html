@@ -2170,7 +2170,7 @@
             id: "peak-2011",
             // Use explicit pixel endpoints so start and end are exact
             lineStart: { x: 600, y: 34, coords: "px" },  // set this to the pixel where the line should begin
-            lineEnd:   { x: 700, y: 37, coords: "px" },  // set this to the pixel where the line should end
+            lineEnd:   { x: 710, y: 37, coords: "px" },  // set this to the pixel where the line should end
           
             // HTML box position is independent; keep it where you want
             boxXY: { x: 1986, y: 2300 },
@@ -2266,10 +2266,54 @@
 
       drawDeadliestCountryLegend()
       
+      await embedWithHtmlAnnotationsForCartesian("#viz-deadliest-map", specs.deadliestMap, {
+        annotations: [
+          {
+            id: "curved-hodograph",
+      
+            boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
+      
+            // keep box fixed unless you want tiny nudges
+            nudgeX: 0,
+            nudgeY: 0,
+      
+            // content
+            label: "Look at how the wind speed increases and wind direction changes with altitude",
+      
+            // visual tuning
+            maxWidth: 340,
+            lineColor: "#000000",
+            lineWidth: 1.0,
+            lineOpacity: 0.95
+          }
+        ]
+      });
+
       await embedSpec("#viz-deadliest-map", specs.deadliestMap);
       drawDeadliestCountryLegend("deadliest-country-swatches-map");
 
-      await embedSpec("#viz-el-reno-hodograph", specs.elRenoHodograph);
+      await embedWithHtmlAnnotationsForCartesian("#viz-el-reno-hodograph", specs.elRenoHodograph, {
+        annotations: [
+          {
+            id: "curved-hodograph",
+      
+            boxXY: { x: 200, y: 50, coords: "px" },   // left inset, vertically centered
+      
+            // keep box fixed unless you want tiny nudges
+            nudgeX: 0,
+            nudgeY: 0,
+      
+            // content
+            label: "Look at how the wind speed increases and wind direction changes with altitude",
+      
+            // visual tuning
+            maxWidth: 340,
+            lineColor: "#000000",
+            lineWidth: 1.0,
+            lineOpacity: 0.95
+          }
+        ]
+      });
       renderAltitudeLegend("el-reno-order-swatches", 0, 400);
     }
 
